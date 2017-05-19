@@ -35,7 +35,7 @@ public int getSuperScript(String text,int i){
 public int getNumerator(int i){
 	int start;
 	int brackets = 0;
-	System.out.print("The value of length: "+i+"charAt(i-6) : "+formatted.charAt(i-6));
+	System.out.print("The value of length: "+i+"charAt(i-6) : "+formatted.charAt(i-6)+" and the string is "+formatted.substring(i-10,i));
 	if(formatted.charAt(i-6)!=')'){
 		start = i-6;
 	}else{
@@ -65,11 +65,18 @@ String text = (String)session.getAttribute("usertext") ;
 //Final Html Code Generated
 
 //all modes to be stated here such as <munderover>
-int munderover=0,division=0,power=0;
+int munderover=0,division=0,power=0,text_mode=0;
 
 //List of all the variables specific to modes . this is for munderover
 //String up_lim,lw_lim;
-int brackets=0;
+//int brackets=0;
+
+//Creating a map to keep track of the brackets of power and Division(Add any other element whose brackets are to be tracked and create the corresponding code)
+//Creating a stack of functions which require bracket tracking
+HashMap<String,Integer> map = new HashMap<String,Integer>();
+ArrayList<String> stack = new ArrayList<String>();
+map.put("division",0);
+map.put("power",0);
 		
 //List of all the operations without unicodes
 String[] op = {"&alpha;","&pi;","&infin;","&pm;","&mp;","&hbar;","&exist;","&forall;",
@@ -78,7 +85,7 @@ String[] op = {"&alpha;","&pi;","&infin;","&pm;","&mp;","&hbar;","&exist;","&for
 "&supset;","&isin;","&notin;","&wedge;","&vee;","&not;","&rightarrow;","&mapsto;","&angsph;"};
 
 //List of all opeartions using unicodes which qualify super and subscripts such as sigma
-Integer[] uni={8721,8719,8747};
+Integer[] uni={8721,8719,8747,67,80};
 //List of all The Symbols
 String[] sym = {"&emptyset;","&naturals;","&integers;","&rationals;","&reals;","&complexes;","&Theta;"};
 
@@ -118,95 +125,132 @@ formatted+="<div id='typed-strings'><p><math xmlns='http://www.w3.org/1998/Math/
 //Writing to the File Using the HTML Conventions
 //Check if function returns Formatted String
 for(i=0;i<text.length();i++){
-	switch(text.charAt(i)){
-		case '^':int start=getNumerator(formatted.length());
-				power = 1;
-				brackets = 0;
-				/*i=getSuperScript(text,i);
-				i--;
-				formatted+="^200 ";*/
-				String t = formatted.substring(0,start);
-				System.out.println("\nThe value of Start is POWER:"+start);
-				t += "<msup><mrow>"+formatted.substring(start,formatted.length())+"</mrow><mrow>";
-				formatted = t;
-				if(text.charAt(i+1)!='('){
-					formatted += text.charAt(i+1)+"^200 </mrow></msup>";
-					power = 0;
-					i++;
-				}
-				break;
-		case '&':int index = text.substring(i).indexOf(";");
-				//System.out.println("The index is "+(i+index)+" and Substring : "+text.substring(i, i+index+1));
-				if(operators.contains(text.substring(i, i+index+1))){
-					formatted+="<mo>"+text.substring(i, i+index+1)+"</mo>";
-				}
-				else if(symbols.contains(text.substring(i, i+index+1))){
-					formatted+="<mn>"+text.substring(i, i+index+1)+"</mn>";
-				}
-				else if(vectors.contains(text.substring(i, i+index+1))){
-					formatted+="<mover><mi>"+text.charAt(i-1)+"</mi><mo>"+text.substring(i, i+index+1)+"</mo></mover>";
-				}
-				i+=index;
-				formatted+="^200 ";
-				break;
-		case '=':formatted+=" = ";
-				break;
-		case '/':int startIndex = getNumerator(formatted.length());
-				brackets = 0;
-				division = 1;
-				String temp = formatted.substring(0,startIndex);
-				//System.out.println("\nThe value of StartIndex is :"+startIndex);
-				temp += "<mfrac><mrow>"+formatted.substring(startIndex,formatted.length())+"</mrow><mrow>";
-				formatted = temp;
-				if(text.charAt(i+1)!='('){
-					formatted += text.charAt(i+1)+"^200 </mrow></mfrac>";
-					power = 0;
-					i++;
-				}
-				break;
-		default:if(i!=text.length()-1 && text.charAt(i)=='\\' && text.charAt(i+1) == 'n'){
-					formatted+="<br></math><math xmlns='http://www.w3.org/1998/Math/MathML'>";
-					i++;
-					continue;
-				}
-				if(i==text.length()-1 || text.charAt(i+1)!='&'){
-					int code = text.codePointAt(i);
-					//System.out.print(code+" ");
-					if(unicodes.contains(code)){
-						munderover=1;
-						formatted+="<munderover><mo>" + text.charAt(i) + "</mo>";
-						String field = text.substring(i+2,i+2+text.substring(i+2).indexOf(")"));
-						String []params = field.split(",");
-						formatted+="<mn>"+params[0]+"</mn>";
-						formatted+="<mn>"+params[1]+"</mn></munderover>";
-						i=i+2+text.substring(i+2).indexOf(")");
-						munderover=0;
-					}else if(division == 1 &&(text.charAt(i)==')' || text.charAt(i)=='(')){
-						brackets = (text.charAt(i)==')')?brackets+1:brackets-1;
-						formatted+=text.charAt(i)+"^200 ";
-						if(brackets == 0){
-							formatted+="</mrow></mfrac>";
-							division=0;						
-						}
-					}else if(power == 1 &&(text.charAt(i)==')' || text.charAt(i)=='(')){
-						brackets = (text.charAt(i)==')')?brackets+1:brackets-1;
-						formatted+=text.charAt(i)+"^200 ";
-						if(brackets == 0){
-							formatted+="</mrow></msup>";
-							power = 0;				
-						}
-					}else{
-						formatted+=text.charAt(i)+"^200 ";
+	if(text_mode == 1){
+		if(text.charAt(i)=='#'){
+			text_mode = 0;
+			formatted+="</mtext>^200 ";
+		}
+		else formatted += text.charAt(i);
+	}else{
+		switch(text.charAt(i)){
+			case '^':int start=getNumerator(formatted.length());
+					power = 1;
+					map.put("power",0);
+					stack.add("power");
+					//brackets = 0;
+					/*i=getSuperScript(text,i);
+					i--;
+					formatted+="^200 ";*/
+					String t = formatted.substring(0,start);
+					//System.out.println("\nThe value of Start is POWER:"+start);
+					t += "<msup><mrow>"+formatted.substring(start,formatted.length())+"</mrow><mrow>";
+					formatted = t;
+					if(text.charAt(i+1)!='('){
+						formatted += text.charAt(i+1)+"^200 </mrow></msup>";
+						stack.remove(stack.size()-1);
+						power = 0 ;
+						i++;
 					}
-				}
-				else if(text.charAt(i+1) == '&'){
-					int indx = text.substring(i+1).indexOf(";")+1;
-					//System.out.println("The index is::"+indx+ "substring : "+text.substring(i+1,i+1+indx));
-					String checker = text.substring(i+1,i+1+indx);
-					if(!vectors.contains(checker))
-						formatted+=text.charAt(i)+"^200 ";
-				}
-				
+					break;
+			case '&':int index = text.substring(i).indexOf(";");
+					//System.out.println("The index is "+(i+index)+" and Substring : "+text.substring(i, i+index+1));
+					if(operators.contains(text.substring(i, i+index+1))){
+						formatted+="<mo>"+text.substring(i, i+index+1)+"</mo>";
+					}
+					else if(symbols.contains(text.substring(i, i+index+1))){
+						formatted+="<mn>"+text.substring(i, i+index+1)+"</mn>";
+					}
+					else if(vectors.contains(text.substring(i, i+index+1))){
+						formatted+="<mover><mi>"+text.charAt(i-1)+"</mi><mo>"+text.substring(i, i+index+1)+"</mo></mover>";
+					}
+					i+=index;
+					formatted+="^200 ";
+					break;
+			case '=':formatted+=" = ";
+					break;
+			case '/':int startIndex = getNumerator(formatted.length());
+					stack.add("division");
+					map.put("division",0);
+					//brackets = 0;
+					division = 1;
+					String temp = formatted.substring(0,startIndex);
+					System.out.println("\nThe value of StartIndex is :"+startIndex);
+					temp += "<mfrac><mrow>"+formatted.substring(startIndex,formatted.length())+"</mrow><mrow>";
+					formatted = temp;
+					if(text.charAt(i+1)!='('){
+						formatted += text.charAt(i+1)+"^200 </mrow></mfrac>";
+						stack.remove(stack.size()-1);
+						division = 0;
+						i++;
+					}
+					break;
+			case '#':text_mode = 1;
+					formatted+="<mtext>";
+					break;
+			default:if(i!=text.length()-1 && text.charAt(i)=='\\' && text.charAt(i+1) == 'n'){
+						formatted+="<br></math><math xmlns='http://www.w3.org/1998/Math/MathML'>";
+						i++;
+						continue;
+					}
+					if(i==text.length()-1 || text.charAt(i+1)!='&'){
+						int code = text.codePointAt(i);
+						//System.out.print(code+" ");
+						if(unicodes.contains(code)){
+							//Permutation and Combination
+							if(code == 67 || code == 80){
+								String field = text.substring(i+2,i+2+text.substring(i+2).indexOf(")"));
+								String []params = field.split(",");
+								char ch=(code == 67)?'C':'P';
+								formatted+="<munderover><mo>"+ch+"</mo><mn>"+params[0].trim()+"</mn><mn>"+params[1].trim()+"</mn></munderover>";
+								i=i+2+text.substring(i+2).indexOf(")");
+								continue;
+							}
+							munderover=1;
+							formatted+="<munderover><mo>" + text.charAt(i) + "</mo>";
+							String field = text.substring(i+2,i+2+text.substring(i+2).indexOf(")"));
+							String []params = field.split(",");
+							formatted+="<mn>"+params[0].trim()+"</mn>";
+							formatted+="<mn>"+params[1].trim()+"</mn></munderover>";
+							i=i+2+text.substring(i+2).indexOf(")");
+							//i=i+1;//Potential Region of error put this as one ) bracket was comming after the operator symbols
+							munderover=0;
+						}
+						else if((division == 1 || power == 1 ) && (text.charAt(i)==')' || text.charAt(i)=='(')){
+							//brackets = (text.charAt(i)==')')?brackets+1:brackets-1;
+							if(division == 1){
+								int brackets = map.get("division");
+								brackets = (text.charAt(i)==')')?brackets+1:brackets-1;
+								map.put("division",brackets);
+							}
+							if(power == 1){
+								int brackets = map.get("power");
+								brackets = (text.charAt(i)==')')?brackets+1:brackets-1;
+								map.put("power",brackets);							
+							}
+							formatted+=text.charAt(i)+"^200 ";
+							while(stack.size()!=0 && map.get(stack.get(stack.size()-1))==0){
+								if(stack.get(stack.size()-1).equals("power")){
+									formatted+="</mrow></msup>";
+									power=0;
+								}else{
+									formatted+="</mrow></mfrac>";
+									division=0;
+								}
+								stack.remove(stack.size()-1);
+							}
+						}else{
+							formatted+=text.charAt(i)+"^200 ";
+						}
+					}
+					else if(text.charAt(i+1) == '&'){
+						int indx = text.substring(i+1).indexOf(";")+1;
+						//System.out.println("The index is::"+indx+ "substring : "+text.substring(i+1,i+1+indx));
+						String checker = text.substring(i+1,i+1+indx);
+						if(!vectors.contains(checker))
+							formatted+=text.charAt(i)+"^200 ";
+					}
+					
+		}
 	}
 }
 formatted+="</math></p></div><span id='typed'></span>";
@@ -222,5 +266,8 @@ bw.close();
 <!--  List of Problems 
 	- In MAthML on tags specific to it can be used.No other tags are allowed.
 	- Getting Invalid Markup Warning during the animations
+	- # has to be Used for text #
+	- for Summation , Product , Integral , Combination , Permuatation Arguments must be Given in Brackets
+	- Sum,Prod,Integral , Combination ,  Permutation  ------  Sym( arg1, arg2)
 	- One Convention states that '/' can only be used for division and only brackets which will not create problem are () 
 -->
