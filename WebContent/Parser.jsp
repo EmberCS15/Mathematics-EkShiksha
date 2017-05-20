@@ -11,35 +11,16 @@
 <%! 
 static String formatted=""; 
 
-public int getSuperScript(String text,int i){
-	formatted+="<sup>";
-	//int index = text.substring(i).indexOf(";");
-	//String operator = text.substring(i,index+1);
-	i++;
-	if(text.charAt(i)=='('){
-		i++;
-		while(text.charAt(i)!=')'&&i<text.length()){
-			formatted+=text.charAt(i);
-			i++;
-		}
-		i++;
-	}else{
-		formatted+=text.charAt(i);
-		i++;
-	}
-	formatted+="</sup></math><math xmlns='http://www.w3.org/1998/Math/MathML'>";
-	return i;
-}
 
 //Must Find a better method to determine the position of the bracket ). I have simply parsed back ^200 5spaces.
 public int getNumerator(int i){
 	int start;
 	int brackets = 0;
-	System.out.print("The value of length: "+i+"charAt(i-6) : "+formatted.charAt(i-6)+" and the string is "+formatted.substring(i-10,i));
-	if(formatted.charAt(i-6)!=')'){
-		start = i-6;
+	System.out.print("The value of length: "+i+"charAt(i-1) : "+formatted.charAt(i-1)+" and the string is "+formatted.substring(i-10,i));
+	if(formatted.charAt(i-1)!=')'){
+		start = i-1;
 	}else{
-		i-=7;
+		i-=2;
 		brackets = 1;
 		/*while(formatted.charAt(i) != '(')
 				i--;*/
@@ -130,7 +111,7 @@ for(i=0;i<text.length();i++){
 	if(text_mode == 1){
 		if(text.charAt(i)=='#'){
 			text_mode = 0;
-			formatted+="</mtext>^200 ";
+			formatted+="</mtext>";
 		}
 		else formatted += text.charAt(i);
 	}else{
@@ -148,7 +129,7 @@ for(i=0;i<text.length();i++){
 					t += "<msup><mrow>"+formatted.substring(start,formatted.length())+"</mrow><mrow>";
 					formatted = t;
 					if(text.charAt(i+1)!='('){
-						formatted += text.charAt(i+1)+"^200 </mrow></msup>";
+						formatted += text.charAt(i+1)+"</mrow></msup>";
 						stack.remove(stack.size()-1);
 						power = 0 ;
 						i++;
@@ -166,7 +147,7 @@ for(i=0;i<text.length();i++){
 						formatted+="<mover><mi>"+text.charAt(i-1)+"</mi><mo>"+text.substring(i, i+index+1)+"</mo></mover>";
 					}
 					i+=index;
-					formatted+="^200 ";
+					//formatted+="^200 ";
 					break;
 			case '=':formatted+=" = ";
 					break;
@@ -180,7 +161,7 @@ for(i=0;i<text.length();i++){
 					temp += "<mfrac><mrow>"+formatted.substring(startIndex,formatted.length())+"</mrow><mrow>";
 					formatted = temp;
 					if(text.charAt(i+1)!='('){
-						formatted += text.charAt(i+1)+"^200 </mrow></mfrac>";
+						formatted += text.charAt(i+1)+"</mrow></mfrac>";
 						stack.remove(stack.size()-1);
 						division = 0;
 						i++;
@@ -241,7 +222,7 @@ for(i=0;i<text.length();i++){
 								brackets = (text.charAt(i) == '(')?brackets+1:brackets-1;
 								map.put("square_root",brackets);
 							}
-							formatted+=text.charAt(i)+"^200 ";
+							formatted+=text.charAt(i);
 							while(stack.size()!=0 && map.get(stack.get(stack.size()-1))==0){
 								String rem = stack.get(stack.size()-1);
 								if(rem.equals("power")){
@@ -257,7 +238,7 @@ for(i=0;i<text.length();i++){
 								stack.remove(stack.size()-1);
 							}
 						}else{
-							formatted+=text.charAt(i)+"^200 ";
+							formatted+=text.charAt(i);
 						}
 					}
 					else if(text.charAt(i+1) == '&'){
@@ -265,14 +246,14 @@ for(i=0;i<text.length();i++){
 						//System.out.println("The index is::"+indx+ "substring : "+text.substring(i+1,i+1+indx));
 						String checker = text.substring(i+1,i+1+indx);
 						if(!vectors.contains(checker))
-							formatted+=text.charAt(i)+"^200 ";
+							formatted+=text.charAt(i);
 					}
 					
 		}
 	}
 }
 formatted+="</math></p></div><span id='typed'></span>";
-formatted+="<script type='text/javascript'>document.addEventListener('DOMContentLoaded', function(){Typed.new('#typed', {stringsElement: document.getElementById('typed-strings'),typeSpeed : -50});});"+"</script>";
+formatted+="<script type='text/javascript'>document.addEventListener('DOMContentLoaded', function(){Typed.new('#typed', {stringsElement: document.getElementById('typed-strings'),typeSpeed : 150});});"+"</script>";
 formatted+="</body></html>";
 bw.write(formatted);
 bw.close();
