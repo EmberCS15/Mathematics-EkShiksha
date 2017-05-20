@@ -65,7 +65,7 @@ String text = (String)session.getAttribute("usertext") ;
 //Final Html Code Generated
 
 //all modes to be stated here such as <munderover>
-int munderover=0,division=0,power=0,text_mode=0;
+int munderover=0,division=0,power=0,text_mode=0,square_root=0;
 
 //List of all the variables specific to modes . this is for munderover
 //String up_lim,lw_lim;
@@ -77,6 +77,7 @@ HashMap<String,Integer> map = new HashMap<String,Integer>();
 ArrayList<String> stack = new ArrayList<String>();
 map.put("division",0);
 map.put("power",0);
+map.put("square_root",0);
 		
 //List of all the operations without unicodes
 String[] op = {"&alpha;","&pi;","&infin;","&pm;","&mp;","&hbar;","&exist;","&forall;",
@@ -85,7 +86,8 @@ String[] op = {"&alpha;","&pi;","&infin;","&pm;","&mp;","&hbar;","&exist;","&for
 "&supset;","&isin;","&notin;","&wedge;","&vee;","&not;","&rightarrow;","&mapsto;","&angsph;"};
 
 //List of all opeartions using unicodes which qualify super and subscripts such as sigma
-Integer[] uni={8721,8719,8747,67,80};
+//Code point for square root is 8730
+Integer[] uni={8721,8719,8747,67,80,8730};
 //List of all The Symbols
 String[] sym = {"&emptyset;","&naturals;","&integers;","&rationals;","&reals;","&complexes;","&Theta;"};
 
@@ -196,8 +198,15 @@ for(i=0;i<text.length();i++){
 						int code = text.codePointAt(i);
 						//System.out.print(code+" ");
 						if(unicodes.contains(code)){
+							if(code == 8730){
+								formatted+="<math><msqrt><mrow>";
+								map.put("square_root",0);
+								stack.add("square_root");
+								square_root=1;
+								continue;
+							}
 							//Permutation and Combination
-							if(code == 67 || code == 80){
+							else if(code == 67 || code == 80){
 								String field = text.substring(i+2,i+2+text.substring(i+2).indexOf(")"));
 								String []params = field.split(",");
 								char ch=(code == 67)?'C':'P';
@@ -215,26 +224,35 @@ for(i=0;i<text.length();i++){
 							//i=i+1;//Potential Region of error put this as one ) bracket was comming after the operator symbols
 							munderover=0;
 						}
-						else if((division == 1 || power == 1 ) && (text.charAt(i)==')' || text.charAt(i)=='(')){
+						else if(stack.size()!=0 && (text.charAt(i)==')' || text.charAt(i)=='(')){
 							//brackets = (text.charAt(i)==')')?brackets+1:brackets-1;
 							if(division == 1){
 								int brackets = map.get("division");
-								brackets = (text.charAt(i)==')')?brackets+1:brackets-1;
+								brackets = (text.charAt(i)=='(')?brackets+1:brackets-1;
 								map.put("division",brackets);
 							}
 							if(power == 1){
 								int brackets = map.get("power");
-								brackets = (text.charAt(i)==')')?brackets+1:brackets-1;
+								brackets = (text.charAt(i)=='(')?brackets+1:brackets-1;
 								map.put("power",brackets);							
+							}
+							if(square_root == 1){
+								int brackets = map.get("square_root");
+								brackets = (text.charAt(i) == '(')?brackets+1:brackets-1;
+								map.put("square_root",brackets);
 							}
 							formatted+=text.charAt(i)+"^200 ";
 							while(stack.size()!=0 && map.get(stack.get(stack.size()-1))==0){
-								if(stack.get(stack.size()-1).equals("power")){
+								String rem = stack.get(stack.size()-1);
+								if(rem.equals("power")){
 									formatted+="</mrow></msup>";
 									power=0;
-								}else{
+								}else if(rem.equals("division")){
 									formatted+="</mrow></mfrac>";
 									division=0;
+								}else if(rem.equals("square_root")){
+									formatted+="</mrow></msqrt></math>";
+									square_root = 0;
 								}
 								stack.remove(stack.size()-1);
 							}
@@ -254,7 +272,7 @@ for(i=0;i<text.length();i++){
 	}
 }
 formatted+="</math></p></div><span id='typed'></span>";
-formatted+="<script type='text/javascript'>document.addEventListener('DOMContentLoaded', function(){Typed.new('#typed', {stringsElement: document.getElementById('typed-strings')});});"+"</script>";
+formatted+="<script type='text/javascript'>document.addEventListener('DOMContentLoaded', function(){Typed.new('#typed', {stringsElement: document.getElementById('typed-strings'),typeSpeed : -50});});"+"</script>";
 formatted+="</body></html>";
 bw.write(formatted);
 bw.close();
