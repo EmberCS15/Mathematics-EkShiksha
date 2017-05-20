@@ -103,8 +103,8 @@ formatted = "<!DOCTYPE html><html lang='en'><head><title>Result TypedJS</title><
     +"<link rel='stylesheet' type='text/css' href='./css/styling.css'>"
     +"<script type='text/javascript' asyncsrc='https://example.com/MathJax.js?config=MML_CHTML'></script>"
     +"<script rel='text/javascript' src='./js/typed.js'></script></head><body>";
-
-formatted+="<div id='typed-strings'><p><math xmlns='http://www.w3.org/1998/Math/MathML'>";
+formatted+="<button id='btn_down' name='DecreaseSpeed' onclick='controlSpeed(100,1)'>Speed Down</button>&nbsp;&nbsp;<button id='btn_up' name='IncreaseSpeed' onclick='controlSpeed(100,-1)'>Speed Up</button>&nbsp;&nbsp;<button id='btn_stop' name='pause' onclick='Pause()'>Pause</button>&nbsp;&nbsp;<button id='btn_start' name='resume' onclick='Resume()'>Resume</button>";
+formatted+="<br><div id='typed-strings'><p><math xmlns='http://www.w3.org/1998/Math/MathML'>";
 //Writing to the File Using the HTML Conventions
 //Check if function returns Formatted String
 for(i=0;i<text.length();i++){
@@ -253,7 +253,7 @@ for(i=0;i<text.length();i++){
 	}
 }
 formatted+="</math></p></div><span id='typed'></span>";
-formatted+="<script type='text/javascript'>document.addEventListener('DOMContentLoaded', function(){Typed.new('#typed', {stringsElement: document.getElementById('typed-strings'),typeSpeed : 150});});"+"</script>";
+formatted+="<script type='text/javascript'>document.addEventListener('DOMContentLoaded', function(){Typed.new('#typed', {stringsElement: document.getElementById('typed-strings'),typeSpeed : 150});});function controlSpeed(decrement,flag){Typed.controlSpeed(decrement,flag);}function Pause(){Typed.pauseAnimation(1);}function Resume(){Typed.resumeAnimation(0);}"+"</script>";
 formatted+="</body></html>";
 bw.write(formatted);
 bw.close();

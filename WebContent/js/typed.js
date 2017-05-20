@@ -26,7 +26,11 @@
 ! function(window, document, $) {
 
 	"use strict";
-
+	var speedController = 0;
+	var pauseValue = 0;
+	var objectReference = null;
+	var pauseStrPos = null;
+	var pauseStr = null;
 	var Typed = function(el, options) {
 		var self = this;
 
@@ -134,6 +138,7 @@
 
 		build: function() {
 			var self = this;
+			objectReference = this;
 			// Insert cursor
 			if (this.showCursor === true) {
 				this.cursor = document.createElement('span');
@@ -141,6 +146,7 @@
 				this.cursor.innerHTML = this.cursorChar;
 				this.el.parentNode && this.el.parentNode.insertBefore(this.cursor, this.el.nextSibling);
 			}
+			//Parsing the String from a <div class="typed-strings"> division
 			if (this.stringsElement) {
 				this.strings = [];
 				this.stringsElement.style.display = 'none';
@@ -155,10 +161,14 @@
 		// pass current string state to each function, types 1 char per call
 		typewrite: function(curString, curStrPos) {
 			// exit when stopped
+			pauseStr = curString ;
+			pauseStrPos = curStrPos ; 
 			if (this.stop === true) {
 				return;
 			}
-
+			if(pauseValue == 1){
+				this.pauseTyping();
+			}
 			if (this.fadeOut && this.el.classList.contains(this.fadeOutClass)) {
 				this.el.classList.remove(this.fadeOutClass);
 				this.cursor.classList.remove(this.fadeOutClass);
@@ -166,7 +176,7 @@
 
 			// varying values for setTimeout during typing
 			// can't be global since number changes each time loop is executed
-			var humanize = Math.round(Math.random() * (100 - 30)) + this.typeSpeed;
+			var humanize = Math.round(Math.random() * (100 - 30)) + this.typeSpeed + speedController;
 			var self = this;
 
 			// ------------- optional ------------- //
@@ -425,8 +435,24 @@
 			this.curLoop = 0;
 			// Send the callback
 			this.options.resetCallback();
-		}
+		},
 
+		//Pause typing
+		pauseTyping: function() {
+            var self = this;
+
+            self.stop = true;
+            clearInterval(self.timeout);
+        },
+        //Continue typing
+        continueTyping: function() {
+            var self = this;
+            if(self.stop === false)
+               return;
+
+            this.stop = false;
+            this.typewrite(pauseStr,pauseStrPos);
+        }
 	};
 
 	Typed.new = function(selector, option) {
@@ -440,6 +466,20 @@
 		});
 	};
 
+	Typed.controlSpeed = function(decrement,flag){
+		speedController = (flag == 1)?speedController + 100 : speedController - 100;
+		//return speedController;
+	};
+
+	Typed.pauseAnimation = function(flag){
+		//element.data('typed').pauseTyping();
+		pauseValue = flag;
+	};
+
+	Typed.resumeAnimation = function(flag){
+		pauseValue = flag;
+		objectReference.continueTyping();
+	}
 	if ($) {
 		$.fn.typed = function(option) {
 			return this.each(function() {
