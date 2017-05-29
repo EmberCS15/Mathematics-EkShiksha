@@ -7,7 +7,41 @@
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script language="javascript" type="text/javascript" src="libraries/p5.js"></script>
+    <script src="libraries/p5.sound.js"></script>
+	<script src="libraries/p5.dom.js"></script>
+
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
+  <script>
+  var rectWidth,rectHeight,canvas;
+
+  	function setupp()
+  	{
+		rectWidth = document.getElementById("rectWidth").value;
+  		rectHeight = document.getElementById("rectHeight").value;
+
+  		console.log(rectWidth);
+  		console.log(rectHeight);
+
+  		canvas=createCanvas(950,450);
+  		canvas.position(350, 85);
+        canvas.style('z-index', '-1');
+  		background(0);
+  		noLoop();
+  		//draw();
+  	}
+
+  	function draw()
+  	{
+  		console.log("Inside Draw!");
+  		stroke(230);
+  		//fill(255);
+  		rect(10,10,rectWidth,rectHeight);
+  		console.log("Drawn!");
+  	}
+
+
+  </script>
 
  <style>
 
@@ -84,7 +118,7 @@
   </head>
 
   <body>
-  
+
  <nav class="navbar navbar-inverse">
   <div class="container-fluid">
     <div class="navbar-header">
@@ -123,8 +157,8 @@
 			<tbody>
 			<tr>
 			<td><input type="button" value="T" class="showSingle" target="1" style="font-size:20pt"></td>
-			<td><input type="button" value="&#x25EF" class="showSingle" target="2" style="font-size:20pt"></td>
-			<td><input type="button" value="&#x25AD" class="showSingle" target="3" style="font-size:20pt"></td>
+			<td><input type="button" value="&#x25AD" id="Rectangle" class="showSingle" target="2" style="font-size:20pt"></td>
+			<td><input type="button" value="&#x25EF" class="showSingle" target="3" style="font-size:20pt"></td>
 			<td><input type="button" value="&#9585" class="showSingle" target="4"></td>
 			</tr>
 			<tr>
@@ -151,10 +185,10 @@
 		<div id="panel2" class="targetDiv">
 		<div class="form-group">
    
-		<input type="text" class="form-control" placeholder="Enter x">
+		<input type="text" class="form-control" id="rectWidth" placeholder="Enter width">
 		</div>
 		<div class="form-group">
-		<input type="text" class="form-control" placeholder="Enter y">
+		<input type="text" class="form-control" id="rectHeight" placeholder="Enter height">
 		</div>
 		<div class="form-group">
 		<input type="text" class="form-control" placeholder="Enter line width">
@@ -289,14 +323,14 @@
 <div class="col-sm-9">
 <div class="bottom-stuff">
 <div id="scroll">
-<canvas width="920px" height="1000px" style="border:1px solid black"></canvas>
-</div>
+<!-- <canvas width="920px" height="1000px" style="border:1px solid black"></canvas>
+ --></div>
 </div>
 <div class="bottom">
 <button type="button" class="btn btn-primary" id="btn1">Preview</button>
   <button type="button" class="btn btn-success" id="btn2">Save</button>
   <button type="button" class="btn btn-info" id="btn3">New</button>
-  <button type="button" class="btn btn-warning" id="btn4">Create</button>
+  <button type="button" class="btn btn-warning" id="btn4" onclick="setupp()">Create</button>
  
 </div>
 
