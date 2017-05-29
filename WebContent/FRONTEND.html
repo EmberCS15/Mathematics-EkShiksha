@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Maths</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
+
+ <style>
+
+	 .navbar-inverse .navbar-nav > li > a:hover
+	 {
+	  	background-color:white;
+	  	color:grey;
+	 }
+
+	 .bottom-stuff
+	 {
+		 position:relative;
+	 }
+
+	 .bottom
+	 {
+		 position:fixed;
+		 background-color:black;
+		 width:100%;
+		 bottom:0;
+		 text-align:center;
+		 border-radius:6px;
+	 }
+
+	 #scroll
+	 {
+		 overflow-y:scroll;
+		 height:500px;
+	 }
+
+	 #btn1
+	 {
+		 margin-left:-360px;
+		 margin-top:10px;
+		 margin-bottom:10px;
+		 padding:5px 30px 5px 30px;
+		 font-size:20px;
+	 }
+
+	 #btn2,#btn3,#btn4
+	 {
+	 	margin-left:110px;
+	  	margin-top:10px;
+	 	margin-bottom:10px;
+	 	padding:5px 30px 5px 30px;
+	  	font-size:20px;
+	 }
+
+	 input[type="button"]
+	 {
+		width:40px;
+		height:40px;
+		margin-left:25px;
+		margin-top:25px;
+		box-shadow:2px 2px 4px black;
+	 }
+
+	 input[type="button"]:hover
+	 {
+		background-color:green;
+	 }
+
+	 #panel2,#panel3,#panel4,#panel5,#panel6,#panel7,#panel8,#panel9,#panel10,#panel11,#panel12
+	 {
+		display:none;
+	 }
+
+	 .selectpicker
+	 {
+		margin-top:10px;
+	 }
+
+</style>
+  </head>
+
+  <body>
+  
+ <nav class="navbar navbar-inverse">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>                        
+      </button>
+      <a class="navbar-brand" href="#">ekshiksha</a>
+    </div>
+    <div class="collapse navbar-collapse" id="myNavbar">
+      <ul class="nav navbar-nav">
+        <li><a href="#">Home</a></li>
+        <li class="active"><a href="#">Blackboard</a></li>
+        <li><a href="#">Help</a></li>
+        <li><a href="#">About us</a></li>
+        <li><a href="#">Contact</a></li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li><a href="#"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
+        <li><a href="#"><span class="glyphicon glyphicon-sign-in"></span> Join us</a></li>
+      </ul>
+    </div>
+  </div>
+</nav>
+<div class="container-fluid">
+<div class="row">
+	<div class="col-sm-3">
+		<ul class="nav nav-tabs">
+			<li class="active"><a data-toggle="tab" href="#draw">Draw</a></li>
+			<li><a data-toggle="tab" href="#project">Project</a></li>
+		</ul>
+	<div class="tab-content">
+		<div id="draw" class="tab-pane fade in active">
+			<table>
+			<tbody>
+			<tr>
+			<td><input type="button" value="T" class="showSingle" target="1" style="font-size:20pt"></td>
+			<td><input type="button" value="&#x25EF" class="showSingle" target="2" style="font-size:20pt"></td>
+			<td><input type="button" value="&#x25AD" class="showSingle" target="3" style="font-size:20pt"></td>
+			<td><input type="button" value="&#9585" class="showSingle" target="4"></td>
+			</tr>
+			<tr>
+			<td><input type="button" value="&#x25B3" class="showSingle" target="5" style="font-size:20pt"></td>
+			<td><input type="button" value="&#x25DC" class="showSingle" target="6" style="font-size:20pt"></td>
+			<td><input type="button" value="&#9722" class="showSingle" target="7" style="font-size:20pt"></td>
+			<td><input type="button" value="" class="showSingle" target="8"></td>
+			</tr>
+			<tr>
+			<td><input type="button" value="T" class="showSingle" target="9"></td>
+			<td><input type="button" value="◇" class="showSingle" target="10" style="font-size:20pt"></td>
+			<td><input type="button" value="&#11054" class="showSingle" target="11"></td>
+			<td><input type="button" value="T" class="showSingle" target="12"></td>
+			</tr>
+			</tbody>
+			</table>
+		</div>
+		<h2>Properties</h2>
+		<div style="overflow-y:scroll; height:150px;">
+		<div id="panel1" class="targetDiv">
+		
+		</div>
+	
+		<div id="panel2" class="targetDiv">
+		<div class="form-group">
+   
+		<input type="text" class="form-control" placeholder="Enter x">
+		</div>
+		<div class="form-group">
+		<input type="text" class="form-control" placeholder="Enter y">
+		</div>
+		<div class="form-group">
+		<input type="text" class="form-control" placeholder="Enter line width">
+		</div>
+		<div class="form-group">
+		<input type="text" class="form-control" placeholder="Enter line type">
+		</div>
+		</div>
+		
+		<div id="panel3" class="targetDiv">
+		
+		</div>
+		
+		<div id="panel4" class="targetDiv">
+		<div class="form-group">
+		<input type="text" class="form-control" placeholder="Start x">
+		</div>
+		<div class="form-group">
+		<input type="text" class="form-control" placeholder="Start y">
+		</div>
+		<div class="form-group">
+		<input type="text" class="form-control" placeholder="Enter line width">
+		</div>
+		<div class="form-group">
+		<input type="text" class="form-control" placeholder="Enter line type">
+		</div>
+		</div>
+		
+		<div id="panel5" class="targetDiv">
+		
+		</div>
+		
+		<div id="panel6" class="targetDiv">
+		asb
+		</div>
+		
+		<div id="panel7" class="targetDiv">
+		asb
+		</div>
+		
+		<div id="panel8" class="targetDiv">
+		<div class="form-group">
+		<input type="text" class="form-control" placeholder="Enter side length">
+		</div>
+		<div class="form-group">
+		<input type="text" class="form-control" placeholder="Enter line width">
+		</div>
+		<div class="form-group">
+		<input type="text" class="form-control" placeholder="Enter line type">
+		</div>
+		</div>
+		
+		<div id="panel9" class="targetDiv">
+		<div class="form-group">
+		<input type="text" class="form-control" placeholder="Enter side length">
+		</div>
+		<div class="form-group">
+		<input type="text" class="form-control" placeholder="Enter line width">
+		</div>
+		<div class="form-group">
+		<input type="text" class="form-control" placeholder="Enter line type">
+		</div>
+		</div>
+		
+		<div id="panel10" class="targetDiv">
+		asbw
+		</div>
+		
+		<div id="panel11" class="targetDiv">
+		<div class="form-group">
+		<input type="text" class="form-control" placeholder="Enter major axis">
+		</div>
+		<div class="form-group">
+		<input type="text" class="form-control" placeholder="Enter minor axis">
+		</div>
+		<div class="form-group">
+		<input type="text" class="form-control" placeholder="Enter line width">
+		</div>
+		<div class="form-group">
+		<input type="text" class="form-control" placeholder="Enter line type">
+		</div>
+		</div>
+		
+		<div id="panel12" class="targetDiv">
+		asb
+		</div>
+	</div>
+		<script>
+		jQuery(function(){
+         
+        jQuery('.showSingle').click(function(){
+              jQuery('.targetDiv').hide();
+              jQuery('#panel'+jQuery(this).attr('target')).show();
+        });
+});
+		</script>
+		
+		
+		<div id="project" class="tab-pane fade">
+			<p>xyz</p>
+		</div>
+	</div>
+	<h3>Animation</h3>
+	Entry
+	<select class="selectpicker">
+    <option>1</option>
+    <option>2</option>
+    <option>3</option>
+	</select><br>
+	Emphasis
+  <select class="selectpicker">
+  <option>1</option>
+  <option>2</option>
+  <option>3</option>
+  </select><br>
+  Exit
+  <select class="selectpicker">
+  <option>1</option>
+  <option>2</option>
+  <option>3</option>
+ </select><br>
+ Animation order
+  <select class="selectpicker">
+  <option>1</option>
+  <option>2</option>
+  <option>3</option>
+</select>
+
+	</div>
+	
+
+<div class="col-sm-9">
+<div class="bottom-stuff">
+<div id="scroll">
+<canvas width="920px" height="1000px" style="border:1px solid black"></canvas>
+</div>
+</div>
+<div class="bottom">
+<button type="button" class="btn btn-primary" id="btn1">Preview</button>
+  <button type="button" class="btn btn-success" id="btn2">Save</button>
+  <button type="button" class="btn btn-info" id="btn3">New</button>
+  <button type="button" class="btn btn-warning" id="btn4">Create</button>
+ 
+</div>
+
+</div>
+
+</div>
+</div>
+
+
+
+</body>
+</html>
