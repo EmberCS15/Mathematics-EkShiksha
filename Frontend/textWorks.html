@@ -320,7 +320,7 @@ $(document).ready(function(){
 	<td><input type="button" value="+"      style="font-size:15pt"></td>
 	<td><input type="button" value="-"      style="font-size:15pt"></td>
 	<td><input type="button" value="*"      style="font-size:15pt"></td>
-	<td><input type="button" value="/"      style="font-size:15pt"></td>
+	<td><input type="button" value="^"      style="font-size:15pt"></td>
 	<td><input type="button" value="&#8730" style="font-size:15pt"></td>
 	<td><input type="button" value="&#8731" style="font-size:15pt"></td>
 	<td><input type="button" value="&#8746" style="font-size:15pt"></td>
@@ -331,24 +331,27 @@ $(document).ready(function(){
 	<td><input type="button" value="&#8751" style="font-size:15pt"></td>
 	<td><input type="button" value="&#8752" style="font-size:15pt"></td>
 	<td><input type="button" value="&#8756" style="font-size:15pt"></td>
-	<td><input type="button" value="&#8757" style="font-size:15pt"></td>
+	<td><input type="button" value="&#8757" style="font-size:15pt"></td
+	</tr>
+	<tr>
 	<td><input type="button" value="&#8764" style="font-size:15pt"></td>
 	<td><input type="button" value="&#8838" style="font-size:15pt"></td>
-	</tr>
-	
-	<tr>	
-	<td><input type="button" value="&#9645" style="font-size:15pt"></td>
 	<td><input type="button" value="&#9633" style="font-size:15pt"></td>
-	<td><input type="button" value="&#9651" style="font-size:15pt"></td>
 	<td><input type="button" value="&#9698" style="font-size:15pt"></td>
 	<td><input type="button" value="&#9671" style="font-size:15pt"></td>
-	<td><input type="button" value="&#9711" style="font-size:15pt"></td>
-	<td><input type="button" value="&#9692" style="font-size:15pt"></td>
-	<td><input type="button" value="&#9692" style="font-size:15pt"></td>
-	<td><input type="button" value="&#9692" style="font-size:15pt"></td>
-	<td><input type="button" value="&#9692" style="font-size:15pt"></td>
-	<td><input type="button" value="&#9692" style="font-size:15pt"></td>
+
+	<!-- Rectangle --><td><input type="button" value="&#9645" style="font-size:15pt" onclick="Rectangle();"></td>
+	<!-- Triangle --><td><input type="button" value="&#9651" style="font-size:15pt"
+	onclick="Triangle();"></td>
+	<!-- Ellipse --><td><input type="button" value="&#9682" style="font-size:15pt" onclick="Ellipse();"></td>
+	<!-- Circle --> <td><input type="button" value="&#9711" style="font-size:15pt" onclick="Circle();"></td>
+	<!-- Line --><td><input type="button" value="/" style="font-size:15pt" onclick="Line();"></td>
 	</tr>
+	<tr>
+	<!-- Delete --><td><input type="button" value="&#x1f5d1" style="font-size:15pt" onclick="deleteObjects();"c
+	<!-- Submit --><td><input type="button" value="&#x2714" style="font-size:15pt" onclick="submit();"></td>
+	</tr>
+	
 		
 	</tbody>
 	</table>
@@ -373,14 +376,309 @@ $(document).ready(function(){
 	</div>
 
 	<canvas id="c"  width="900px" height="1500px">
+	<script type="text/javascript">
+		var canvas = new fabric.Canvas('c', { selection: true });
+
+function draw()
+{
+	console.log("Inside Draw!");
+
+            var rect = new fabric.Rect
+            ({
+              left: 300,
+              top: 100,
+              fill: 'blue',
+              width: 200,
+              height: 200
+            });
+
+            canvas.add(rect);
+
+	console.log("Width: "+rect.getWidth());
+    console.log("Height: "+rect.getHeight());
+    console.log("Drawn rectangle!");
+}
+</script>
 	</canvas>
 
 	<div id="div3">
 	</div>
 
+	<script>
+var shape;
+
+function Circle(){
+	shape='circle';
+	draw();
+}
+
+function Rectangle(){
+	shape='rectangle';
+	draw();
+}
+
+function Triangle(){
+	shape='triangle';
+	draw();
+}
+
+function Ellipse(){
+	shape='ellipse';
+	draw();
+}
+
+function Line(){
+	shape='line';
+	draw();
+}
+
+function draw(){
+console.log("Entered!");
+
+var ref=[];
+var array=[];
+var arrayIndex=0;
+var objectCounter=0;
+var canvas = new fabric.Canvas('c', { selection: true });
+
+var isDown = false;
+var element;
+var origX, origY, finX, finY, prev=null;
+
+console.log("shape is"+shape);
+
+canvas.on('mouse:down', function(o){
+	if(shape==null) return;
+	  isDown = true;
+	  var pointer = canvas.getPointer(o.e);
+	  origX = pointer.x;
+	  origY = pointer.y;
+	  switch(shape) {
+	  	case 'circle':
+	  	console.log("Circle chosen!");
+	  	element = new fabric.Circle({
+	  		id: objectCounter,
+	  		type: 'circle',
+		    left: pointer.x,
+		    top: pointer.y,
+		    radius: 1,
+		    strokeWidth: 2,
+		    fill: 'red',
+		    stroke: 'black',
+		    selectable: true,
+		    originX: 'center', originY: 'center'
+		  });
+	  	break;
+	  	case 'triangle':
+	  	element = new fabric.Triangle({
+	  		id: objectCounter,
+	  		type: 'triangle',
+		    left: pointer.x,
+		    top: pointer.y,
+		    width: 1,
+		    height: 1,
+		    strokeWidth: 2,
+		    fill: "#fff",
+		    stroke: 'black',
+		    selectable: true,
+		    originX: 'center', originY: 'center'
+		  });
+	  	break;
+	  	case 'rectangle':
+	  	console.log("Rectangle chosen!");
+	  	element = new fabric.Rect({
+	  		id: objectCounter,
+	  		type: 'rectangle',
+		    left: pointer.x,
+		    top: pointer.y,
+		    width: 1,
+		    height: 1,
+		    strokeWidth: 2,
+		    fill: "#fff",
+		    stroke: 'black',
+		    selectable: true,
+		    originX: 'left', originY: 'top'
+		  });
+	  	break;
+	  	case 'ellipse':
+	  	element = new fabric.Ellipse({
+	  		id: objectCounter,
+	  		type: 'ellipse',
+		    left: pointer.x,
+		    top: pointer.y,
+		    rx: 1,
+		    ry: 1,
+		    strokeWidth: 2,
+		    fill: "#fff",
+		    stroke: 'black',
+		    selectable: true,
+		    originX: 'center', originY: 'center'
+		  });
+	  	break;
+	  	case 'line':
+	  	element = new fabric.Line([origX, origY, origX, origY], {
+	  		id: objectCounter,
+	  		type: 'line',
+	  		top: pointer.y,
+	  		left: pointer.x,
+	  		length: 1,
+	  		strokeWidth: 2,
+	        stroke: 'black',
+	        selectable: true
+	      });
+	  	prev=element;
+	  	break;
+	  }
+	  ref.push(element);
+	  objectCounter++;
+	  canvas.add(element);
+});
+
+canvas.on('mouse:move', function(o){
+  if (!isDown) return;
+  var pointer = canvas.getPointer(o.e);
+
+  switch(shape) {
+  	case 'circle':
+  	 element.set({ radius: Math.abs(origX - pointer.x) });
+  	break;
+
+  	case 'rectangle':
+  	  element.set({ width: Math.abs(origX - pointer.x) });
+	  element.set({ height: Math.abs(origY - pointer.y) });
+	  if(pointer.x<origX){
+	  	element.set({left: pointer.x});
+	  }
+	  else{
+	  	element.set({left: origX});
+	  }
+	  if(pointer.y>origY){
+	  	element.set({top: origY});
+	  }
+	  else{
+	  	element.set({top: pointer.y});
+	  }
+	  break;
+
+	  case 'triangle':
+	  element.set({ width: Math.abs(origX - pointer.x) });
+	  element.set({ height: Math.abs(origY - pointer.y) });
+	  break;
+
+	  case 'ellipse':
+	  element.set({ rx: Math.abs(origX - pointer.x) });
+	  element.set({ ry: Math.abs(origY - pointer.y) });
+	  break;
+	  case 'line':
+	  finX=pointer.x;
+	  finY=pointer.y;
+	  element.set({length: Math.sqrt((origX-finX)*(origX-finX)+(origY-finY)*(origY-finY))});
+	  var line = new fabric.Line([origX, origY, finX, finY], {
+        stroke: 'black',
+        selectable: true
+      });
+	  del(prev);
+	  canvas.add(line);
+	  prev=line;
+	  break;
+  }
+  canvas.renderAll();
+});
+
+canvas.on('mouse:up', function(o){
+  isDown = false;
+  shape=null;
+});
+
+function deleteObjects(){
+	var activeObject = canvas.getActiveObject(),
+    activeGroup = canvas.getActiveGroup();
+    if (activeObject) {
+        if (confirm('Are you sure?')) {
+        	ref[activeObject.id]=null;
+            canvas.remove(activeObject);
+        }
+    }
+    else if (activeGroup) {
+        if (confirm('Are you sure?')) {
+            var objectsInGroup = activeGroup.getObjects();
+            canvas.discardActiveGroup();
+            objectsInGroup.forEach(function(object) {
+            canvas.remove(object);
+            });
+        }
+    }
+}
+
+function del(ob){
+	var activeObject = ob;
+    if (activeObject) {
+        canvas.remove(activeObject);
+    }
+}
+
+var str=[];
+function submit(){
+	for(var i=0;i<objectCounter;i++){
+		if(ref[i]!=null){
+			if(ref[i].type=='circle'){
+				array.push({id: 'G'+arrayIndex, DBN: true, type:{shape:ref[i].type, radius:ref[i].radius, stroke:ref[i].stroke, strokeWidth:ref[i].strokeWidth, fill:ref[i].fill},boundedBox:{top:ref[i].top,left:ref[i].left}, animation:{entrance: null, emphasis: null,exit: null }});
+			}
+			else if(ref[i].type=='rectangle'){
+				array.push({id: 'G'+arrayIndex, DBN: true, type:{shape:ref[i].type, height:ref[i].height, width:ref[i].width, stroke:ref[i].stroke, strokeWidth:ref[i].strokeWidth, fill:ref[i].fill},boundedBox:{top:ref[i].top,left:ref[i].left}, animation:{entrance: null, emphasis: null,exit: null }});
+			}
+			else if(ref[i].type=='triangle'){
+				array.push({id: 'G'+arrayIndex, DBN: true, type:{shape:ref[i].type, height:ref[i].height, width:ref[i].width, stroke:ref[i].stroke, strokeWidth:ref[i].strokeWidth, fill:ref[i].fill},boundedBox:{top:ref[i].top,left:ref[i].left}, animation:{entrance: null, emphasis: null,exit: null }});
+			}
+			else if(ref[i].type=='ellipse'){
+				array.push({id: 'G'+arrayIndex, DBN: true, type:{shape:ref[i].type, height:ref[i].height, width:ref[i].width, stroke:ref[i].stroke, strokeWidth:ref[i].strokeWidth, fill:ref[i].fill},boundedBox:{top:ref[i].top,left:ref[i].left}, animation:{entrance: null, emphasis: null,exit: null }});
+			}
+			else if(ref[i].type=='line'){
+				array.push({id: 'G'+arrayIndex, DBN: true, type:{shape:ref[i].type, length:ref[i].length, stroke:ref[i].stroke, strokeWidth:ref[i].strokeWidth, fill:ref[i].fill},boundedBox:{top:ref[i].top,left:ref[i].left}, animation:{entrance: null, emphasis: null,exit: null }});
+			}
+			var myJSON = JSON.stringify(array[arrayIndex]);
+			str.push(myJSON);
+			arrayIndex++;
+		}
+	}
+	exportToCsv('file.csv',str);
+}
+
+function exportToCsv(filename, rows) {
+        var processRow = function (row) {
+            var finalVal = '';
+            finalVal+=row;
+            return finalVal + '\n';
+        };
+
+        var csvFile = '';
+        for (var i = 0; i < rows.length; i++) {
+            csvFile += processRow(rows[i]);
+        }
+
+        var blob = new Blob([csvFile], { type: 'text/csv;charset=utf-8;' });
+        if (navigator.msSaveBlob) { // IE 10+
+            navigator.msSaveBlob(blob, filename);
+        } else {
+            var link = document.createElement("a");
+            if (link.download !== undefined) {
+                var url = URL.createObjectURL(blob);
+                link.setAttribute("href", url);
+                link.setAttribute("download", filename);
+                link.style.visibility = 'hidden';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            }
+        }
+    }
+}
+</script>
+
+
 <script>
 
-var canvas = new fabric.Canvas('c', { selection: true });
+
 var MyArray=[];
 
 function myFunction(obj) 
@@ -408,35 +706,7 @@ function myFunction(obj)
     
 }
 
-function draw()
-{
-	console.log("Inside Draw!");
 
-            var rect = new fabric.Rect({
-              left: 400,
-              top: 500,
-              fill: 'blue',
-              width: 200,
-              height: 200,
-              //angle: 45,
-              selectable:true
-            });
-
-            var rect1 = new fabric.Rect({
-              left: 300,
-              top: 300,
-              fill: 'yellow',
-              width: 100,
-              height: 100,
-              //angle: 45,
-              selectable:true
-            });
-
-            canvas.add(rect);
-            canvas.add(rect1);
-
-    console.log("Drawn rectangle!");
-}
 	 			$(function() {
               $("#T0")
              .draggable({ containment: "parent" },
