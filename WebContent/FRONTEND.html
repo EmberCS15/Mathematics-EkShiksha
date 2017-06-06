@@ -18,15 +18,15 @@
   	function setupp()
   	{
 		rectWidth = document.getElementById("rectWidth").value;
-  		rectHeight = document.getElementById("rectHeight").value;
+  		rectHeight=document.getElementById("rectHeight").value;
 
   		console.log(rectWidth);
   		console.log(rectHeight);
 
   		canvas=createCanvas(950,450);
   		canvas.position(350, 85);
-        canvas.style('z-index', '-1');
-  		background(0);
+        	canvas.style('z-index', '-1');
+  		background(255);
   		noLoop();
   		//draw();
   	}
@@ -35,7 +35,7 @@
   	{
   		console.log("Inside Draw!");
   		stroke(230);
-  		//fill(255);
+  		fill(50);
   		rect(10,10,rectWidth,rectHeight);
   		console.log("Drawn!");
   	}
