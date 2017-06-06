@@ -8,6 +8,7 @@
 <button onclick="shape='rectangle'">Rectangle</button>
 <button onclick="shape='triangle'">Triangle</button>
 <button onclick="shape='ellipse'">Ellipse</button>
+<button onclick="shape='line'">Line</button>
 <button onclick="deleteObjects()">Delete</button>
 <button onclick="submit()">Submit</button>
 <canvas id="c" width="500" height="500" style="border:1px solid #ccc"></canvas>
@@ -21,7 +22,7 @@ var canvas = new fabric.Canvas('c', { selection: true });
 var shape = null;
 var isDown = false;
 var element;
-var origX, origY;
+var origX, origY, finX, finY, prev=null;
 canvas.on('mouse:down', function(o){
 	if(shape==null) return;
 	  isDown = true;
@@ -36,8 +37,8 @@ canvas.on('mouse:down', function(o){
 		    left: pointer.x,
 		    top: pointer.y,
 		    radius: 1,
-		    strokeWidth: 5,
-		    fill: 'blue',
+		    strokeWidth: 2,
+		    fill: 'red',
 		    stroke: 'black',
 		    selectable: true,
 		    originX: 'center', originY: 'center'
@@ -51,7 +52,7 @@ canvas.on('mouse:down', function(o){
 		    top: pointer.y,
 		    width: 1,
 		    height: 1,
-		    strokeWidth: 5,
+		    strokeWidth: 2,
 		    fill: "#fff",
 		    stroke: 'black',
 		    selectable: true,
@@ -66,7 +67,7 @@ canvas.on('mouse:down', function(o){
 		    top: pointer.y,
 		    width: 1,
 		    height: 1,
-		    strokeWidth: 5,
+		    strokeWidth: 2,
 		    fill: "#fff",
 		    stroke: 'black',
 		    selectable: true,
@@ -81,12 +82,25 @@ canvas.on('mouse:down', function(o){
 		    top: pointer.y,
 		    rx: 1,
 		    ry: 1,
-		    strokeWidth: 5,
+		    strokeWidth: 2,
 		    fill: "#fff",
 		    stroke: 'black',
 		    selectable: true,
 		    originX: 'center', originY: 'center'
 		  });
+	  	break;
+	  	case 'line':
+	  	element = new fabric.Line([origX, origY, origX, origY], {
+	  		id: objectCounter,
+	  		type: 'line',
+	  		top: pointer.y,
+	  		left: pointer.x,
+	  		length: 1,
+	  		strokeWidth: 2,
+	        stroke: 'black',
+	        selectable: true
+	      });
+	  	prev=element;
 	  	break;
 	  }
 	  ref.push(element);
@@ -129,6 +143,18 @@ canvas.on('mouse:move', function(o){
 	  element.set({ rx: Math.abs(origX - pointer.x) });
 	  element.set({ ry: Math.abs(origY - pointer.y) });
 	  break;
+	  case 'line':
+	  finX=pointer.x;
+	  finY=pointer.y;
+	  element.set({length: Math.sqrt((origX-finX)*(origX-finX)+(origY-finY)*(origY-finY))});
+	  var line = new fabric.Line([origX, origY, finX, finY], {
+        stroke: 'black',
+        selectable: true
+      });
+	  del(prev);
+	  canvas.add(line);
+	  prev=line;
+	  break;
   }
   canvas.renderAll();
 });
@@ -158,15 +184,36 @@ function deleteObjects(){
         }
     }
 }
+
+function del(ob){
+	var activeObject = ob;
+    if (activeObject) {
+        canvas.remove(activeObject);
+    }
+}
+
 var str=[];
 function submit(){
 	for(var i=0;i<objectCounter;i++){
 		if(ref[i]!=null){
-			array.push({DBN: true, type:{shape:ref[i].type, radius:ref[i].radius, stroke:ref[i].stroke, strokeWidth:ref[i].strokeWidth, fill:ref[i].fill},boundedBox:{top:ref[i].top,left:ref[i].left}, animation:{entrance: null, emphasis: null,exit: null }});
+			if(ref[i].type=='circle'){
+				array.push({id: 'G'+arrayIndex, DBN: true, type:{shape:ref[i].type, radius:ref[i].radius, stroke:ref[i].stroke, strokeWidth:ref[i].strokeWidth, fill:ref[i].fill},boundedBox:{top:ref[i].top,left:ref[i].left}, animation:{entrance: null, emphasis: null,exit: null }});
+			}
+			else if(ref[i].type=='rectangle'){
+				array.push({id: 'G'+arrayIndex, DBN: true, type:{shape:ref[i].type, height:ref[i].height, width:ref[i].width, stroke:ref[i].stroke, strokeWidth:ref[i].strokeWidth, fill:ref[i].fill},boundedBox:{top:ref[i].top,left:ref[i].left}, animation:{entrance: null, emphasis: null,exit: null }});
+			}
+			else if(ref[i].type=='triangle'){
+				array.push({id: 'G'+arrayIndex, DBN: true, type:{shape:ref[i].type, height:ref[i].height, width:ref[i].width, stroke:ref[i].stroke, strokeWidth:ref[i].strokeWidth, fill:ref[i].fill},boundedBox:{top:ref[i].top,left:ref[i].left}, animation:{entrance: null, emphasis: null,exit: null }});
+			}
+			else if(ref[i].type=='ellipse'){
+				array.push({id: 'G'+arrayIndex, DBN: true, type:{shape:ref[i].type, height:ref[i].height, width:ref[i].width, stroke:ref[i].stroke, strokeWidth:ref[i].strokeWidth, fill:ref[i].fill},boundedBox:{top:ref[i].top,left:ref[i].left}, animation:{entrance: null, emphasis: null,exit: null }});
+			}
+			else if(ref[i].type=='line'){
+				array.push({id: 'G'+arrayIndex, DBN: true, type:{shape:ref[i].type, length:ref[i].length, stroke:ref[i].stroke, strokeWidth:ref[i].strokeWidth, fill:ref[i].fill},boundedBox:{top:ref[i].top,left:ref[i].left}, animation:{entrance: null, emphasis: null,exit: null }});
+			}
 			var myJSON = JSON.stringify(array[arrayIndex]);
 			str.push(myJSON);
 			arrayIndex++;
-			//console.log(array[arrayIndex-1].type.radius);
 		}
 	}
 	exportToCsv('file.csv',str);
