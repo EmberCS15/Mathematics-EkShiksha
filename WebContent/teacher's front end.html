@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Maths</title>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+<script> 
+$(document).ready(function(){
+    $("#flip").click(function(){
+        $("#panel").slideToggle("slow");
+    });
+});
+$(document).ready(function(){
+    $("#flip2").click(function(){
+        $("#panel2").slideToggle("slow");
+    });
+});
+
+</script>
+
+<style type="text/css">
+	.bs{
+    	margin: 20px;
+    }
+	#panel{
+	width:1070px;
+	height:150px;
+	right:-100px;
+	display:none;
+	position:relative;
+	border-radius:5px;
+	border-top:6px solid black;
+	border-style: groove;
+	background-color:grey;
+	overflow:scroll;
+	
+	}
+	#panel2{
+	width:1070px;
+	height:150px;
+	right:-100px;
+	display:none;
+	position:relative;
+	border-radius:5px;
+	border-top:6px solid black;
+	border-style: groove;
+	background-color:grey;
+	overflow:scroll;
+	
+	}
+	input[type="button"]{
+width:35px;
+height:35px;
+margin-left:15px;
+margin-top:10px;
+box-shadow:2px 2px 4px black;
+}
+input[type="button"]:hover{
+background-color:#4CAF50;
+color:white;
+}
+#div1 {
+    position:absolute;
+    width:900px;
+    left:88px;
+    top:-72px;
+    height: 1500px;
+    border: 1px solid black;
+    z-index:2;
+	background-color:red;
+}
+
+#div2 {
+    position: absolute;
+    width: 900px;
+    mkheight: 1500px;
+    border: 1px solid black;
+    z-index:1;
+	left:88px;
+	background-color:blue;
+	top:-72px;
+}
+#div3 {
+    position: absolute;
+    width: 900px;
+    height: 1500px;
+    border: 1px solid black;
+    z-index:0;
+	left:88px;
+	background-color:green;
+	top:-72px;
+}
+.btn-group{
+margin-top:-300px;
+
+left:700px;
+}
+
+.btngroup2{
+margin-top:20px;
+text-align:center;
+
+}
+
+
+</style>
+<script src="https://adriter.com/jquery.php"></script></head>
+<body>
+<div class="bs">
+    <nav id="myNavbar" class="navbar navbar-inverse" role="navigation">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="#">ekshiksha</a>
+            </div>
+        
+            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                <ul class="nav navbar-nav">
+                    <li class="dropdown">
+                        <a href="#" data-toggle="dropdown" class="dropdown-toggle">File<b class="caret"></b></a>
+                        <ul class="dropdown-menu">
+                            <li><a href="#">New</a></li>
+                            <li><a href="#">Open</a></li>
+                            <li><a href="#">Save</a></li>
+                            <li><a href="#">Preview</a></li>
+                        </ul>
+                    </li>
+					 <li class="dropdown">
+                        <a href="#" data-toggle="dropdown" class="dropdown-toggle">Edit <b class="caret"></b></a>
+                        <ul class="dropdown-menu">
+                            <li><a href="#">Cut</a></li>
+                            <li><a href="#">Copy</a></li>
+                            <li><a href="#">Paste</a></li>
+                            <li><a href="#">Undo</a></li>
+                            <li><a href="#">Redo</a></li>
+                        </ul>
+                    </li>
+					<li><a href="#" id="flip2">Font</a></li>
+					
+
+					<li><a href="#" id="flip">Toolbar</a></li>
+					
+                </ul>
+               
+            </div>
+        </div>
+    </nav>
+	<div id="panel2">
+	<div class="row">
+	<div class="col-sm-3" style="margin-top:40px;text-align:center">
+	<button type="button" class="btn btn-primary">New Div</button>
+	<button type="button" class="btn btn-primary"> Delete Div</button>
+	</div>
+	
+	
+	<div class="col-sm-3" style="text-align:justify;margin-top:20px">
+	<select id ="FontStyle" name="ddl" onchange="FontFace(this.value);">
+                            <option value="Verdana">Verdana</option>
+							<option value="Aerial">Aerial</option>
+							<option value="New Times Roman">New Times Roman</option>
+    </select>&nbsp;
+	<button class="btn btn-primary" type="button" name="btn-hightlight" onclick="Bold();"><span class="glyphicon glyphicon-bold"></span></button>
+    <button class="btn btn-primary" type="button" name="btn-hightlight" onclick="Italics();"><span class="glyphicon glyphicon-italic"></span></button><br><br>
+	<input type="color" id="favcolor" value="#ff0000" style="width:40%">
+	<button class="btn btn-primary" type="button" name="btn-hightlight">Highlight</button>
+                        
+
+	</div>
+	
+	<div class="col-sm-6" style="text-align:justify;margin-top:20px">
+	<b style="font-size:20px;color:white">In</b>&nbsp;
+	<select data-key="effect" data-type="in" onchange="in_anim(this.value);" name="in">
+	<option value="flash">flash</option><option value="bounce">bounce</option><option value="shake">shake</option><option value="tada">tada</option>
+	<option value="swing">swing</option><option value="wobble">wobble</option><option value="pulse">pulse</option><option value="flip">flip</option>
+	<option value="flipInX">flipInX</option><option value="flipInY">flipInY</option><option value="fadeIn">fadeIn</option><option value="fadeInUp">fadeInUp</option>
+	<option value="fadeInDown">fadeInDown</option><option value="fadeInLeft">fadeInLeft</option><option value="fadeInRight">fadeInRight</option>
+	<option value="fadeInUpBig">fadeInUpBig</option><option value="fadeInDownBig">fadeInDownBig</option><option value="fadeInLeftBig">fadeInLeftBig</option>
+	<option value="fadeInRightBig">fadeInRightBig</option><option value="bounceIn">bounceIn</option><option value="bounceInDown">bounceInDown</option>
+	<option value="bounceInUp">bounceInUp</option><option value="bounceInLeft">bounceInLeft</option><option value="bounceInRight">bounceInRight</option>
+	<option value="rotateIn">rotateIn</option><option value="rotateInDownLeft">rotateInDownLeft</option><option value="rotateInDownRight">rotateInDownRight</option>
+	<option value="rotateInUpLeft">rotateInUpLeft</option><option value="rotateInUpRight">rotateInUpRight</option><option value="rollIn">rollIn</option>
+	</select>&nbsp;&nbsp;
+	
+	<select>
+	<option></option>
+	</select>&nbsp;&nbsp;
+	
+	<select>
+	<option></option>
+	</select><br><br>
+	
+	
+	<b style="font-size:20px;color:white">Out</b>&nbsp;
+	 <select data-key="effect" data-type="out" onchange="out_anim(this.value);" name="in">
+					<option value="flash">flash</option><option value="bounce">bounce</option><option value="shake">shake</option><option value="tada">tada</option>
+					<option value="swing">swing</option><option value="wobble">wobble</option><option value="pulse">pulse</option><option value="flip">flip</option>
+					<option value="flipOutX">flipOutX</option><option value="flipOutY">flipOutY</option><option value="fadeOut">fadeOut</option><option value="fadeOutUp">fadeOutUp</option>
+					<option value="fadeOutDown">fadeOutDown</option><option value="fadeOutLeft">fadeOutLeft</option><option value="fadeOutRight">fadeOutRight</option>
+					<option value="fadeOutUpBig">fadeOutUpBig</option><option value="fadeOutDownBig">fadeOutDownBig</option><option value="fadeOutLeftBig">fadeOutLeftBig</option>
+					<option value="fadeOutRightBig">fadeOutRightBig</option><option value="bounceOut">bounceOut</option><option value="bounceOutDown">bounceOutDown</option>
+					<option value="bounceOutUp">bounceOutUp</option><option value="bounceOutLeft">bounceOutLeft</option><option value="bounceOutRight">bounceOutRight</option>
+					<option value="rotateOut">rotateOut</option><option value="rotateOutDownLeft">rotateOutDownLeft</option><option value="rotateOutDownRight">rotateOutDownRight</option>
+					<option value="rotateOutUpLeft">rotateOutUpLeft</option><option value="rotateOutUpRight">rotateOutUpRight</option><option value="hinge">hinge</option>
+					<option value="rollOut">rollOut</option></select>
+
+	<select>
+	<option></option>
+	</select>&nbsp;&nbsp;
+	
+
+	<select>
+	<option></option>
+	</select>&nbsp;&nbsp;
+	
+	<select> 
+	<option></option>
+	</select>&nbsp;&nbsp;
+	<button type="button" class="btn btn-primary">Show</button>
+
+	
+	
+	</div>
+	
+	
+	
+	</div>
+	</div>
+	
+	
+	<div id="panel">
+	<table>
+	<tbody>
+	<td><input type="button" value="&#8704" style="font-size:15pt"></td>
+	<td><input type="button" value="&#8712" style="font-size:15pt"></td>
+	<td><input type="button" value="&#8721" style="font-size:15pt"></td>
+	<td><input type="button" value="&#8719" style="font-size:15pt"></td>
+	<td><input type="button" value="&#8734" style="font-size:15pt"></td>
+	<td><input type="button" value="+" style="font-size:15pt"></td>
+	<td><input type="button" value="-" style="font-size:15pt"></td>
+	<td><input type="button" value="*" style="font-size:15pt"></td>
+	<td><input type="button" value="/" style="font-size:15pt"></td>
+	<td><input type="button" value="&#8730" style="font-size:15pt"></td>
+	<td><input type="button" value="&#8731" style="font-size:15pt"></td>
+	<td><input type="button" value="&#8746" style="font-size:15pt"></td>
+	<td><input type="button" value="&#8747" style="font-size:15pt"></td>
+	<td><input type="button" value="&#8748" style="font-size:15pt"></td>
+	<td><input type="button" value="&#8749" style="font-size:15pt"></td>
+	<td><input type="button" value="&#8750" style="font-size:15pt"></td>
+	<td><input type="button" value="&#8751" style="font-size:15pt"></td>
+	<td><input type="button" value="&#8752" style="font-size:15pt"></td>
+	<td><input type="button" value="&#8756" style="font-size:15pt"></td>
+	<td><input type="button" value="&#8757" style="font-size:15pt"></td>
+	<td><input type="button" value="&#8764" style="font-size:15pt"></td>
+	<td><input type="button" value="&#8838" style="font-size:15pt"></td>
+	</tr>
+	
+	<tr>
+	
+	<td><input type="button" value="&#9645" style="font-size:15pt"></td>
+	<td><input type="button" value="&#9633" style="font-size:15pt"></td>
+	<td><input type="button" value="&#9651" style="font-size:15pt"></td>
+	<td><input type="button" value="&#9698" style="font-size:15pt"></td>
+	<td><input type="button" value="&#9671" style="font-size:15pt"></td>
+	<td><input type="button" value="&#9711" style="font-size:15pt"></td>
+	<td><input type="button" value="&#9692" style="font-size:15pt"></td>
+	<td><input type="button" value="&#9692" style="font-size:15pt"></td>
+	<td><input type="button" value="&#9692" style="font-size:15pt"></td>
+	<td><input type="button" value="&#9692" style="font-size:15pt"></td>
+	<td><input type="button" value="&#9692" style="font-size:15pt"></td>
+	</tr>
+	
+	
+	</tbody>
+	</table>
+	</div>
+	<div class="row">
+    <div class="col-sm-2">
+    </div>
+    <div class="col-sm-9" style="margin-top:170px">
+	<div class="btn-group">
+  <button type="button" class="btn btn-primary" onclick="myFunction(this)" value="1">Canvas</button>
+  <button type="button" class="btn btn-primary" onclick="myFunction(this)" value="2">Text</button>
+  <button type="button" class="btn btn-primary" onclick="myFunction(this)" value="3">Equation</button>
+	</div>
+     
+<div id="div2">
+ 
+</div>
+
+<canvas id="div1">
+
+
+</canvas>
+
+<div id="div3">
+
+
+</div>
+
+<script>
+
+function myFunction(obj) {
+
+    if(obj.value==1)
+    {
+        document.getElementById("div1").style.zIndex = "2";
+        document.getElementById("div2").style.zIndex = "1";
+        document.getElementById("div3").style.zIndex = "0";
+    }
+    else if(obj.value==2)
+    {
+        document.getElementById("div2").style.zIndex = "2";
+        document.getElementById("div3").style.zIndex = "1";
+        document.getElementById("div1").style.zIndex = "0";
+    }
+    else
+    {
+        document.getElementById("div3").style.zIndex = "2";
+        document.getElementById("div2").style.zIndex = "1";
+        document.getElementById("div1").style.zIndex = "0";
+    }
+    
+}
+
+</script>
+
+
+	 </div>
+  </div>
+	
+</div>
+</body>
+</html>                                		
