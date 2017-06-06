@@ -195,8 +195,10 @@ $(document).ready(function(){
     </nav>
 	<div id="panel2">
 	<div class="row">
-	<div class="col-sm-3" style="margin-top:40px;text-align:center">
-	<button type="button" class="btn btn-primary" onclick="NewDiv();">New Div</button>
+	<div class="col-sm-2" style="margin-top:20px;text-align:center">
+	<button type="button" class="btn btn-primary" onclick="NewDiv();">   New Div   </button>
+	<br>
+	<br>
 	<button type="button" class="btn btn-primary" onclick="DeleteDiv();"> Delete Div</button>
 	</div>
 	
@@ -216,11 +218,13 @@ $(document).ready(function(){
 	<button class="btn btn-primary" type="button" name="btn-hightlight" onclick="FontColor();">Highlight</button>
    	</div>
 	
-	<div class="col-sm-6" style="text-align:justify;margin-top:20px">
+	<div class="col-sm-3" style="text-align:justify;margin-top:20px">
 	<b style="font-size:20px;color:white">In</b>&nbsp;
 	<select data-key="effect" data-type="in" onchange="in_anim(this.value);" name="in">
 		<option value="flash">flash</option>
-		<option value="bounce">bounce</option><option value="shake">shake</option><option value="tada">tada</option>
+		<option value="bounce">bounce</option>
+		<option value="shake">shake</option>
+		<option value="tada">tada</option>
 		<option value="swing">swing</option>
 		<option value="wobble">wobble</option>
 		<option value="pulse">pulse</option>
@@ -248,18 +252,7 @@ $(document).ready(function(){
 		<option value="rotateInUpRight">rotateInUpRight</option>
 		<option value="rollIn">rollIn</option>
 		</select>&nbsp;&nbsp;
-	
-
-	 Delay:
-					<input id="delay" onchange="delay_change();">
-					  <br>
-					<br>Duration:
-					<input id="duration" onchange="duration_change();">
-					<br>
-					<br><label>Animation Order</label>
-					<input id="a_order" onchange="anim_order()">
-
-	
+	<br>
 	<b style="font-size:20px;color:white">Out</b>&nbsp;
 	 <select data-key="effect" data-type="out" onchange="out_anim(this.value);" name="in">
 		<option value="flash">flash</option>
@@ -293,21 +286,22 @@ $(document).ready(function(){
 		<option value="rotateOutUpRight">rotateOutUpRight</option>
 		<option value="hinge">hinge</option>
 		<option value="rollOut">rollOut</option></select>
+</div>
 
-	<select>
-		<option></option>
-	</select>&nbsp;&nbsp;
-
-	<select>
-		<option></option>
-	</select>&nbsp;&nbsp;
-	
-	<select> 
-		<option></option>
-	</select>&nbsp;&nbsp;
+	<div class="col-sm-3" style="text-align:justify;margin-top:20px">
+	   Delay:
+		<input id="delay" onchange="delay_change();">
+	Duration:
+		<input id="duration" onchange="duration_change();">
+	   Order:     
+		<input id="a_order" onchange="anim_order();">
+ 	</div>
+	  
+ 	<br><br>
 	<button type="button" class="btn btn-primary" onclick="f1();">Show</button>	
-	</div>	
+
 	</div>
+
 	</div>
 	
 	<div id="panel">
