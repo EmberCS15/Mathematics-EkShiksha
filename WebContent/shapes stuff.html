@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Graphics</title>
+</head>
+<body>
+<button onclick="shape='circle'">Circle</button>
+<button onclick="shape='rectangle'">Rectangle</button>
+<button onclick="shape='triangle'">Triangle</button>
+<button onclick="shape='ellipse'">Ellipse</button>
+<button onclick="deleteObjects()">Delete</button>
+<button onclick="submit()">Submit</button>
+<canvas id="c" width="500" height="500" style="border:1px solid #ccc"></canvas>
+<script src="fabric.js"></script>
+<script>
+var ref=[];
+var array=[];
+var arrayIndex=0;
+var objectCounter=0;
+var canvas = new fabric.Canvas('c', { selection: true });
+var shape = null;
+var isDown = false;
+var element;
+var origX, origY;
+canvas.on('mouse:down', function(o){
+	if(shape==null) return;
+	  isDown = true;
+	  var pointer = canvas.getPointer(o.e);
+	  origX = pointer.x;
+	  origY = pointer.y;
+	  switch(shape) {
+	  	case 'circle':
+	  	element = new fabric.Circle({
+	  		id: objectCounter,
+	  		type: 'circle',
+		    left: pointer.x,
+		    top: pointer.y,
+		    radius: 1,
+		    strokeWidth: 5,
+		    fill: 'blue',
+		    stroke: 'black',
+		    selectable: true,
+		    originX: 'center', originY: 'center'
+		  });
+	  	break;
+	  	case 'triangle':
+	  	element = new fabric.Triangle({
+	  		id: objectCounter,
+	  		type: 'triangle',
+		    left: pointer.x,
+		    top: pointer.y,
+		    width: 1,
+		    height: 1,
+		    strokeWidth: 5,
+		    fill: "#fff",
+		    stroke: 'black',
+		    selectable: true,
+		    originX: 'center', originY: 'center'
+		  });
+	  	break;
+	  	case 'rectangle':
+	  	element = new fabric.Rect({
+	  		id: objectCounter,
+	  		type: 'rectangle',
+		    left: pointer.x,
+		    top: pointer.y,
+		    width: 1,
+		    height: 1,
+		    strokeWidth: 5,
+		    fill: "#fff",
+		    stroke: 'black',
+		    selectable: true,
+		    originX: 'left', originY: 'top'
+		  });
+	  	break;
+	  	case 'ellipse':
+	  	element = new fabric.Ellipse({
+	  		id: objectCounter,
+	  		type: 'ellipse',
+		    left: pointer.x,
+		    top: pointer.y,
+		    rx: 1,
+		    ry: 1,
+		    strokeWidth: 5,
+		    fill: "#fff",
+		    stroke: 'black',
+		    selectable: true,
+		    originX: 'center', originY: 'center'
+		  });
+	  	break;
+	  }
+	  ref.push(element);
+	  objectCounter++;
+	  canvas.add(element);
+});
+
+canvas.on('mouse:move', function(o){
+  if (!isDown) return;
+  var pointer = canvas.getPointer(o.e);
+
+  switch(shape) {
+  	case 'circle':
+  	 element.set({ radius: Math.abs(origX - pointer.x) });
+  	break;
+
+  	case 'rectangle':
+  	  element.set({ width: Math.abs(origX - pointer.x) });
+	  element.set({ height: Math.abs(origY - pointer.y) });
+	  if(pointer.x<origX){
+	  	element.set({left: pointer.x});
+	  }
+	  else{
+	  	element.set({left: origX});
+	  }
+	  if(pointer.y>origY){
+	  	element.set({top: origY});
+	  }
+	  else{
+	  	element.set({top: pointer.y});
+	  }
+	  break;
+
+	  case 'triangle':
+	  element.set({ width: Math.abs(origX - pointer.x) });
+	  element.set({ height: Math.abs(origY - pointer.y) });
+	  break;
+
+	  case 'ellipse':
+	  element.set({ rx: Math.abs(origX - pointer.x) });
+	  element.set({ ry: Math.abs(origY - pointer.y) });
+	  break;
+  }
+  canvas.renderAll();
+});
+
+canvas.on('mouse:up', function(o){
+  isDown = false;
+  shape=null;
+});
+
+
+function deleteObjects(){
+	var activeObject = canvas.getActiveObject(),
+    activeGroup = canvas.getActiveGroup();
+    if (activeObject) {
+        if (confirm('Are you sure?')) {
+        	ref[activeObject.id]=null;
+            canvas.remove(activeObject);
+        }
+    }
+    else if (activeGroup) {
+        if (confirm('Are you sure?')) {
+            var objectsInGroup = activeGroup.getObjects();
+            canvas.discardActiveGroup();
+            objectsInGroup.forEach(function(object) {
+            canvas.remove(object);
+            });
+        }
+    }
+}
+var str=[];
+function submit(){
+	for(var i=0;i<objectCounter;i++){
+		if(ref[i]!=null){
+			array.push({DBN: true, type:{shape:ref[i].type, radius:ref[i].radius, stroke:ref[i].stroke, strokeWidth:ref[i].strokeWidth, fill:ref[i].fill},boundedBox:{top:ref[i].top,left:ref[i].left}, animation:{entrance: null, emphasis: null,exit: null }});
+			var myJSON = JSON.stringify(array[arrayIndex]);
+			str.push(myJSON);
+			arrayIndex++;
+			//console.log(array[arrayIndex-1].type.radius);
+		}
+	}
+	exportToCsv('file.csv',str);
+}
+
+function exportToCsv(filename, rows) {
+        var processRow = function (row) {
+            var finalVal = '';
+            finalVal+=row;
+            return finalVal + '\n';
+        };
+
+        var csvFile = '';
+        for (var i = 0; i < rows.length; i++) {
+            csvFile += processRow(rows[i]);
+        }
+
+        var blob = new Blob([csvFile], { type: 'text/csv;charset=utf-8;' });
+        if (navigator.msSaveBlob) { // IE 10+
+            navigator.msSaveBlob(blob, filename);
+        } else {
+            var link = document.createElement("a");
+            if (link.download !== undefined) {
+                var url = URL.createObjectURL(blob);
+                link.setAttribute("href", url);
+                link.setAttribute("download", filename);
+                link.style.visibility = 'hidden';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            }
+        }
+    }
+
+</script>
+</body>
+</html>
