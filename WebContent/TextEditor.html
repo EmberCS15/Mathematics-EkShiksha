@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Teacher Interface</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+    <script src="http://jschr.github.io/textillate/jquery.textillate.js"></script>
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Tangerine">
+    <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Play">
+	<link href="js/animate.css" rel="stylesheet">
+	<script src="js/jquery-3.2.1.js"></script>
+	<script src="js/jquery.lettering.js"></script>
+	<script src="js/jquery.textillate.js"></script>	
+    <link href="js/animate.css" rel="stylesheet">	
+	<script src="js/jquery-ui.js"></script>
+</head>
+
+<body>
+<script>
+var MyArray=[];
+</script>
+<form action="" method="post" id="form1">
+<div class="row">
+    <div class="container">
+        <div class="col-md-4">
+            <div class="row utiltool">
+				<br><br>
+				<center>
+				<script>
+	 			$(function() {
+              $("#T0")
+             .draggable({ containment: "parent" },
+             {
+			drag: function(){
+            var offset = $(this).offset();
+            var xPos = offset.left;
+            var yPos = offset.top;
+            $('#posX').text('x: ' + xPos);
+            $('#posY').text('y: ' + yPos);
+			MyArray[index].xPos=xPos;
+		    MyArray[index].yPos=yPos;
+        },
+        })		 
+          .click(function(){
+        if ( $(this).is('.ui-draggable-dragging') ) {
+            return;
+        }
+        $(this).draggable( "option", "disabled", true );
+        $(this).attr('contenteditable','true');
+    }).blur(function(){
+        $(this).draggable( 'option', 'disabled', false);
+        $(this).attr('contenteditable','false');
+    });
+	});
+		
+			</script>
+				
+				<script>
+				var id="T0";
+				var index=0;
+				 jQuery(document).on("click", "div.demo", function (event) {
+					  id = jQuery(this).attr('id') || '';
+					  for(var j=0;j<MyArray.length;j++)
+					  {
+					  if(MyArray[j].id==id)
+					        { index=j;
+							break;}
+					  }
+					var editable = document.getElementById(id);
+				    editable.addEventListener('input', function() {
+					MyArray[index].Data=document.getElementById(id).innerHTML;
+				});
+					  document.getElementById("delay").value=MyArray[index].delay;
+					  document.getElementById("duration").value=MyArray[index].duration;
+					  document.getElementById("a_order").value=MyArray[index].order;
+				  });
+				  jQuery(document).on("click", "#T0", function (event) {
+				  id="T0";
+				index=0;
+					var editable = document.getElementById(id);
+				    editable.addEventListener('input', function() {
+					MyArray[index].Data=document.getElementById(id).innerHTML;
+				});
+					  document.getElementById("delay").value=MyArray[0].delay;
+					  document.getElementById("duration").value=MyArray[0].duration;
+					  document.getElementById("a_order").value=MyArray[0].order;
+				  });
+								function ShowDiv()
+								{
+								alert(id + " "+index);
+								}
+                </script>
+				<script>
+				function DeleteDiv(){
+				    MyArray.splice(index, 1);
+					document.getElementById(id).remove();
+					}
+				</script>
+				 <button class="allhead" style="padding : 5px;text-align:center" type="button" onclick="DeleteDiv();">Delete Div</button>
+                <button class="allhead" style="padding : 5px;text-align:center" type="button" onclick="NewDiv();">New Div</button>
+				                <button class="allhead" style="padding : 5px;text-align:center" type="button" onclick="ShowDiv();">Show Div</button>
+                
+				<script>
+				var c=0;
+					function NewDiv()
+						{c+=1;
+						$("#container").append('<div id="T'+ c +'" name="T'+ c +'" class="demo" contenteditable="true" style="display: inline-block; border:1px solid black;"  class="ui-widget-content draggable,animated"><p>Here is a typical paragraph element</p></div>	');
+                 var x=	"#T"+c;		 
+			   $(x)
+    .draggable({ containment: "parent" },
+             {
+			drag: function(){
+            var offset = $(this).offset();
+            var xPos = offset.left;
+            var yPos = offset.top;
+            $('#posX').text('x: ' + xPos);
+            $('#posY').text('y: ' + yPos);
+			MyArray[index].xPos=xPos;
+			MyArray[index].yPos=yPos;
+        },
+      })
+    .click(function(){
+        if ( $(this).is('.ui-draggable-dragging') ) {
+            return;
+        }
+        $(this).draggable( "option", "disabled", true );
+        $(this).attr('contenteditable','true');
+    }).blur(function(){
+        $(this).draggable( 'option', 'disabled', false);
+        $(this).attr('contenteditable','false');
+				});
+			var s=document.getElementById(id).innerHTML;
+			var i="flash";
+			var o="flash";
+			var offset=document.getElementById(id);
+			var l=offset.offsetLeft;
+			var t=offset.offsetTop;
+			MyArray.push({id:"T"+c,Data:s,in_anim:i,out_anim:o,xPos:l,yPos:t,delay:"2",duration:"3",order:"1"});
+			}
+				</script>
+				<br>
+				<br>
+			</center>
+            </div>
+			<div class="row utiltool">
+                <h3 class="allhead" style="padding : 5px;text-align:center">Preferences</h3>
+                <br>
+                <div class="row colorpicker">
+                    <div class="col-md-8 col-md-offset-2">
+					 <script>
+						function FontColor() {
+						var range;
+						var c=document.getElementById("favcolor").value;
+						if (window.getSelection && window.getSelection().getRangeAt) {
+						var html='<font color='+c+'>' + window.getSelection() + '</font>';
+						range = window.getSelection().getRangeAt(0);
+						range.deleteContents();
+						var div = document.createElement("div");
+						div.innerHTML = html;
+						var frag = document.createDocumentFragment(), child;
+						while ( (child = div.firstChild) ) {
+						frag.appendChild(child);
+						}
+						range.insertNode(frag);
+						} else if (document.selection && document.selection.createRange) {
+						range = document.selection.createRange();
+						range.pasteHTML(html);
+						}
+						MyArray[index].Data=document.getElementById(id).innerHTML;
+						}
+					</script>
+                        <strong title="select porion to hightlight">Color : </strong><input type="color" id="favcolor" value="#ff0000" style="width:20%">&nbsp;
+                        <button class="btn btn-primary" type="button" name="btn-hightlight" onclick="FontColor();"><span style="font-size:13px">High light</span></button>
+                        <br>
+                    </div>
+                </div>
+                <div class="row textstyling">
+                    <div class="col-md-8 col-md-offset-2">
+                        <script>					
+						function Bold() {
+						var range;
+						if (window.getSelection && window.getSelection().getRangeAt) {
+						var html="<b>"+window.getSelection()+"</b>";
+						range = window.getSelection().getRangeAt(0);
+						range.deleteContents();
+						var div = document.createElement("p");
+						div.innerHTML = html;
+						var frag = document.createDocumentFragment(), child;
+						while ( (child = div.firstChild) ) {
+						frag.appendChild(child);
+						}
+						range.insertNode(frag);
+						} else if (document.selection && document.selection.createRange) {
+						range = document.selection.createRange();
+						range.pasteHTML(html);
+						}
+						var d=document.getElementById(id);
+					    var s=d.innerHTML;						
+						console.log(s);
+						MyArray[index].Data=document.getElementById(id).innerHTML;
+						}
+						function Italics() {
+						var range;
+						if (window.getSelection && window.getSelection().getRangeAt) {
+						var html="<i>"+window.getSelection()+"</i>";
+						range = window.getSelection().getRangeAt(0);
+						range.deleteContents();
+						var div = document.createElement("div");
+						div.innerHTML = html;
+						var frag = document.createDocumentFragment(), child;
+						while ( (child = div.firstChild) ) {
+						frag.appendChild(child);
+						}
+						range.insertNode(frag);
+						} else if (document.selection && document.selection.createRange) {
+						range = document.selection.createRange();
+						range.pasteHTML(html);
+						}
+						MyArray[index].Data=document.getElementById(id).innerHTML;
+						}
+						</script>
+						<br>
+                        <strong title="select porion to hightlight">Style : </strong>&nbsp;
+                        <button class="btn btn-primary" type="button" name="btn-hightlight" onclick="Bold();"><span class="glyphicon glyphicon-bold"></span></button>&nbsp;&nbsp;&nbsp;
+                        <button class="btn btn-primary" type="button" name="btn-hightlight" onclick="Italics();"><span class="glyphicon glyphicon-italic"></span></button>&nbsp;
+                        <br>
+                    </div>
+                </div>
+                <div class="row font">
+                    <div class="col-md-8 col-md-offset-2">
+                        <br>
+						<strong title="select porion to hightlight">Font : </strong>&nbsp;
+                        <script type="text/javascript">
+						function FontFace(value) {
+						var range;
+						if (window.getSelection && window.getSelection().getRangeAt) {
+						var html=	'<font face='+value+'>' +window.getSelection()+ '</font>';
+						range = window.getSelection().getRangeAt(0);
+						range.deleteContents();
+						var div = document.createElement("div");
+						div.innerHTML = html;
+						var frag = document.createDocumentFragment(), child;
+						while ( (child = div.firstChild) ) {
+						frag.appendChild(child);
+						}
+						range.insertNode(frag);
+						} else if (document.selection && document.selection.createRange) {
+						range = document.selection.createRange();
+						range.pasteHTML(html);
+						}
+						MyArray[index].Data=document.getElementById(id).innerHTML;
+						}
+						</script>
+						<select id ="FontStyle" name="ddl" onchange="FontFace(this.value);">
+                            <option value="Verdana">Verdana</option>
+							<option value="Aerial">Aerial</option>
+							<option value="New Times Roman">New Times Roman</option>
+                        </select>
+                        &nbsp;
+                   </div>
+                </div>   
+            </div>
+			<hr>
+			<div class="row utiltool">
+                <h3 class="allhead" style="padding : 5px;text-align:center">Animations</h3>
+				<br>
+				<div class="row colorpicker">
+				<script>
+				function in_anim(value)
+				{
+				MyArray[index].in_anim=value;
+				}
+				</script>
+				<script>
+				function out_anim(value)
+				{
+				MyArray[index].out_anim=value;
+				}
+				</script>
+				<script>
+				function delay_change()
+				{
+				 var v1=document.getElementById("delay").value;
+				 if(v1!=null && v1!="")
+				 {
+			     $("#"+id).css({"-webkit-animation-duration": v1+'s'});
+				 $("#"+id).css({"-moz-animation-duration": v1+'s'});
+				 $("#"+id).css({"animation-duration": v1+'s'});
+				 MyArray[index].delay=v1;
+				 }
+				}
+				</script>
+				<script>
+				function duration_change()
+				{
+				 var v2=document.getElementById("duration").value;
+				 MyArray[index].duration=v2;
+				}
+				</script>
+				<script>
+				function anim_order()
+				{
+				MyArray[index].order=document.getElementById("a_order").value;
+				}
+				</script>
+				    <div class="col-md-8 col-md-offset-2">
+					 <center><label>In</label><br>
+                    <select data-key="effect" data-type="in" onchange="in_anim(this.value);" name="in">
+					<option value="flash">flash</option><option value="bounce">bounce</option><option value="shake">shake</option><option value="tada">tada</option><option value="swing">swing</option><option value="wobble">wobble</option><option value="pulse">pulse</option><option value="flip">flip</option><option value="flipInX">flipInX</option><option value="flipInY">flipInY</option><option value="fadeIn">fadeIn</option><option value="fadeInUp">fadeInUp</option><option value="fadeInDown">fadeInDown</option><option value="fadeInLeft">fadeInLeft</option><option value="fadeInRight">fadeInRight</option><option value="fadeInUpBig">fadeInUpBig</option><option value="fadeInDownBig">fadeInDownBig</option><option value="fadeInLeftBig">fadeInLeftBig</option><option value="fadeInRightBig">fadeInRightBig</option><option value="bounceIn">bounceIn</option><option value="bounceInDown">bounceInDown</option><option value="bounceInUp">bounceInUp</option><option value="bounceInLeft">bounceInLeft</option><option value="bounceInRight">bounceInRight</option><option value="rotateIn">rotateIn</option><option value="rotateInDownLeft">rotateInDownLeft</option><option value="rotateInDownRight">rotateInDownRight</option><option value="rotateInUpLeft">rotateInUpLeft</option><option value="rotateInUpRight">rotateInUpRight</option><option value="rollIn">rollIn</option></select>
+					</select>
+					<br>
+					   <label>Out</label><br>
+                    <select data-key="effect" data-type="out" onchange="out_anim(this.value);" name="in">
+					<option value="flash">flash</option><option value="bounce">bounce</option><option value="shake">shake</option><option value="tada">tada</option><option value="swing">swing</option><option value="wobble">wobble</option><option value="pulse">pulse</option><option value="flip">flip</option><option value="flipOutX">flipOutX</option><option value="flipOutY">flipOutY</option><option value="fadeOut">fadeOut</option><option value="fadeOutUp">fadeOutUp</option><option value="fadeOutDown">fadeOutDown</option><option value="fadeOutLeft">fadeOutLeft</option><option value="fadeOutRight">fadeOutRight</option><option value="fadeOutUpBig">fadeOutUpBig</option><option value="fadeOutDownBig">fadeOutDownBig</option><option value="fadeOutLeftBig">fadeOutLeftBig</option><option value="fadeOutRightBig">fadeOutRightBig</option><option value="bounceOut">bounceOut</option><option value="bounceOutDown">bounceOutDown</option><option value="bounceOutUp">bounceOutUp</option><option value="bounceOutLeft">bounceOutLeft</option><option value="bounceOutRight">bounceOutRight</option><option value="rotateOut">rotateOut</option><option value="rotateOutDownLeft">rotateOutDownLeft</option><option value="rotateOutDownRight">rotateOutDownRight</option><option value="rotateOutUpLeft">rotateOutUpLeft</option><option value="rotateOutUpRight">rotateOutUpRight</option><option value="hinge">hinge</option><option value="rollOut">rollOut</option></select>
+					</select>
+					<br> Delay:
+					<input id="delay" onchange="delay_change();">
+					  <br>
+					<br>Duration:
+					<input id="duration" onchange="duration_change();">
+					<br>
+					<br><label>Animation Order</label>
+					<input id="a_order" onchange="anim_order()"></center>
+					</div>
+				</div>
+				<br>
+				<center>
+				<button  type="button" onclick="f1();">show</button>
+				<button  type="button" onclick="f2();">array</button>
+				<script>
+				$.fn.extend({
+				animateCss: function (animationName) {
+			    var animationEnd = 'webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend';
+						this.addClass('animated ' + animationName).one(animationEnd, function() {
+							$(this).removeClass('animated ' + animationName);
+						});
+					}
+				});
+				function f1(){
+				var element=document.getElementById(id);
+				var e1 = MyArray[index].in_anim;
+				var e2 = MyArray[index].out_anim;
+				var t=MyArray[index].duration;
+				$(element).animateCss(""+e1);
+				setTimeout(function() {
+				$(element).animateCss(""+e2)
+				},t);
+                }
+			    </script>
+				<script>
+				function f2(){
+				for(var n=0;n<MyArray.length;n++)
+				alert("elements:"+MyArray[n].id+" "+MyArray[n].Data+" "+MyArray[n].in_anim+" "+MyArray[n].out_anim+" "+MyArray[n].in_seq+" "+MyArray[0].out_seq);
+				}
+				</script>
+				</center>
+		    </div>
+        </div>
+        <div class="col-md-4 col-md-offset-1 text-portion">
+		<br>
+		<div>
+		<div id="container" style="height:500px; width:500px; display:block; border:1px solid black;" ondrop="drop(event)" ondragover="allowDrop(event)">
+			<div id="T0" name="T0" contenteditable="true" style="display: inline-block; border:1px solid black;"  class="demo,ui-widget-content draggable,animated" >
+				<p>Here's a typical paragraph element</p>
+			</div>	
+		</div>
+		<input type="hidden" value="" name="hidden1" id="hidden1" />
+		<script>
+		function f8()
+	    {var str=[];
+		for(var n=0;n<MyArray.length;n++)
+		{var final_string=JSON.stringify(MyArray[n]);
+		str.push(final_string);
+		}
+		exportToCsv("final-file.csv",str);
+		}
+		function exportToCsv(filename, rows)
+		{
+		   var processRow = function (row) {
+            var finalVal = '';
+            finalVal+=row;
+            return finalVal + '\n';
+        };
+        var csvFile = '';
+        for (var i = 0; i < rows.length; i++) {
+            csvFile += processRow(rows[i]);
+        }
+        var blob = new Blob([csvFile], { type: 'text/csv;charset=utf-8;' });
+        if (navigator.msSaveBlob) { // IE 10+
+            navigator.msSaveBlob(blob, filename);
+        } else {
+            var link = document.createElement("a");
+            if (link.download !== undefined) {
+                var url = URL.createObjectURL(blob);
+                link.setAttribute("href", url);
+                link.setAttribute("download", filename);
+                link.style.visibility = 'hidden';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            }
+        }
+		}
+		</script>
+		<button type="button" form="form1" value="CreateCsv" onclick="f8();">CreateCsv</button>
+		</ul>
+		</div>
+        </div>
+        <div class="col-md-3 picture">
+        </div>
+    </div>
+</div>
+</form>				
+<script>
+var s=document.getElementById("T0").innerHTML;
+var i="flash";
+var o="flash";
+var offset=document.getElementById("T0");
+var l=offset.offsetLeft;
+var t=offset.offsetTop;
+MyArray.push({id:"T0",Data:s,in_anim:i,out_anim:o,xPos:l,yPos:t,delay:"2",duration:"3",order:"1"});
+</script>
+</body>
+</html>
