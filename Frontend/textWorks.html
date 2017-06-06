@@ -28,7 +28,7 @@
 <link href="js/animate.css" rel="stylesheet"><!-- CSS Animate -->
 
 <script src="js/jquery.lettering.js"></script><!-- Jquery Lettering -->	
-	
+
 <script src="js/jquery-ui.js"></script><!-- Jquery UI -->
 
 <script src="fabric.js"></script><!-- Fabric.js -->
@@ -298,9 +298,13 @@ $(document).ready(function(){
 		<input id="a_order" onchange="anim_order();">
  	</div>
 	  
- 	<br><br>
+ 	
+ 	<div class="col-sm-1" style="text-align:justify; margin-top:20px">
 	<button type="button" class="btn btn-primary" onclick="f1();">Show</button>	
-
+	</div>
+	<div class="col-sm-1" style="text-align:justify; margin-top:20px">
+	<button type="button" class="btn btn-primary" onclick="f8();">CreateCsv</button>
+	</div>
 	</div>
 
 	</div>
@@ -361,7 +365,7 @@ $(document).ready(function(){
 
     <button type="button" class="btn btn-primary" onclick="myFunction(this)" value="3">Equation</button>
 	</div>
-     
+   
 	<div id="div2" ondrop="drop(event)" ondragover="allowDrop(event)">
 		<div id="T0" name="T0" contenteditable="true" style="display: inline-block; border:1px solid black;"  class="demo,ui-widget-content draggable,animated" >
 				<p>Here's a typical paragraph element</p>
@@ -543,7 +547,28 @@ function draw()
 					document.getElementById(id).remove();
 					}
 				</script>
-
+<script>
+						function FontColor() {
+						var range;
+						var c=document.getElementById("favcolor").value;
+						if (window.getSelection && window.getSelection().getRangeAt) {
+						var html='<font color='+c+'>' + window.getSelection() + '</font>';
+						range = window.getSelection().getRangeAt(0);
+						range.deleteContents();
+						var div = document.createElement("div");
+						div.innerHTML = html;
+						var frag = document.createDocumentFragment(), child;
+						while ( (child = div.firstChild) ) {
+						frag.appendChild(child);
+						}
+						range.insertNode(frag);
+						} else if (document.selection && document.selection.createRange) {
+						range = document.selection.createRange();
+						range.pasteHTML(html);
+						}
+						MyArray[index].Data=document.getElementById(id).innerHTML;
+						}
+					</script>
 				<script>					
 						function Bold() {
 						var range;
@@ -608,63 +633,7 @@ function draw()
 						MyArray[index].Data=document.getElementById(id).innerHTML;
 						}
 						</script>
-
-						 <script>
-						function FontColor() {
-						var range;
-						var c=document.getElementById("favcolor").value;
-						if (window.getSelection && window.getSelection().getRangeAt) {
-						var html='<font color='+c+'>' + window.getSelection() + '</font>';
-						range = window.getSelection().getRangeAt(0);
-						range.deleteContents();
-						var div = document.createElement("div");
-						div.innerHTML = html;
-						var frag = document.createDocumentFragment(), child;
-						while ( (child = div.firstChild) ) {
-						frag.appendChild(child);
-						}
-						range.insertNode(frag);
-						} else if (document.selection && document.selection.createRange) {
-						range = document.selection.createRange();
-						range.pasteHTML(html);
-						}
-						MyArray[index].Data=document.getElementById(id).innerHTML;
-						}
-					</script>
-
-
 <script>
-var s=document.getElementById("T0").innerHTML;
-var i="flash";
-var o="flash";
-var offset=document.getElementById("T0");
-var l=offset.offsetLeft;
-var t=offset.offsetTop;
-MyArray.push({id:"T0",Data:s,in_anim:i,out_anim:o,xPos:l,yPos:t,delay:"2",duration:"3",order:"1"});
-</script>
-
-<script>
-				$.fn.extend({
-				animateCss: function (animationName) {
-			    var animationEnd = 'webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend';
-						this.addClass('animated ' + animationName).one(animationEnd, function() {
-							$(this).removeClass('animated ' + animationName);
-						});
-					}
-				});
-				function f1(){
-				var element=document.getElementById(id);
-				var e1 = MyArray[index].in_anim;
-				var e2 = MyArray[index].out_anim;
-				var t=MyArray[index].duration;
-				$(element).animateCss(""+e1);
-				setTimeout(function() {
-				$(element).animateCss(""+e2)
-				},t);
-                }
-			    </script>
-
-			    <script>
 				function in_anim(value)
 				{
 				MyArray[index].in_anim=value;
@@ -702,7 +671,32 @@ MyArray.push({id:"T0",Data:s,in_anim:i,out_anim:o,xPos:l,yPos:t,delay:"2",durati
 				MyArray[index].order=document.getElementById("a_order").value;
 				}
 				</script>
-
+				<script>
+				$.fn.extend({
+				animateCss: function (animationName) {
+			    var animationEnd = 'webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend';
+						this.addClass('animated ' + animationName).one(animationEnd, function() {
+							$(this).removeClass('animated ' + animationName);
+						});
+					}
+				});
+				function f1(){
+				var element=document.getElementById(id);
+				var e1 = MyArray[index].in_anim;
+				var e2 = MyArray[index].out_anim;
+				var t=MyArray[index].duration;
+				$(element).animateCss(""+e1);
+				setTimeout(function() {
+				$(element).animateCss(""+e2)
+				},t);
+                }
+			    </script>
+			    <script>
+				function f2(){
+				for(var n=0;n<MyArray.length;n++)
+				alert("elements:"+MyArray[n].id+" "+MyArray[n].Data+" "+MyArray[n].in_anim+" "+MyArray[n].out_anim+" "+MyArray[n].in_seq+" "+MyArray[0].out_seq);
+				}
+				</script>
 				<script>
 		function f8()
 	    {var str=[];
@@ -740,12 +734,20 @@ MyArray.push({id:"T0",Data:s,in_anim:i,out_anim:o,xPos:l,yPos:t,delay:"2",durati
         }
 		}
 		</script>
+
+<script>
+var s=document.getElementById("T0").innerHTML;
+var i="flash";
+var o="flash";
+var offset=document.getElementById("T0");
+var l=offset.offsetLeft;
+var t=offset.offsetTop;
+MyArray.push({id:"T0",Data:s,in_anim:i,out_anim:o,xPos:l,yPos:t,delay:"2",duration:"3",order:"1"});
+</script>
 		
 	 </div>
   </div>
 	
-</div>
-<button type="button" form="form1" value="CreateCsv" onclick="f8();">CreateCsv</button>
-				
+</div>				
 </body>
 </html>                                		
