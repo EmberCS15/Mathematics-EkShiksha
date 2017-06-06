@@ -1,0 +1,453 @@
+<html>
+<head>
+<title>MathML Retry</title>
+<meta charset="utf-8">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="./animate.css">
+<script src="../MathJax-master/MathJax.js?config=TeX-MML-AM_HTMLorMML"></script>
+<!--<script type="text/javascript" src="../MathJax.js?config=TeX-MML-AM_HTMLorMML"></script>-->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    showProcessingMessages: false,
+    tex2jax: { inlineMath: [['$','$'],['\\(','\\)']] }
+  });
+</script>
+<script>
+var Preview = {
+  delay: 150,        // delay after keystroke before updating
+
+  preview: null,     // filled in by Init below
+  buffer: null,      // filled in by Init below
+
+  timeout: null,     // store setTimout id
+  mjRunning: false,  // true when MathJax is processing
+  mjPending: false,  // true when a typeset has been queued
+  oldText: null,     // used to check if an update is needed
+
+  //
+  //  Get the preview and buffer DIV's
+  //
+  Init: function () {
+    this.preview = document.getElementById("MathPreview");
+    this.buffer = document.getElementById("MathBuffer");
+  },
+
+  //
+  //  Switch the buffer and preview, and display the right one.
+  //  (We use visibility:hidden rather than display:none since
+  //  the results of running MathJax are more accurate that way.)
+  //
+  SwapBuffers: function () {
+    var buffer = this.preview, preview = this.buffer;
+    this.buffer = buffer; this.preview = preview;
+    buffer.style.visibility = "hidden"; buffer.style.position = "absolute";
+    preview.style.position = ""; preview.style.visibility = "";
+  },
+
+  //
+  //  This gets called when a key is pressed in the textarea.
+  //  We check if there is already a pending update and clear it if so.
+  //  Then set up an update to occur after a small delay (so if more keys
+  //    are pressed, the update won't occur until after there has been 
+  //    a pause in the typing).
+  //  The callback function is set up below, after the Preview object is set up.
+  //
+  Update: function () {
+    if (this.timeout) {clearTimeout(this.timeout)}
+    this.timeout = setTimeout(this.callback,this.delay);
+  },
+
+  //
+  //  Creates the preview and runs MathJax on it.
+  //  If MathJax is already trying to render the code, return
+  //  If the text hasn't changed, return
+  //  Otherwise, indicate that MathJax is running, and start the
+  //    typesetting.  After it is done, call PreviewDone.
+  //  
+  CreatePreview: function () {
+    Preview.timeout = null;
+    if (this.mjPending) return;
+    var text = document.getElementById("MathInput").value;
+    if (text === this.oldtext) return;
+    if (this.mjRunning) {
+      this.mjPending = true;
+      MathJax.Hub.Queue(["CreatePreview",this]);
+    } else {
+      this.buffer.innerHTML = this.oldtext = text;
+      this.mjRunning = true;
+      MathJax.Hub.Queue(
+  ["Typeset",MathJax.Hub,this.buffer],
+  ["PreviewDone",this]
+      );
+    }
+  },
+
+  //
+  //  Indicate that MathJax is no longer running,
+  //  and swap the buffers to show the results.
+  //
+  PreviewDone: function () {
+    this.mjRunning = this.mjPending = false;
+    this.SwapBuffers();
+  }
+
+};
+
+//
+//  Cache a callback to the CreatePreview action
+//
+Preview.callback = MathJax.Callback(["CreatePreview",Preview]);
+Preview.callback.autoReset = true;  // make sure it can run more than once
+
+</script>
+<style>
+textarea {
+  padding: 10px;
+  font-family: Calibri;
+  font-size: 18px;
+  line-height: 1.1;
+  resize: none;
+}
+.addText {
+  padding: 5px 15px;
+  transition: all 0.5s;
+  border: 1px solid black;
+  border-radius: 2px;
+  background-color: #169c16;
+  width: 70px;
+  margin: 10px 0;
+  color: white;
+  cursor: pointer;
+}
+.addText:hover {
+  background-color: #2776b9;
+}
+span{
+    display: inline-block;
+}
+.MathJax span{
+    display: inline-block;
+}
+</style>
+</head>
+<body>
+
+<p> Type text (mixed with MathML) in the box below for a live preview.</p>
+<br><br>
+<!--<trix-editor id="MathInput" onkeyup="Preview.Update()"></trix-editor>-->
+<p id="currClass">Current : </p>
+<textarea id="MathInput" cols="60" rows="10" onkeyup="Preview.Update()" style="margin-top:5px">
+</textarea>
+
+<p>Preview is shown here:</p>
+<div id="MathPreview" style="padding: 3px; min-width:50%; margin-top:5px"></div>
+<div id="MathBuffer" style="padding: 3px; min-width:50%; margin-top:5px; 
+visibility:hidden; position:absolute; top:0; left: 0"></div>
+<br><br><br>
+<button type="button" id="anim">Animate</button>
+<select name="in" id="animSelect">
+    <option value="flash">flash</option><option value="bounce">bounce</option><option value="shake">shake</option><option value="tada">tada</option><option value="swing">swing</option><option value="wobble">wobble</option><option value="pulse">pulse</option><option value="flip">flip</option><option value="flipInX">flipInX</option><option value="flipInY">flipInY</option><option value="fadeIn">fadeIn</option><option value="fadeInUp">fadeInUp</option><option value="fadeInDown">fadeInDown</option><option value="fadeInLeft">fadeInLeft</option><option value="fadeInRight">fadeInRight</option><option value="fadeInUpBig">fadeInUpBig</option><option value="fadeInDownBig">fadeInDownBig</option><option value="fadeInLeftBig">fadeInLeftBig</option><option value="fadeInRightBig">fadeInRightBig</option><option value="bounceIn">bounceIn</option><option value="bounceInDown">bounceInDown</option><option value="bounceInUp">bounceInUp</option><option value="bounceInLeft">bounceInLeft</option><option value="bounceInRight">bounceInRight</option><option value="rotateIn">rotateIn</option><option value="rotateInDownLeft">rotateInDownLeft</option><option value="rotateInDownRight">rotateInDownRight</option><option value="rotateInUpLeft">rotateInUpLeft</option><option value="rotateInUpRight">rotateInUpRight</option><option value="rollIn">rollIn</option>
+</select>&nbsp;&nbsp;&nbsp;
+<button type="button" id="addClass" title="Add class to equation elements for styling">Add Class</button>&nbsp;&nbsp;
+<button type="button" id="preview" title="Preview the entire equation">Preview</button>
+<br><br>
+<button type="button" id="fraction">a/b</button>
+<button type="button" id="power">a^b</button>
+<br><br>
+Equation ClassNames : <select id="EqnClass" style="overflow: scroll;">
+</select>&nbsp;&nbsp;&nbsp;
+<button type="button" id="newEqn">New Eqn</button>&nbsp;&nbsp;
+<button type="button" id="delEqn">Delete Eqn</button>
+<br><br>
+Child ClassNames : <select id="ChildClass" style="overflow: scroll;">
+</select>&nbsp;&nbsp;&nbsp;
+<button type="button" id="newChild">New Child</button>&nbsp;&nbsp;
+<button type="button" id="delChild">Delete Child</button>
+<br><br>
+<button type="button" id="color">Color</button>&nbsp;&nbsp;
+<input type="color" id="favcolor" value="#0000ff" style="width:15%">&nbsp;&nbsp;
+<input type="checkbox" id="btn-bold" name="radBold">Bold&nbsp;&nbsp;
+<!--<input type="checkbox" id="btn-italic" name="radItalic">Italic&nbsp;&nbsp;-->
+<!--<button type="button" id="btn-bold">Bold</button>&nbsp;&nbsp;
+<button type="button" id="btn-italic">Italics</button>&nbsp;&nbsp;-->
+
+<script>
+//Equation Object 
+//DeleteEqn will work on both the arrays 
+//DeleteChildClass will work on only one array
+var Equation = function(className,code,animation,animOrder){
+  this.className = className;
+  this.code = code;
+  this.animation = animation;
+  this.animOrder = null;
+  this.childArray=[];
+}
+
+/*Child Object in Eqn Array
+[{
+  "e1c0":{
+      this.color:"black";
+      this.fontWeight:"none";
+      this.fontStyle:"none";      
+  },
+}]
+*/
+
+var Child=function(className,color,fontWeight,fontStyle){
+  this.className = className;
+  this.fontWeight = fontWeight;
+  this.fontStyle = fontStyle;
+  this.color = color;
+}
+
+Preview.Init();
+// http://stackoverflow.com/a/9851769/529024
+// Opera 8.0+
+var isOpera = (!!window.opr && !!opr.addons) || !!window.opera || navigator.userAgent.indexOf(' OPR/') >= 0;
+
+// Firefox 1.0+
+var isFirefox = typeof InstallTrigger !== 'undefined';
+
+// Safari 3.0+ "[object HTMLElementConstructor]" 
+var isSafari = Object.prototype.toString.call(window.HTMLElement).indexOf('Constructor') > 0 || (function(p) {
+  return p.toString() === "[object SafariRemoteNotification]";
+})(!window['safari'] || safari.pushNotification);
+
+// Internet Explorer 6-11 
+var isIE = /*@cc_on!@*/ false || !!document.documentMode;
+
+// Edge 20+
+var isEdge = !isIE && !!window.StyleMedia;
+
+// Chrome 1+
+var isChrome = !!window.chrome && !!window.chrome.webstore;
+var position = 0;
+
+// text to anser
+//var text = 'Inserted Text';
+var operator = ["+","-","*",".","(",")",",","[","]","=",">","<","{","}","?","!","~"];
+var math_main_class = [];
+var math_child_class = [];
+var math_indx = -1;
+var MathMode = true;
+var childName = "";
+
+$(document).ready(function(){
+/* Adding text on click based on browser */
+  $("#MathInput").val("Please add an Equation using the button to start");
+  $("#MathInput").on("keypress", function(event) {
+    var char = event.which || event.keyCode;
+    if(event.ctrlKey){
+      return;
+    }
+    if( event.keyCode >= 37 && event.keyCode <= 40 ) {
+      return; // arrow keys
+    }
+    if( event.keyCode === 8 || event.keyCode === 46 || event.keyCode==13) {
+      if(event.keyCode == 13 && MathMode){
+        var txt = "<mspace linebreak='newline' />";
+        insertAtCaret('MathInput',txt);
+      }
+      return; // backspace (8) / delete (46)
+    }
+    else if(((char>=48 && char<58) || (char>=65 && char<=90) || (char>=97 && char<=122) ||operator.includes(String.fromCharCode(char))) && MathMode){
+      var str = String.fromCharCode(char);
+      insertAtCaret('MathInput',""+convertCode(str,char));
+      //text = convertCode(str,char);
+      event.preventDefault();
+      // this.value = this.value.substring(0, this.value.length-1);
+    }
+    math_main_class[math_indx].code = $(this).val();
+    //console.log(""+math_main_class[math_indx].code);
+});
+
+$("#fraction").on("click",function(){
+  var txt = "<mfrac>\n<mrow></mrow>\n<mrow></mrow>\n</mfrac>\n";
+  insertAtCaret('MathInput',txt);
+});
+
+$("#power").on("click",function(){
+  var txt = "<msup>\n<mrow></mrow>\n<mrow></mrow>\n</msup>\n";
+  insertAtCaret('MathInput',txt);
+});
+
+$("#anim").on("click",function(){
+    var anim = $("#animSelect").val();
+    var c_name = math_main_class[math_indx].className;
+    c_name = "."+c_name;
+    $(c_name).animateCss(anim);
+    math_main_class[math_indx].animation = anim;
+    console.log(math_main_class[math_indx].animation);
+    //$(".e01").animateCss(anim);
+    //alert(anim);
+});
+
+$("#newEqn").on("click",function(){
+    var c_order = "e"+math_main_class.length;
+    var neq = new Equation(c_order,"<math class='"+c_order+"'>\n</math>","fadeIn");
+    $("#MathInput").val("<math class='"+c_order+"'>\n</math>");
+    math_main_class.push(neq);
+    math_indx++;
+    $("#EqnClass").html($("#EqnClass").html()+"<option value='"+c_order+"'>"+c_order+"</option>");
+    $("#currClass").html("Current : <strong>"+c_order+"</strong>");
+    loadChildSelect(neq.childArray);
+});
+
+$('#EqnClass').on('change', function() {
+    var index = parseInt($(this).val().substring(1));
+    var sel_eqn = math_main_class[index];
+    $("#MathInput").val(sel_eqn.code);
+    $("#currClass").html("Current : <strong>"+sel_eqn.className+"</strong>");
+    math_indx = index;
+    loadChildSelect(sel_eqn.childArray);
+});
+
+$('#newChild').on('click',function(){
+    var parent = math_main_class[math_indx].className;
+    var sel_eqn = math_main_class[math_indx];
+    var childName = parent+"c"+sel_eqn.childArray.length;
+    var childObj = new Child(childName,"#0000ff","none","none");
+    sel_eqn.childArray.push(childObj);
+    //$(".e1c1").css("color","#0000ff");
+    $("#ChildClass").html($("#ChildClass").html()+"<option value='"+childName+"'>"+childName+"</option>");
+});
+
+$("#addClass").on('click',function(){
+  if(MathMode){
+    $(this).text("MathMode On");
+    MathMode = false;
+  }else{ 
+    $(this).text("Add Class");
+    MathMode = true;
+  }
+});
+
+$("#color").on('click',function(){
+    var colVal = $("#favcolor").val();
+    var parent = math_main_class[math_indx];
+    childName = $("#ChildClass").val();
+    var child = parent.childArray.find(findChild);
+    try{
+      child.color = colVal;
+    }catch(e){
+      alert("Please select a ChildClass");
+    }
+    console.log(child);
+});
+
+$("#btn-bold").on('change',function(){
+    var isBold = false;
+    if($('#btn-bold').is(':checked')) { 
+        isBold = true;
+    }
+    var parent = math_main_class[math_indx];
+    childName = $("#ChildClass").val();
+    var child = parent.childArray.find(findChild);
+    try{
+      child.fontWeight = (isBold)?"bold":"none";
+    }catch(e){
+      alert("Please select a ChildClass");
+    }
+    console.log(child);
+});
+
+$("#preview").on('click',function(){
+    try{
+    var finalEq = math_main_class[math_indx];
+    var eqname = "."+finalEq.className;
+    var arrayChild = finalEq.childArray;
+    for(var itr=0;itr<arrayChild.length;itr++){
+        var child = arrayChild[itr];
+        var clname = child.className;
+        clname="."+clname;
+        $(clname).css({"color":child.color,"font-weight":child.fontWeight});
+    }
+    $(eqname).animateCss(finalEq.animation);
+    console.log("DONE");
+  }catch(e){
+    alert("Make Some Equatiions Bonny");
+  }
+});
+$("#MathInput").on("focusout", function(e) {
+  position = $(this)[0].selectionStart;
+});
+});
+
+$.fn.extend({
+    animateCss: function (animationName) {
+        var animationEnd = 'webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend';
+        this.addClass('animated ' + animationName).one(animationEnd, function() {
+            $(this).removeClass('animated ' + animationName);
+        });
+    }
+});
+
+
+function findChild(obj) { 
+    return obj.className === childName;
+}
+
+function loadChildSelect(array){
+    console.log("called");
+    $("#ChildClass").html("<option value=''></option>");
+    for(var itr=0;itr<array.length;itr++){
+        var c_name = array[itr].className;
+        console.log("cname = "+c_name);
+        var string = "<option value='"+c_name+"'>"+c_name+"</option>";
+        $("#ChildClass").html($("#ChildClass").html()+string);
+    }
+}
+
+function convertCode(text,code){
+  var txt="";
+  if((code>=65&&code<=90) || (code>=97&&code<=122))
+    txt="<mi>"+text+"</mi>\n";
+  else if(code>=48 && code<58)
+    txt="<mn>"+text+"</mn>\n";
+  else if(operator.includes(text))
+    txt="<mo>"+text+"</mo>\n";
+  return txt;
+}
+
+function insertAtCaret(areaId, text) {
+    var txtarea = document.getElementById(areaId);
+    if (!txtarea) { return; }
+
+    var scrollPos = txtarea.scrollTop;
+    var strPos = 0;
+    var br = ((txtarea.selectionStart || txtarea.selectionStart == '0') ?
+        "ff" : (document.selection ? "ie" : false ) );
+    if (br == "ie") {
+        txtarea.focus();
+        var range = document.selection.createRange();
+        range.moveStart ('character', -txtarea.value.length);
+        strPos = range.text.length;
+    } else if (br == "ff") {
+        strPos = txtarea.selectionStart;
+    }
+
+    var front = (txtarea.value).substring(0, strPos);
+    var back = (txtarea.value).substring(strPos, txtarea.value.length);
+    txtarea.value = front + text + back;
+    strPos = strPos + text.length;
+    if (br == "ie") {
+        txtarea.focus();
+        var ieRange = document.selection.createRange();
+        ieRange.moveStart ('character', -txtarea.value.length);
+        ieRange.moveStart ('character', strPos);
+        ieRange.moveEnd ('character', 0);
+        ieRange.select();
+    } else if (br == "ff") {
+        txtarea.selectionStart = strPos;
+        txtarea.selectionEnd = strPos;
+        txtarea.focus();
+    }
+
+    txtarea.scrollTop = scrollPos;
+}
+</script>
+</body>
+</html>
