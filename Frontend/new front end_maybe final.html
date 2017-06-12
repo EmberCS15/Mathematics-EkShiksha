@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Maths</title>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script type="text/javascript" src="http://code.jquery.com/jquery-1.7.1.js"></script>
+<script type="text/javascript" src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
+<style>
+#menubar{
+border-radius:3px 3px 0 0;
+min-height:25px;
+padding:5px 0;
+margin-top:-20px;
+}
+button[type="button"]{
+width:30px;
+height:30px;
+padding:0px 3px 0px 3px;
+}
+#div2{
+position:absolute;
+width:1141px;
+height:1004px;
+border-style:groove;
+
+}
+#canv{
+
+position:absolute;
+}
+
+</style>
+<script>
+function myFunction(obj) {
+
+    if(obj.value==1)
+    {
+        document.getElementById("div2").style.zIndex = "1";
+        document.getElementById("canv").style.zIndex = "-1";
+    }
+    else if(obj.value==2)
+    {
+        document.getElementById("canv").style.zIndex = "1";
+        document.getElementById("div2").style.zIndex = "-1";
+    }
+	}
+</script>
+</head>
+<body>
+ <nav class="navbar navbar-inverse">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>                        
+      </button>
+      <a class="navbar-brand" href="#">ekshiksha</a>
+    </div>
+    <div class="collapse navbar-collapse" id="myNavbar">
+      <ul class="nav navbar-nav">
+        <li><a href="#">Home</a></li>
+        <li><a href="#">Help</a></li>
+        <li><a href="#">About us</a></li>
+        <li><a href="#">Contact</a></li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li><a href="#"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
+        <li><a href="#"><span class="glyphicon glyphicon-sign-in"></span> Join us</a></li>
+      </ul>
+    </div>
+  </div>
+</nav>
+<div class="row">
+<div class="col-sm-1">
+
+
+</div>
+<div class="col-sm-11">
+<div class="row-fluid container">
+<div id="menubar" class="row-fluid"style="background-color:#33B8FF">
+
+<div class="btn btn-group">
+<button class="btn btn-default" title="Save">
+<i class="fa fa-save"></i>
+</button>
+<button class="btn btn-default" title="Undo">
+<i class="fa fa-undo"></i>
+</button>
+<button class="btn btn-default" title="Redo">
+<i class="fa fa-repeat"></i>
+</button>
+<button class="btn btn-default" data-toggle="dropdown">
+    <span class="caret"></span></button>
+    <ul class="dropdown-menu">
+      <li><a href="#">New</a></li>
+      <li><a href="#">Open</a></li>
+      <li><a href="#">Save</a></li>
+      <li><a href="#">Preview</a></li>
+    </ul>
+	
+</div>
+
+
+<div class="btn-group">
+<button class="btn btn-default" title="Bold">
+<i class="fa fa-bold"></i>
+</button>
+<button class="btn btn-default" title="Italics">
+<i class="fa fa-italic"></i>
+</button>
+<button class="btn btn-default" title="Underline">
+<i class="fa fa-underline"></i>
+</button>
+<button class="btn btn-default" title="Color">
+<i class="fa fa-font"></i>
+</button>
+</div>
+
+
+
+<div class="btn-group" style="margin-left:10px">
+<button class="btn btn-default" title="Strikethrough">
+<i class="fa fa-strikethrough"></i>
+</button>
+<button class="btn btn-default" title="Subscript">
+<i class="fa fa-subscript"></i>
+</button>
+<button class="btn btn-default" title="Superscript">
+<i class="fa fa-superscript"></i>
+</button>
+</div>
+
+<div class="btn btn-group">
+    <button class="btn btn-default btn1" data-toggle="dropdown" title="Change Font" onclick="myFunction(this)" value="1">Font
+    <span class="caret"></span></button>
+    <ul class="dropdown-menu">
+      <li><a href="#">Verdana</a></li>
+      <li><a href="#">Times New Roman</a></li>
+      <li><a href="#">Monotype Corsiva</a></li>
+    </ul>
+	
+	
+	<button class="btn btn-default" title="Insert new div element">New Div
+	</button>
+	<button class="btn btn-default" title="Delete div element">Delete Div
+	</button>
+	
+</div>
+
+
+<div class="btn btn-group">
+<button class="btn btn-default" data-toggle="dropdown" title="Insert shapes" onclick="myFunction(this)" value="2">Shapes
+    <span class="caret"></span></button>
+    <ul class="dropdown-menu">
+ <li> <center><div class="btn btn-group">
+<button type="button" class="btn btn-default" title="Line">&#9585;</button>
+<button type="button" class="btn btn-default" style="font-size:20px" title="Rectangle">&#9645;</button>
+<button type="button" class="btn btn-default" style="font-size:20px" title="Square">&#9633;</button>
+<button type="button" class="btn btn-default" style="font-size:20px" title="Triangle">&#9651;</button>
+</div>
+</center>
+</li>
+<li> <center><div class="btn btn-group" style="margin-top:-12px">
+<button type="button" class="btn btn-default" style="font-size:20px" title="Right angle triangle">&#8895;</button>
+<button type="button" class="btn btn-default" style="font-size:20px" title="Circle">&#9711;</button>
+<button type="button"class="btn btn-default" style="font-size:25px" title="Trapezium">&#9671;</button>
+<button type="button"class="btn btn-default" style="font-size:25px" title="Arc">&#9692;</button>
+</div>
+</center>
+</li>
+
+</ul>
+<button class="btn btn-default" title="Remove shape">
+<i class="fa fa-trash"></i>
+</button>
+</div>
+<button class="btn btn-default" title="Insert equation" data-toggle="modal" data-target="#myModal">&#937;
+</button>
+<div class="modal fade" id="myModal" data-target="#myModal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header orange">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span>
+        </button>
+	
+	Welcome to Equation Editor &nbsp;
+	<button class="btn btn-default" type="button" data-toggle="dropdown">&#8721;
+    <span class="caret"></span></button>
+    <ul class="dropdown-menu" style="overflow:scroll;height:150px;width:200px;top:40px">
+      
+   <li><center>
+	<div class="btn btn-group">
+	<button type="button" class="btn btn-default">&#8704;</button>
+	<button type="button" class="btn btn-default">&#8712;</button>
+	<button type="button" class="btn btn-default">&#8721;</button>
+	<button type="button" class="btn btn-default">&#8719;</button>
+	</div></center></li>
+	
+	<li><center>
+	<div class="btn btn-group" style="margin-top:-11px">
+	<button type="button" class="btn btn-default">&#8734;</button>
+	<button type="button" class="btn btn-default">+</button>
+	<button type="button" class="btn btn-default">-</button>
+	<button type="button" class="btn btn-default">*</button>
+	</div></center></li>
+	
+	<li><center>
+	<div class="btn btn-group" style="margin-top:-11px">
+	<button type="button" class="btn btn-default">/</button>
+	<button type="button" class="btn btn-default">&#8730;</button>
+	<button type="button" class="btn btn-default">&#8731;</button>
+	<button type="button" class="btn btn-default">&#8746;</button>
+	</div></center></li>
+	
+	<li><center>
+	<div class="btn btn-group" style="margin-top:-11px">
+	<button type="button" class="btn btn-default">&#8745;</button>
+	<button type="button" class="btn btn-default">&#8736;</button>
+	<button type="button" class="btn btn-default">&#8741;</button>
+	<button type="button" class="btn btn-default">&#8742;</button>
+	</div></center></li>
+	
+	<li><center>
+	<div class="btn btn-group" style="margin-top:-11px">
+	<button type="button" class="btn btn-default">&#8747;</button>
+	<button type="button" class="btn btn-default">&#8748;</button>
+	<button type="button" class="btn btn-default">&#8749;</button>
+	<button type="button" class="btn btn-default">&#8754;</button>
+	</div></center></li>
+	
+	<li><center>
+	<div class="btn btn-group" style="margin-top:-11px">
+	<button type="button" class="btn btn-default">&#8750;</button>
+	<button type="button" class="btn btn-default">&#8751;</button>
+	<button type="button" class="btn btn-default">&#8752;</button>
+	<button type="button" class="btn btn-default">&#8756;</button>
+	</div></center></li>
+	
+	<li><center>
+	<div class="btn btn-group" style="margin-top:-11px">
+	<button type="button" class="btn btn-default">&#8757;</button>
+	<button type="button" class="btn btn-default">&#8840;</button>
+	<button type="button" class="btn btn-default">&#8838;</button>
+	<button type="button" class="btn btn-default">&#8711;</button>
+	</div>
+	</center></li>
+	
+	<li><center>
+	<div class="btn btn-group" style="margin-top:-11px">
+	<button type="button" class="btn btn-default">&#8710;</button>
+	<button type="button" class="btn btn-default">&#8713;</button>
+	<button type="button" class="btn btn-default">&#8904;</button>
+	<button type="button" class="btn btn-default">&#8658;</button>
+	</div></center></li>
+	
+	<li><center>
+	<div class="btn btn-group" style="margin-top:-11px">
+	<button type="button" class="btn btn-default">&#8764;</button>
+	<button type="button" class="btn btn-default">&#8771;</button>
+	<button type="button" class="btn btn-default">&#8773;</button>
+	<button type="button" class="btn btn-default">&#8775;</button>
+	</div>
+	</center></li>
+	
+	<li><center>
+	<div class="btn btn-group" style="margin-top:-11px">
+	<button type="button" class="btn btn-default">&#8785;</button>
+	<button type="button" class="btn btn-default">&#8791;</button>
+	<button type="button" class="btn btn-default">&#8804;</button>
+	<button type="button" class="btn btn-default">&#8805;</button>
+	</div>
+	</center></li>
+	
+	<li><center>
+	<div class="btn btn-group" style="margin-top:-11px">
+	<button type="button" class="btn btn-default">&#8816;</button>
+	<button type="button" class="btn btn-default">&#8817;</button>
+	<button type="button" class="btn btn-default">&#8946;</button>
+	<button type="button" class="btn btn-default">&#8947;</button>
+	</div>
+	</center></li>
+	
+	<li><center>
+	<div class="btn btn-group" style="margin-top:-11px">
+	<button type="button" class="btn btn-default">&#8950;</button>
+	<button type="button" class="btn btn-default">&#8853;</button>
+	<button type="button" class="btn btn-default">&#8857;</button>
+	<button type="button" class="btn btn-default">&#8805;</button>
+	</div>
+	</center></li>
+	
+	<li><center>
+	<div class="btn btn-group" style="margin-top:-11px">
+	<button type="button" class="btn btn-default">&#8862;</button>
+	<button type="button" class="btn btn-default">&#8865;</button>
+	<button type="button" class="btn btn-default">&#8870;</button>
+	<button type="button" class="btn btn-default">&#8871;</button>
+	</div>
+	</center></li>
+	</ul>
+
+		</div>
+       <div class="modal-body">
+          	<center><textarea style="width:500px;height:150px;overflow:scroll" placeholder="Click add to add new equation"></textarea></center>
+        </div>
+		
+		<b style="margin-left:40px">Preview is shown here</b>
+		<div style="padding:30px 20px 30px">
+		</div>
+		<center><button class="btn btn-default" id="btnright"style="margin-bottom:20px">Click here to avail options</button></center>
+		<div id="slidediv" style="display:none">
+		<center>
+		
+		<select>
+		<option></option>
+		<option></option>
+		<option></option>
+		<option></option>
+		<option></option>
+		</select>
+		
+		<button class="btn btn-default">Animate</button>
+		<input type="color" style="width:12%;margin-left:20px">
+		<button class="btn btn-default">Color</button>
+		
+		</center>
+		<center>
+		Equation classnames:
+		<select>
+		<option></option>
+		<option></option>
+		<option></option>
+		<option></option>
+		<option></option>
+		</select>
+		<div class="btn btn-group">
+		<button class="btn btn-default">New Eqn</button>
+		<button class="btn btn-default">Delete Eqn</button>
+		</div>
+		</center>
+		<center>
+		Child classnames:
+		<select>
+		<option></option>
+		<option></option>
+		<option></option>
+		<option></option>
+		<option></option>
+		</select>
+		<div class="btn btn-group">
+		<button class="btn btn-default">New Child</button>
+		<button class="btn btn-default">Delete Child</button>
+		</div>
+		</center>
+		</div>
+		<div class="modal-footer">
+		<button class="btn btn-primary">OK</button>
+         <button class="btn btn-default" data-dismiss="modal">Close</button>
+        </div>
+		
+		
+
+    
+    </div>
+  </div>
+</div>
+
+</div>
+<canvas id="canv" width="1136px" height="1000px" style="border-style:groove">
+</canvas>
+<div id="div2">
+</div>
+</div>
+</div>
+</div>
+
+<script type="text/javascript">
+$(function() {
+$("#btnright").click(function() {
+$('#slidediv').toggle('slide', { direction: 'right' }, 700);
+});
+$("#btnleft").click(function() {
+$('#slidediv').toggle('slide', { direction: 'left' }, 700);
+});
+});
+</script>
+</body>
+</html>
