@@ -15,6 +15,7 @@
 <script type="text/javascript" src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
 <link rel="stylesheet" href="./animate.css">
 <script src="../MathJax-master/MathJax.js?config=TeX-MML-AM_HTMLorMML"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/1.7.11/fabric.js"></script>
 <style>
 #menubar{
 border-radius:3px 3px 0 0;
@@ -35,6 +36,22 @@ border-style:groove;
 
 }*/
 
+.hide {
+    display: none;
+}
+
+.show {
+    z-index:1000;
+    position: absolute;
+    background-color:#C0C0C0;
+    border: 1px solid blue;
+    padding: 2px;
+    display: block;
+    margin: 0;
+    list-style-type: none;
+    list-style: none;
+}
+
 #canvas-wrap { 
 	position:relative;
 	border:5px solid #000000;
@@ -48,7 +65,15 @@ border-style:groove;
 	/*border-style:groove;*/
 	z-index: -2;
 }
-
+.upper-canvas .lower-canvas{
+  /*z-index:-2;*/
+}
+.demo{
+  z-index:3;
+  position:absolute; 
+  top:20px; 
+  left:30px; 
+}
 </style>
 <script>
 /*function myFunction(obj) {
@@ -246,7 +271,7 @@ Preview.callback.autoReset = true;  // make sure it can run more than once
 </div>
 
 <div class="btn btn-group">
-    <button class="btn btn-default btn1" data-toggle="dropdown" title="Change Font" onclick="myFunction(this)" value="1">Font
+    <button class="btn btn-default btn1" data-toggle="dropdown" title="Change Font" onclick="" value="1">Font
     <span class="caret"></span></button>
     <ul class="dropdown-menu">
       <li><a href="#">Verdana</a></li>
@@ -264,28 +289,35 @@ Preview.callback.autoReset = true;  // make sure it can run more than once
 
 
 <div class="btn btn-group">
-<button class="btn btn-default" data-toggle="dropdown" title="Insert shapes" onclick="myFunction(this)" value="2">Shapes
+<button class="btn btn-default" data-toggle="dropdown" title="Insert shapes" onclick="" value="2">Shapes
     <span class="caret"></span></button>
     <ul class="dropdown-menu">
  <li> <center><div class="btn btn-group">
-<button type="button" class="btn btn-default" title="Line">&#9585;</button>
-<button type="button" class="btn btn-default" style="font-size:20px" title="Rectangle">&#9645;</button>
+<button type="button" class="btn btn-default" onclick="shape='line'" title="Line">&#9585;</button>
+<button type="button" class="btn btn-default" style="font-size:20px" onclick="shape='rectangle'" title="Rectangle">&#9645;</button>
 <button type="button" class="btn btn-default" style="font-size:20px" title="Square">&#9633;</button>
-<button type="button" class="btn btn-default" style="font-size:20px" title="Triangle">&#9651;</button>
+<button type="button" class="btn btn-default" style="font-size:20px" onclick="shape='triangle'" title="Triangle">&#9651;</button>
 </div>
 </center>
 </li>
 <li> <center><div class="btn btn-group" style="margin-top:-12px">
 <button type="button" class="btn btn-default" style="font-size:20px" title="Right angle triangle">&#8895;</button>
-<button type="button" class="btn btn-default" style="font-size:20px" title="Circle">&#9711;</button>
+<button type="button" class="btn btn-default" style="font-size:20px" onclick="shape='circle'" title="Circle">&#9711;</button>
 <button type="button" class="btn btn-default" style="font-size:25px" title="Trapezium">&#9671;</button>
 <button type="button" class="btn btn-default" style="font-size:25px" title="Arc">&#9692;</button>
 </div>
 </center>
 </li>
 
+<li> <center><div class="btn btn-group" style="margin-top:-12px">
+<input type="color" id="bottle" style="font-size:15pt">
+<button onclick="Fill()">Fill</button>
+</div>
+</center>
+</li>
+
 </ul>
-<button class="btn btn-default" title="Remove shape">
+<button class="btn btn-default" onclick="deleteObjects()" title="Remove shape">
 <i class="fa fa-trash"></i>
 </button>
 </div>
@@ -301,139 +333,139 @@ Preview.callback.autoReset = true;  // make sure it can run more than once
         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span>
         </button>
 	
-	Welcome to Equation Editor &nbsp;
-	<button class="btn btn-default" type="button" data-toggle="dropdown">&#8721;
+  Welcome to Equation Editor &nbsp;
+  <button class="btn btn-default" type="button" data-toggle="dropdown">&#8721;
     <span class="caret"></span></button>
     <ul class="dropdown-menu" style="overflow:scroll;height:150px;width:200px;top:40px">
       
    <li><center>
-	<div class="btn btn-group">
-	<button type="button" class="btn btn-default symbol">&#8704;</button><!--for all-->
-	<button type="button" class="btn btn-default symbol">&#8712;</button><!--for each-->
-	<button type="button" class="btn btn-default supsub" >&#8721;</button><!--Sum-->
-	<button type="button" class="btn btn-default supsub">&#8719;</button><!--Prod-->
-	</div></center></li>
-	
-	<li><center>
-	<div class="btn btn-group" style="margin-top:-11px">
-	<button type="button" class="btn btn-default symbol">&#8734;</button><!--Infin-->
-	<button type="button" class="btn btn-default operate">+</button><!--Plus-->
-	<button type="button" class="btn btn-default operate">-</button><!--minus-->
-	<button type="button" class="btn btn-default operate">*</button><!--star-->
-	</div></center></li>
-	
-	<li><center>
-	<div class="btn btn-group" style="margin-top:-11px">
-	<button type="button" class="btn btn-default" id="fraction">a/b</button><!--frac-->
-	<button type="button" class="btn btn-default sqroot">&#8730;</button><!--Square Root-->
-	<button type="button" class="btn btn-default curoot">&#8731;</button><!--Cube root-->
-	<button type="button" class="btn btn-default supsub">&#8746;</button><!--Union-->
-	</div></center></li>
-	
-	<li><center>
-	<div class="btn btn-group" style="margin-top:-11px">
-	<button type="button" class="btn btn-default supsub">&#8745;</button><!--Intersection-->
-	<button type="button" class="btn btn-default">&#8736;</button><!--angle-->
-	<button type="button" class="btn btn-default">&#8741;</button><!-- || -->
-	<button type="button" class="btn btn-default">&#8742;</button><!-- !|| -->
-	</div></center></li>
-	
-	<li><center>
-	<div class="btn btn-group" style="margin-top:-11px">
-	<button type="button" class="btn btn-default supsub">&#8747;</button><!--Integral-->
-	<button type="button" class="btn btn-default supsub">&#8748;</button><!--Double Integral-->
-	<button type="button" class="btn btn-default supsub">&#8749;</button><!--Triple Integral-->
-	<button type="button" class="btn btn-default operate">&#100;</button><!--derivative	-->
-	</div></center></li>
-	
-	<li><center>
-	<div class="btn btn-group" style="margin-top:-11px">
-	<button type="button" class="btn btn-default supsub">&#8750;</button><!--Countour Integral-->
-	<button type="button" class="btn btn-default supsub">&#8751;</button><!--d contour Integral-->
-	<button type="button" class="btn btn-default supsub">&#8752;</button><!--t contour Integral-->
-	<button type="button" class="btn btn-default symbol">&#8756;</button><!--therefore -->
-	</div></center></li>
-	
-	<li><center>
-	<div class="btn btn-group" style="margin-top:-11px">
-	<button type="button" class="btn btn-default symbol">&#8757;</button><!--Since -->
-	<button type="button" class="btn btn-default symbol">&#8840;</button><!--Not Subset-->
-	<button type="button" class="btn btn-default symbol">&#8838;</button><!--Subset-->
-	<button type="button" class="btn btn-default operate">&#8711;</button><!-- Del Operator-->
-	</div>
-	</center></li>
-	
-	<li><center>
-	<div class="btn btn-group" style="margin-top:-11px">
-	<button type="button" class="btn btn-default operate">&#8710;</button><!--Delta Operator-->
-	<button type="button" class="btn btn-default symbol">&#8713;</button>
-	<button type="button" class="btn btn-default symbol">&#8904;</button>
-	<button type="button" class="btn btn-default symbol">&#8658;</button><!--Implies-->
-	</div></center></li>
-	
-	<li><center>
-	<div class="btn btn-group" style="margin-top:-11px">
-	<button type="button" class="btn btn-default symbol">&#8764;</button>
-	<button type="button" class="btn btn-default symbol">&#8771;</button>
-	<button type="button" class="btn btn-default symbol">&#8773;</button>
-	<button type="button" class="btn btn-default symbol">&#8775;</button>
-	</div>
-	</center></li>
-	
-	<li><center>
-	<div class="btn btn-group" style="margin-top:-11px">
-	<button type="button" class="btn btn-default symbol">&#8785;</button>
-	<button type="button" class="btn btn-default symbol">&#8791;</button>
-	<button type="button" class="btn btn-default symbol">&#8804;</button>
-	<button type="button" class="btn btn-default symbol">&#8805;</button>
-	</div>
-	</center></li>
-	
-	<li><center>
-	<div class="btn btn-group" style="margin-top:-11px">
-	<button type="button" class="btn btn-default symbol">&#8816;</button>
-	<button type="button" class="btn btn-default symbol">&#8817;</button>
-	<button type="button" class="btn btn-default symbol">&#8946;</button>
-	<button type="button" class="btn btn-default symbol">&#8947;</button>
-	</div>
-	</center></li>
-	
-	<li><center>
-	<div class="btn btn-group" style="margin-top:-11px">
-	<button type="button" class="btn btn-default symbol">&#8950;</button>
-	<button type="button" class="btn btn-default operate">&#8853;</button>
-	<button type="button" class="btn btn-default operate">&#8857;</button>
-	<button type="button" class="btn btn-default symbol">&#8805;</button>
-	</div>
-	</center></li>
-	
-	<li><center>
-	<div class="btn btn-group" style="margin-top:-11px">
-	<button type="button" class="btn btn-default symbol">&#8862;</button>
-	<button type="button" class="btn btn-default symbol">&#8865;</button>
-	<button type="button" class="btn btn-default symbol">&#8870;</button>
-	<button type="button" class="btn btn-default complex">d/dx</button><!--d/dx-->
-	</div>
-	</center></li>
+  <div class="btn btn-group">
+  <button type="button" class="btn btn-default symbol">&#8704;</button><!--for all-->
+  <button type="button" class="btn btn-default symbol">&#8712;</button><!--for each-->
+  <button type="button" class="btn btn-default supsub" >&#8721;</button><!--Sum-->
+  <button type="button" class="btn btn-default supsub">&#8719;</button><!--Prod-->
+  </div></center></li>
+  
+  <li><center>
+  <div class="btn btn-group" style="margin-top:-11px">
+  <button type="button" class="btn btn-default symbol">&#8734;</button><!--Infin-->
+  <button type="button" class="btn btn-default operate">+</button><!--Plus-->
+  <button type="button" class="btn btn-default operate">-</button><!--minus-->
+  <button type="button" class="btn btn-default operate">*</button><!--star-->
+  </div></center></li>
+  
+  <li><center>
+  <div class="btn btn-group" style="margin-top:-11px">
+  <button type="button" class="btn btn-default" id="fraction">a/b</button><!--frac-->
+  <button type="button" class="btn btn-default sqroot">&#8730;</button><!--Square Root-->
+  <button type="button" class="btn btn-default curoot">&#8731;</button><!--Cube root-->
+  <button type="button" class="btn btn-default supsub">&#8746;</button><!--Union-->
+  </div></center></li>
+  
+  <li><center>
+  <div class="btn btn-group" style="margin-top:-11px">
+  <button type="button" class="btn btn-default supsub">&#8745;</button><!--Intersection-->
+  <button type="button" class="btn btn-default">&#8736;</button><!--angle-->
+  <button type="button" class="btn btn-default">&#8741;</button><!-- || -->
+  <button type="button" class="btn btn-default">&#8742;</button><!-- !|| -->
+  </div></center></li>
+  
+  <li><center>
+  <div class="btn btn-group" style="margin-top:-11px">
+  <button type="button" class="btn btn-default supsub">&#8747;</button><!--Integral-->
+  <button type="button" class="btn btn-default supsub">&#8748;</button><!--Double Integral-->
+  <button type="button" class="btn btn-default supsub">&#8749;</button><!--Triple Integral-->
+  <button type="button" class="btn btn-default operate">&#100;</button><!--derivative -->
+  </div></center></li>
+  
+  <li><center>
+  <div class="btn btn-group" style="margin-top:-11px">
+  <button type="button" class="btn btn-default supsub">&#8750;</button><!--Countour Integral-->
+  <button type="button" class="btn btn-default supsub">&#8751;</button><!--d contour Integral-->
+  <button type="button" class="btn btn-default supsub">&#8752;</button><!--t contour Integral-->
+  <button type="button" class="btn btn-default symbol">&#8756;</button><!--therefore -->
+  </div></center></li>
+  
+  <li><center>
+  <div class="btn btn-group" style="margin-top:-11px">
+  <button type="button" class="btn btn-default symbol">&#8757;</button><!--Since -->
+  <button type="button" class="btn btn-default symbol">&#8840;</button><!--Not Subset-->
+  <button type="button" class="btn btn-default symbol">&#8838;</button><!--Subset-->
+  <button type="button" class="btn btn-default operate">&#8711;</button><!-- Del Operator-->
+  </div>
+  </center></li>
+  
+  <li><center>
+  <div class="btn btn-group" style="margin-top:-11px">
+  <button type="button" class="btn btn-default operate">&#8710;</button><!--Delta Operator-->
+  <button type="button" class="btn btn-default symbol">&#8713;</button>
+  <button type="button" class="btn btn-default symbol">&#8904;</button>
+  <button type="button" class="btn btn-default symbol">&#8658;</button><!--Implies-->
+  </div></center></li>
+  
+  <li><center>
+  <div class="btn btn-group" style="margin-top:-11px">
+  <button type="button" class="btn btn-default symbol">&#8764;</button>
+  <button type="button" class="btn btn-default symbol">&#8771;</button>
+  <button type="button" class="btn btn-default symbol">&#8773;</button>
+  <button type="button" class="btn btn-default symbol">&#8775;</button>
+  </div>
+  </center></li>
+  
+  <li><center>
+  <div class="btn btn-group" style="margin-top:-11px">
+  <button type="button" class="btn btn-default symbol">&#8785;</button>
+  <button type="button" class="btn btn-default symbol">&#8791;</button>
+  <button type="button" class="btn btn-default symbol">&#8804;</button>
+  <button type="button" class="btn btn-default symbol">&#8805;</button>
+  </div>
+  </center></li>
+  
+  <li><center>
+  <div class="btn btn-group" style="margin-top:-11px">
+  <button type="button" class="btn btn-default symbol">&#8816;</button>
+  <button type="button" class="btn btn-default symbol">&#8817;</button>
+  <button type="button" class="btn btn-default symbol">&#8946;</button>
+  <button type="button" class="btn btn-default symbol">&#8947;</button>
+  </div>
+  </center></li>
+  
+  <li><center>
+  <div class="btn btn-group" style="margin-top:-11px">
+  <button type="button" class="btn btn-default symbol">&#8950;</button>
+  <button type="button" class="btn btn-default operate">&#8853;</button>
+  <button type="button" class="btn btn-default operate">&#8857;</button>
+  <button type="button" class="btn btn-default symbol">&#8805;</button>
+  </div>
+  </center></li>
+  
+  <li><center>
+  <div class="btn btn-group" style="margin-top:-11px">
+  <button type="button" class="btn btn-default symbol">&#8862;</button>
+  <button type="button" class="btn btn-default symbol">&#8865;</button>
+  <button type="button" class="btn btn-default symbol">&#8870;</button>
+  <button type="button" class="btn btn-default complex">d/dx</button><!--d/dx-->
+  </div>
+  </center></li>
 
-	<li><center>
-	<div class="btn btn-group" style="margin-top:-11px">
-	<button type="button" class="btn btn-default" id="power">a^b</button><!--power-->
-	<button type="button" class="btn btn-default operate">&#8723;</button><!--plus minus-->
-	<button type="button" class="btn btn-default nroot">n&#8730;</button><!--nth root-->
-	<button type="button" class="btn btn-default operate">&#8706;</button><!--part differential-->
-	</div>
-	</center></li>
+  <li><center>
+  <div class="btn btn-group" style="margin-top:-11px">
+  <button type="button" class="btn btn-default" id="power">a^b</button><!--power-->
+  <button type="button" class="btn btn-default operate">&#8723;</button><!--plus minus-->
+  <button type="button" class="btn btn-default nroot">n&#8730;</button><!--nth root-->
+  <button type="button" class="btn btn-default operate">&#8706;</button><!--part differential-->
+  </div>
+  </center></li>
 
-	<li><center><p>Vector</p>
-	<div class="btn btn-group" style="margin-top:-11px">
-	<button type="button" class="btn btn-default vector">&rharu;</button>
-	<button type="button" class="btn btn-default vector">&rarr;</button>
-	<button type="button" class="btn btn-default vector">&tilde;</button>
-	<button type="button" class="btn btn-default vector">^</button>
-	</div>
-	</center></li>
-	</ul>
+  <li><center><p>Vector</p>
+  <div class="btn btn-group" style="margin-top:-11px">
+  <button type="button" class="btn btn-default vector">&rharu;</button>
+  <button type="button" class="btn btn-default vector">&rarr;</button>
+  <button type="button" class="btn btn-default vector">&tilde;</button>
+  <button type="button" class="btn btn-default vector">^</button>
+  </div>
+  </center></li>
+  </ul>
 
 		</div>
        <div class="modal-body">
@@ -669,7 +701,7 @@ $("#newEqn").on("click",function(){
     math_main_class.push(neq);
     math_indx++;
     console.log("The outputId is : "+neq.outputId);
-    $("#canvas-wrap").append("<div id='"+neq.outputId+"' class='ui-widget-content' style='display:inline-block;border:1px solid black;'></div>");
+    $("#canvas-wrap").append("<div id='"+neq.outputId+"' class='demo draggable ui-widget-content' style='display:inline-block;border:1px solid black;'></div>");
     $("#"+neq.outputId).draggable();
     $("#EqnClass").html($("#EqnClass").html()+"<option value='"+c_order+"'>"+c_order+"</option>");
     $("#currClass").html("Current : <strong>"+c_order+"</strong>");
@@ -734,8 +766,6 @@ $("#btn-bold").on('change',function(){
     console.log(child);
 });
 
-
-//Functionality of OK button to put all the stuff on the division
 $("#preview").on('click',function(){
     try{
     var finalEq = math_main_class[math_indx];
@@ -757,7 +787,7 @@ $("#preview").on('click',function(){
     $(output).html($(target).html());
     console.log("DONE "+output+" "+target);
   }catch(e){
-    alert("Make Some Equations Bonny");
+    alert("Please Add Some Equations");
   }
 });
 
@@ -765,42 +795,42 @@ $("#preview").on('click',function(){
 //symbol class
 $(".symbol").on("click",function(){
   var txt = "<mi>"+$(this).text()+"</mi>";
-  insertAtCaret('MathInput',txt);	
+  insertAtCaret('MathInput',txt); 
 });
 //supsub class
 $(".supsub").on("click",function(){
-	var txt = "<munderover><mrow><mo>"+$(this).text()+"</mo></mrow>\n<mrow> </mrow>\n<mrow> </mrow>\n</munderover>\n";
-	insertAtCaret('MathInput',txt);
+  var txt = "<munderover><mrow><mo>"+$(this).text()+"</mo></mrow>\n<mrow> </mrow>\n<mrow> </mrow>\n</munderover>\n";
+  insertAtCaret('MathInput',txt);
 });
 //operator class
 $(".operate").on("click",function(){
   var txt = "<mo>"+$(this).text()+"</mo>";
-  insertAtCaret('MathInput',txt);	
+  insertAtCaret('MathInput',txt); 
 });
 //root Classes
 $(".sqroot").on("click",function(){
-	var txt = "<msqrt>\n<mrow></mrow></msqrt>";
-	insertAtCaret('MathInput',txt);
+  var txt = "<msqrt>\n<mrow></mrow></msqrt>";
+  insertAtCaret('MathInput',txt);
 });
 //curoot
 $(".curoot").on("click",function(){
-	var txt="<mroot>\n<mrow> </mrow>\n<mn>3</mn>\n</mroot>\n";
-	insertAtCaret('MathInput',txt);
-});	
+  var txt="<mroot>\n<mrow> </mrow>\n<mn>3</mn>\n</mroot>\n";
+  insertAtCaret('MathInput',txt);
+}); 
 //n-root class
 $(".nroot").on("click",function(){
-	var txt="<mroot>\n<mrow> </mrow>\n<mrow> </mrow>\n</mroot>\n";
-	insertAtCaret('MathInput',txt);
+  var txt="<mroot>\n<mrow> </mrow>\n<mrow> </mrow>\n</mroot>\n";
+  insertAtCaret('MathInput',txt);
 });
 //vector class
 $(".vector").on("click",function(){
-	var txt = "<mover><mrow></mrow><mo>"+$(this).text()+"</mo></mover>\n";
-	insertAtCaret('MathInput',txt);
+  var txt = "<mover><mrow></mrow><mo>"+$(this).text()+"</mo></mover>\n";
+  insertAtCaret('MathInput',txt);
 });
 //complex class
 $(".complex").on("click",function(){
-	var txt="<mfrac><mo>d</mo><mrow><mo>dx</mo></mrow></mfrac>";
-	insertAtCaret('MathInput',txt);
+  var txt="<mfrac><mo>d</mo><mrow><mo>dx</mo></mrow></mfrac>";
+  insertAtCaret('MathInput',txt);
 
 });
 //This is required to insert stuff at the pointer position
@@ -880,6 +910,258 @@ function insertAtCaret(areaId, text) {
     }
 
     txtarea.scrollTop = scrollPos;
+}
+</script>
+
+<div class="hide" id="rmenu">
+            <ul>
+                <li>
+                    <a onclick="Copy()">Copy</a>
+                </li>
+
+                <li>
+                    <a onclick="Paste()">Paste</a>
+                </li>
+            </ul>
+</div>
+
+<script>
+var ref=[];
+var array=[];
+var clipboard;
+var arrayIndex=0;
+var objectCounter=0;
+var canvas = new fabric.Canvas('canv', { selection: true,stopContextMenu:true });
+canvas.upperCanvasEl.addEventListener('contextmenu', function(e) {
+            document.getElementById("rmenu").className = "show"; 
+            document.getElementById("rmenu").style.top =(e.clientY+170) + 'px';
+            document.getElementById("rmenu").style.left =(e.clientX+25) + 'px';
+            console.log(document.getElementById("rmenu").style.top);
+            e.preventDefault();
+        }, false);
+var shape = null;
+var isDown = false;
+var element;
+var origX, origY, finX, finY, prev=null;
+canvas.on('mouse:down', function(o){
+  if(shape==null) return;
+    isDown = true;
+    var pointer = canvas.getPointer(o.e);
+    origX = pointer.x;
+    origY = pointer.y;
+});
+
+canvas.on('mouse:move', function(o){
+  if (!isDown) return;
+  var pointer = canvas.getPointer(o.e);
+
+  switch(shape) {
+    case 'circle':
+    var Circ=new fabric.Circle({
+        left: origX,
+        top: origY,
+        radius: Math.abs(origX - pointer.x)/2,
+        strokeWidth: 2,
+        fill: null,
+        stroke: 'black',
+        selectable: true,
+        backgroundColor: 'transparent',
+        originX: 'left', originY: 'top'
+    });
+    if(pointer.x<origX){
+      Circ.set({left: pointer.x});
+    }
+    else{
+      Circ.set({left: origX});
+    }
+    if(pointer.y>origY){
+      Circ.set({top: origY});
+    }
+    else{
+      Circ.set({top: pointer.y});
+    }
+    del(prev);
+    canvas.add(Circ);
+    prev=Circ;
+    break;
+
+    case 'rectangle':
+    var Recta=new fabric.Rect({
+        left: origX,
+        top: origY,
+        width: Math.abs(origX - pointer.x),
+        height: Math.abs(origY - pointer.y),
+        strokeWidth: 2,
+        fill: null,
+        stroke: 'black',
+        selectable: true,
+        backgroundColor: 'transparent',
+        originX: 'left', originY: 'top'
+    });
+    if(pointer.x<origX){
+      Recta.set({left: pointer.x});
+    }
+    else{
+      Recta.set({left: origX});
+    }
+    if(pointer.y>origY){
+      Recta.set({top: origY});
+    }
+    else{
+      Recta.set({top: pointer.y});
+    }
+    del(prev);
+    canvas.add(Recta);
+    prev=Recta;
+    break;
+
+    case 'triangle':
+    var Tri=new fabric.Triangle({
+        left: origX,
+        top: origY,
+        width: Math.abs(origX - pointer.x),
+        height: Math.abs(origY - pointer.y),
+        strokeWidth: 2,
+        fill: null,
+        stroke: 'black',
+        selectable: true,
+        backgroundColor: 'transparent',
+        originX: 'left', originY: 'top'
+    });
+    if(pointer.x<origX){
+      Tri.set({left: pointer.x});
+    }
+    else{
+      Tri.set({left: origX});
+    }
+    if(pointer.y>origY){
+      Tri.set({top: origY});
+    }
+    else{
+      Tri.set({top: pointer.y});
+    }
+    del(prev);
+    canvas.add(Tri);
+    prev=Tri;
+    break;
+
+    case 'line':
+    finX=pointer.x;
+    finY=pointer.y;
+    var line = new fabric.Line([origX, origY, finX, finY], {
+      id: objectCounter,
+      length: Math.sqrt((origX-finX)*(origX-finX)+(origY-finY)*(origY-finY)),
+        stroke: 'black',
+        selectable: true
+      });
+    del(prev);
+    canvas.add(line);
+    prev=line;
+    break;
+  }
+  canvas.renderAll();
+});
+
+canvas.on('mouse:up', function(o){
+  isDown = false;
+  shape=null;
+  prev=null;
+  selectable=true;
+});
+
+function Fill(){
+  var col=document.getElementById("bottle").value;
+  console.log(col);
+  if(canvas.getActiveObject()){
+    canvas.getActiveObject().set({fill:col});
+  }
+  else if (canvas.getActiveGroup()) {
+            var objectsInGroup = canvas.getActiveGroup().getObjects();
+            canvas.discardActiveGroup();
+            objectsInGroup.forEach(function(object) {
+            object.set({fill:col});
+            });
+  }
+  canvas.renderAll();
+}
+
+function Copy() {
+    if(canvas.getActiveObject()) {
+        if(!fabric.util.getKlass(canvas.getActiveObject().type).async) {
+            clipboard = canvas.getActiveObject().clone();
+        } else {
+            canvas.getActiveObject().clone(function(clone) {
+                clipboard= clone;
+            });
+        }
+    }
+
+    if(canvas.getActiveGroup()) {
+        canvas.getActiveGroup().clone(function(clone) {
+            clipboard = clone;
+        });
+    }
+}
+
+
+function Paste() {
+    if(clipboard) { 
+        if(!fabric.util.getKlass(clipboard.type).async) {
+            var obj = clipboard.clone();
+            obj.setTop(obj.top += 10);
+            obj.setLeft(obj.left += 10);            
+            canvas.add(obj);
+            canvas.setActiveObject(obj);
+            clipboard = obj;
+        }  else {
+            clipboard.clone(function(clone) {
+                clone.setTop(clone.top += 10);
+                clone.setLeft(clone.left += 10);
+                clone.forEachObject(function(obj){
+          canvas.add(obj);
+        });
+                
+          canvas.deactivateAll();
+
+                if(clipboard.isType("group")) {
+                    canvas.setActiveGroup(clone);
+                } else {
+                    canvas.setActiveObject(clone);
+                }
+                clipboard = clone;
+            });
+        }
+    }
+    document.getElementById("rmenu").className = "hide";
+    clipboard=null;
+    canvas.renderAll();
+}
+
+function deleteObjects(){
+  var activeObject = canvas.getActiveObject(),
+    activeGroup = canvas.getActiveGroup();
+    if (activeObject) {
+        if (confirm('Are you sure?')) {
+          activeObject.visible=false;
+        }
+    }
+    else if (activeGroup) {
+        if (confirm('Are you sure?')) {
+            var objectsInGroup = activeGroup.getObjects();
+            canvas.discardActiveGroup();
+            objectsInGroup.forEach(function(object) {
+            object.visible=false;
+            });
+        }
+    }
+    canvas.renderAll();
+}
+
+function del(ob){
+  var activeObject = ob;
+    if (activeObject) {
+        canvas.remove(activeObject);
+    }
 }
 </script>
 </body>
