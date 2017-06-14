@@ -1,0 +1,1703 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Maths</title>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script type="text/javascript" src="http://code.jquery.com/jquery-1.7.1.js"></script>
+<script type="text/javascript" src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
+<link rel="stylesheet" href="./animate.css">
+<script src="../MathJax-master/MathJax.js?config=TeX-MML-AM_HTMLorMML"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/1.7.11/fabric.js"></script>
+<style>
+#menubar{
+border-radius:3px 3px 0 0;
+min-height:25px;
+padding:5px 0;
+margin-top:-20px;
+}
+button[type="button"]{
+width:30px;
+height:30px;
+padding:0px 3px 0px 3px;
+}
+/*#div2{
+position:absolute;
+width:1141px;
+height:1004px;
+border-style:groove;
+
+}*/
+
+.hide {
+    display: none;
+}
+
+.show {
+    z-index:1000;
+    position: absolute;
+    background-color:#C0C0C0;
+    border: 1px solid blue;
+    padding: 2px;
+    display: block;
+    margin: 0;
+    list-style-type: none;
+    list-style: none;
+}
+
+#canvas-wrap { 
+	position:relative;
+	border:5px solid #000000;
+	overflow-x: scroll;
+	width: 1140px;
+	height: 1000px;
+	padding:0px;
+} /* Make this a positioned parent */
+#canv{
+	position:absolute;
+	/*border-style:groove;*/
+	z-index: -2;
+}
+.upper-canvas .lower-canvas{
+  /*z-index:-2;*/
+}
+.demo{
+  z-index:3;
+  position:absolute; 
+  top:20px; 
+  left:30px; 
+}
+</style>
+<script>
+/*function myFunction(obj) {
+
+    if(obj.value==1)
+    {
+        document.getElementById("div2").style.zIndex = "1";
+        document.getElementById("canv").style.zIndex = "-1";
+    }
+    else if(obj.value==2)
+    {
+        document.getElementById("canv").style.zIndex = "1";
+        document.getElementById("div2").style.zIndex = "-1";
+    }
+}*/
+</script>
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    showProcessingMessages: false,
+    tex2jax: { inlineMath: [['$','$'],['\\(','\\)']] }
+  });
+</script>
+<script>
+var Preview = {
+  delay: 150,        // delay after keystroke before updating
+
+  preview: null,     // filled in by Init below
+  buffer: null,      // filled in by Init below
+
+  timeout: null,     // store setTimout id
+  mjRunning: false,  // true when MathJax is processing
+  mjPending: false,  // true when a typeset has been queued
+  oldText: null,     // used to check if an update is needed
+
+  //
+  //  Get the preview and buffer DIV's
+  //
+  Init: function () {
+    this.preview = document.getElementById("MathPreview");
+    this.buffer = document.getElementById("MathBuffer");
+  },
+
+  //
+  //  Switch the buffer and preview, and display the right one.
+  //  (We use visibility:hidden rather than display:none since
+  //  the results of running MathJax are more accurate that way.)
+  //
+  SwapBuffers: function () {
+    var buffer = this.preview, preview = this.buffer;
+    this.buffer = buffer; this.preview = preview;
+    buffer.style.visibility = "hidden"; buffer.style.position = "absolute";
+    preview.style.position = ""; preview.style.visibility = "";
+  },
+
+  //
+  //  This gets called when a key is pressed in the textarea.
+  //  We check if there is already a pending update and clear it if so.
+  //  Then set up an update to occur after a small delay (so if more keys
+  //    are pressed, the update won't occur until after there has been 
+  //    a pause in the typing).
+  //  The callback function is set up below, after the Preview object is set up.
+  //
+  Update: function () {
+    if (this.timeout) {clearTimeout(this.timeout)}
+    this.timeout = setTimeout(this.callback,this.delay);
+  },
+
+  //
+  //  Creates the preview and runs MathJax on it.
+  //  If MathJax is already trying to render the code, return
+  //  If the text hasn't changed, return
+  //  Otherwise, indicate that MathJax is running, and start the
+  //    typesetting.  After it is done, call PreviewDone.
+  //  
+  CreatePreview: function () {
+    Preview.timeout = null;
+    if (this.mjPending) return;
+    var text = document.getElementById("MathInput").value;
+    if (text === this.oldtext) return;
+    if (this.mjRunning) {
+      this.mjPending = true;
+      MathJax.Hub.Queue(["CreatePreview",this]);
+    } else {
+      this.buffer.innerHTML = this.oldtext = text;
+      this.mjRunning = true;
+      MathJax.Hub.Queue(
+  ["Typeset",MathJax.Hub,this.buffer],
+  ["PreviewDone",this]
+      );
+    }
+  },
+
+  //
+  //  Indicate that MathJax is no longer running,
+  //  and swap the buffers to show the results.
+  //
+  PreviewDone: function () {
+    this.mjRunning = this.mjPending = false;
+    this.SwapBuffers();
+  }
+
+};
+
+//
+//  Cache a callback to the CreatePreview action
+//
+Preview.callback = MathJax.Callback(["CreatePreview",Preview]);
+Preview.callback.autoReset = true;  // make sure it can run more than once
+
+</script>
+</head>
+<body>
+ <nav class="navbar navbar-inverse">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>                        
+      </button>
+      <a class="navbar-brand" href="#">ekshiksha</a>
+    </div>
+    <div class="collapse navbar-collapse" id="myNavbar">
+      <ul class="nav navbar-nav">
+        <li><a href="#">Home</a></li>
+        <li><a href="#">Help</a></li>
+        <li><a href="#">About us</a></li>
+        <li><a href="#">Contact</a></li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li><a href="#"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
+        <li><a href="#"><span class="glyphicon glyphicon-sign-in"></span> Join us</a></li>
+      </ul>
+    </div>
+  </div>
+</nav>
+<div class="row">
+<div class="col-sm-1">
+
+
+</div>
+<div class="col-sm-11">
+<div class="row-fluid container">
+<div id="menubar" class="row-fluid"style="background-color:#33B8FF">
+
+<div class="btn btn-group">
+<button class="btn btn-default" title="Save">
+<i class="fa fa-save"></i>
+</button>
+<button class="btn btn-default" title="Undo">
+<i class="fa fa-undo"></i>
+</button>
+<button class="btn btn-default" title="Redo">
+<i class="fa fa-repeat"></i>
+</button>
+<button class="btn btn-default" data-toggle="dropdown">
+    <span class="caret"></span></button>
+    <ul class="dropdown-menu">
+      <li><a href="#">New</a></li>
+      <li><a href="#">Open</a></li>
+      <li><a href="#">Save</a></li>
+      <li><a href="#">Preview</a></li>
+    </ul>
+	
+</div>
+
+
+<div class="btn-group">
+<button class="btn btn-default" title="Bold" onclick="Bold();">
+<i class="fa fa-bold"></i>
+</button>
+<button class="btn btn-default" title="Italics" onclick="Italics();">
+<i class="fa fa-italic"></i>
+</button>
+<button class="btn btn-default" title="Underline">
+<i class="fa fa-underline"></i>
+</button>
+<button class="btn btn-default" title="Color" onclick="FontColor();">
+<i class="fa fa-font"></i>
+</button>
+ <strong title="select porion to hightlight"></strong><input type="color" id="favcolor" value="#ff0000" style="width:20%">&nbsp;
+</div>
+						
+<select style="width:120px;height:35px;margin-right:-12px;border-radius:3px" onchange="FontFace(this.value);">
+	<option selected hidden >Font Face</option>
+	<option> Times New Roman</option>
+	<option>Verdana</option>
+	<option>Monotype Corsiva</option>
+	</select>
+<select style="width:120px;height:35px;margin-right:-12px;border-radius:3px" onchange="FontSize(this.value);">
+	<option selected hidden >Font Size</option>
+	<option> 10</option>
+	<option>15</option>
+	<option>20</option>
+	<option>25</option>
+	<option>30</option>
+	<option>35</option>
+	<option>40</option>
+	</select>
+<div class="btn btn-group">
+    
+	
+	<button class="btn btn-default" data-toggle="modal" data-target="#myModal2" title="Add animation">Animation</button>
+	<div class="modal fade" id="myModal2" role="dialog">
+    <div class="modal-dialog">
+    
+      <!-- Modal content-->
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h4 class="modal-title">Please give your specifications</h4>
+        </div>
+        <div class="modal-body">
+         
+		 <ul class="nav nav-tabs">
+    <li class="active"><a data-toggle="tab" href="#menu1">Text</a></li>
+    <li><a data-toggle="tab" href="#menu2">Graphics</a></li>
+  </ul>
+
+  <div class="tab-content">
+   
+    <div id="menu1" class="tab-pane fade in active">
+      <center style="padding:20px 0px 20px 0px">
+		In
+		<select onchange="in_anim(this.value);">
+		<option value="flash">flash</option><option value="bounce">bounce</option><option value="shake">shake</option><option value="tada">tada</option><option value="swing">swing</option><option value="wobble">wobble</option><option value="pulse">pulse</option><option value="flip">flip</option><option value="flipInX">flipInX</option><option value="flipInY">flipInY</option><option value="fadeIn">fadeIn</option><option value="fadeInUp">fadeInUp</option><option value="fadeInDown">fadeInDown</option><option value="fadeInLeft">fadeInLeft</option><option value="fadeInRight">fadeInRight</option><option value="fadeInUpBig">fadeInUpBig</option><option value="fadeInDownBig">fadeInDownBig</option><option value="fadeInLeftBig">fadeInLeftBig</option><option value="fadeInRightBig">fadeInRightBig</option><option value="bounceIn">bounceIn</option><option value="bounceInDown">bounceInDown</option><option value="bounceInUp">bounceInUp</option><option value="bounceInLeft">bounceInLeft</option><option value="bounceInRight">bounceInRight</option><option value="rotateIn">rotateIn</option><option value="rotateInDownLeft">rotateInDownLeft</option><option value="rotateInDownRight">rotateInDownRight</option><option value="rotateInUpLeft">rotateInUpLeft</option><option value="rotateInUpRight">rotateInUpRight</option><option value="rollIn">rollIn</option>
+		</select>&nbsp;&nbsp;
+		Delay
+		<input type="text" style="width:60px" id="in_delay" onchange="in_delay_change();">&nbsp;&nbsp;
+		Duration
+		<input type="text" style="width:60px" id="in_duration" onchange="in_duration_change();">&nbsp;&nbsp;
+		Animation order
+		<input type="text" style="width:60px" id="in_a_order" onchange="in_anim_order()">&nbsp;
+		<br><br>
+		Out
+		<select onchange="out_anim(this.value);">
+		<option value="flash">flash</option><option value="bounce">bounce</option><option value="shake">shake</option><option value="tada">tada</option><option value="swing">swing</option><option value="wobble">wobble</option><option value="pulse">pulse</option><option value="flip">flip</option><option value="flipOutX">flipOutX</option><option value="flipOutY">flipOutY</option><option value="fadeOut">fadeOut</option><option value="fadeOutUp">fadeOutUp</option><option value="fadeOutDown">fadeOutDown</option><option value="fadeOutLeft">fadeOutLeft</option><option value="fadeOutRight">fadeOutRight</option><option value="fadeOutUpBig">fadeOutUpBig</option><option value="fadeOutDownBig">fadeOutDownBig</option><option value="fadeOutLeftBig">fadeOutLeftBig</option><option value="fadeOutRightBig">fadeOutRightBig</option><option value="bounceOut">bounceOut</option><option value="bounceOutDown">bounceOutDown</option><option value="bounceOutUp">bounceOutUp</option><option value="bounceOutLeft">bounceOutLeft</option><option value="bounceOutRight">bounceOutRight</option><option value="rotateOut">rotateOut</option><option value="rotateOutDownLeft">rotateOutDownLeft</option><option value="rotateOutDownRight">rotateOutDownRight</option><option value="rotateOutUpLeft">rotateOutUpLeft</option><option value="rotateOutUpRight">rotateOutUpRight</option><option value="hinge">hinge</option><option value="rollOut">rollOut</option>
+		</select>&nbsp;&nbsp;
+		Delay
+		<input type="text" style="width:60px" id="out_delay" onchange="out_delay_change();">&nbsp;
+		Duration
+		<input type="text" style="width:60px" id="out_duration" onchange="out_duration_change();">&nbsp;
+		Animation order
+		<input type="text" style="width:60px" id="out_a_order" onchange="out_anim_order()">&nbsp;
+		</center>
+     
+    </div>
+    <div id="menu2" class="tab-pane fade">
+     
+      <center style="padding:20px 0px 20px 0px">
+		Animation effect
+		<select>
+		<option></option>
+		<option></option>
+		<option></option>
+		<option></option>
+		</select>
+		Easing
+		<select>
+		<option></option>
+		<option></option>
+		<option></option>
+		<option></option>
+		</select><br><br>
+		Delay
+		<input type="text" style="width:60px">&nbsp;&nbsp;
+		Duration
+		<input type="text" style="width:60px">&nbsp;&nbsp;
+		Animation order
+		<input type="text" style="width:60px">&nbsp;
+		<br><br>
+		</center>
+    </div>
+   
+  </div>
+		 
+		
+		
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-default" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+      
+    </div>
+  </div>
+  
+	<button class="btn btn-default" title="Insert new div element" onclick="NewDiv();">New Div
+	</button>
+	<button class="btn btn-default" title="Delete div element" onclick="DeleteDiv();">Delete Div
+	</button>
+	
+</div>
+
+
+<div class="btn btn-group">
+<button class="btn btn-default" data-toggle="dropdown" title="Insert shapes" onclick="" value="2" style="margin-left:-10px">Shapes
+    <span class="caret"></span></button>
+    <ul class="dropdown-menu">
+ <li> <center><div class="btn btn-group">
+<button type="button" class="btn btn-default" onclick="shape='line'" title="Line">&#9585;</button>
+<button type="button" class="btn btn-default" style="font-size:20px" onclick="shape='rectangle'" title="Rectangle">&#9645;</button>
+<button type="button" class="btn btn-default" style="font-size:20px" title="Square">&#9633;</button>
+<button type="button" class="btn btn-default" style="font-size:20px" onclick="shape='triangle'" title="Triangle">&#9651;</button>
+</div>
+</center>
+</li>
+<li> <center><div class="btn btn-group" style="margin-top:-12px">
+<button type="button" class="btn btn-default" style="font-size:20px" title="Right angle triangle">&#8895;</button>
+<button type="button" class="btn btn-default" style="font-size:20px" onclick="shape='circle'" title="Circle">&#9711;</button>
+<button type="button" class="btn btn-default" style="font-size:25px" title="Trapezium">&#9671;</button>
+<button type="button" class="btn btn-default" style="font-size:25px" title="Arc">&#9692;</button>
+</div>
+</center>
+</li>
+
+<li> <center><div class="btn btn-group" style="margin-top:-12px">
+<input type="color" id="bottle" style="font-size:15pt">
+<button onclick="Fill()">Fill</button>
+</div>
+</center>
+</li>
+
+</ul>
+<button class="btn btn-default" onclick="deleteObjects()" title="Remove shape">
+<i class="fa fa-trash"></i>
+</button>
+</div>
+<button class="btn btn-default" title="Insert equation" data-toggle="modal" data-target="#myModal">&#937;
+</button>&nbsp;
+<button class="btn btn-default">Add Hint</button>
+<button class="btn btn-default">Show Hints</button>
+<button class="btn btn-default" onclick="f1();">Show Text Animation</button>
+<div class="modal fade" id="myModal" data-target="#myModal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header orange">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span>
+        </button>
+	
+  Welcome to Equation Editor &nbsp;
+  <button class="btn btn-default" type="button" data-toggle="dropdown">&#8721;
+    <span class="caret"></span></button>
+    <ul class="dropdown-menu" style="overflow:scroll;height:150px;width:200px;top:40px">
+      
+   <li><center>
+  <div class="btn btn-group">
+  <button type="button" class="btn btn-default symbol">&#8704;</button><!--for all-->
+  <button type="button" class="btn btn-default symbol">&#8712;</button><!--for each-->
+  <button type="button" class="btn btn-default supsub" >&#8721;</button><!--Sum-->
+  <button type="button" class="btn btn-default supsub">&#8719;</button><!--Prod-->
+  </div></center></li>
+  
+  <li><center>
+  <div class="btn btn-group" style="margin-top:-11px">
+  <button type="button" class="btn btn-default symbol">&#8734;</button><!--Infin-->
+  <button type="button" class="btn btn-default operate">+</button><!--Plus-->
+  <button type="button" class="btn btn-default operate">-</button><!--minus-->
+  <button type="button" class="btn btn-default operate">*</button><!--star-->
+  </div></center></li>
+  
+  <li><center>
+  <div class="btn btn-group" style="margin-top:-11px">
+  <button type="button" class="btn btn-default" id="fraction">a/b</button><!--frac-->
+  <button type="button" class="btn btn-default sqroot">&#8730;</button><!--Square Root-->
+  <button type="button" class="btn btn-default curoot">&#8731;</button><!--Cube root-->
+  <button type="button" class="btn btn-default supsub">&#8746;</button><!--Union-->
+  </div></center></li>
+  
+  <li><center>
+  <div class="btn btn-group" style="margin-top:-11px">
+  <button type="button" class="btn btn-default supsub">&#8745;</button><!--Intersection-->
+  <button type="button" class="btn btn-default">&#8736;</button><!--angle-->
+  <button type="button" class="btn btn-default">&#8741;</button><!-- || -->
+  <button type="button" class="btn btn-default">&#8742;</button><!-- !|| -->
+  </div></center></li>
+  
+  <li><center>
+  <div class="btn btn-group" style="margin-top:-11px">
+  <button type="button" class="btn btn-default supsub">&#8747;</button><!--Integral-->
+  <button type="button" class="btn btn-default supsub">&#8748;</button><!--Double Integral-->
+  <button type="button" class="btn btn-default supsub">&#8749;</button><!--Triple Integral-->
+  <button type="button" class="btn btn-default operate">&#100;</button><!--derivative -->
+  </div></center></li>
+  
+  <li><center>
+  <div class="btn btn-group" style="margin-top:-11px">
+  <button type="button" class="btn btn-default supsub">&#8750;</button><!--Countour Integral-->
+  <button type="button" class="btn btn-default supsub">&#8751;</button><!--d contour Integral-->
+  <button type="button" class="btn btn-default supsub">&#8752;</button><!--t contour Integral-->
+  <button type="button" class="btn btn-default symbol">&#8756;</button><!--therefore -->
+  </div></center></li>
+  
+  <li><center>
+  <div class="btn btn-group" style="margin-top:-11px">
+  <button type="button" class="btn btn-default symbol">&#8757;</button><!--Since -->
+  <button type="button" class="btn btn-default symbol">&#8840;</button><!--Not Subset-->
+  <button type="button" class="btn btn-default symbol">&#8838;</button><!--Subset-->
+  <button type="button" class="btn btn-default operate">&#8711;</button><!-- Del Operator-->
+  </div>
+  </center></li>
+  
+  <li><center>
+  <div class="btn btn-group" style="margin-top:-11px">
+  <button type="button" class="btn btn-default operate">&#8710;</button><!--Delta Operator-->
+  <button type="button" class="btn btn-default symbol">&#8713;</button>
+  <button type="button" class="btn btn-default symbol">&#8904;</button>
+  <button type="button" class="btn btn-default symbol">&#8658;</button><!--Implies-->
+  </div></center></li>
+  
+  <li><center>
+  <div class="btn btn-group" style="margin-top:-11px">
+  <button type="button" class="btn btn-default symbol">&#8764;</button>
+  <button type="button" class="btn btn-default symbol">&#8771;</button>
+  <button type="button" class="btn btn-default symbol">&#8773;</button>
+  <button type="button" class="btn btn-default symbol">&#8775;</button>
+  </div>
+  </center></li>
+  
+  <li><center>
+  <div class="btn btn-group" style="margin-top:-11px">
+  <button type="button" class="btn btn-default symbol">&#8785;</button>
+  <button type="button" class="btn btn-default symbol">&#8791;</button>
+  <button type="button" class="btn btn-default symbol">&#8804;</button>
+  <button type="button" class="btn btn-default symbol">&#8805;</button>
+  </div>
+  </center></li>
+  
+  <li><center>
+  <div class="btn btn-group" style="margin-top:-11px">
+  <button type="button" class="btn btn-default symbol">&#8816;</button>
+  <button type="button" class="btn btn-default symbol">&#8817;</button>
+  <button type="button" class="btn btn-default symbol">&#8946;</button>
+  <button type="button" class="btn btn-default symbol">&#8947;</button>
+  </div>
+  </center></li>
+  
+  <li><center>
+  <div class="btn btn-group" style="margin-top:-11px">
+  <button type="button" class="btn btn-default symbol">&#8950;</button>
+  <button type="button" class="btn btn-default operate">&#8853;</button>
+  <button type="button" class="btn btn-default operate">&#8857;</button>
+  <button type="button" class="btn btn-default symbol">&#8805;</button>
+  </div>
+  </center></li>
+  
+  <li><center>
+  <div class="btn btn-group" style="margin-top:-11px">
+  <button type="button" class="btn btn-default symbol">&#8862;</button>
+  <button type="button" class="btn btn-default symbol">&#8865;</button>
+  <button type="button" class="btn btn-default symbol">&#8870;</button>
+  <button type="button" class="btn btn-default complex">d/dx</button><!--d/dx-->
+  </div>
+  </center></li>
+
+  <li><center>
+  <div class="btn btn-group" style="margin-top:-11px">
+  <button type="button" class="btn btn-default" id="power">a^b</button><!--power-->
+  <button type="button" class="btn btn-default operate">&#8723;</button><!--plus minus-->
+  <button type="button" class="btn btn-default nroot">n&#8730;</button><!--nth root-->
+  <button type="button" class="btn btn-default operate">&#8706;</button><!--part differential-->
+  </div>
+  </center></li>
+
+  <li><center><p>Vector</p>
+  <div class="btn btn-group" style="margin-top:-11px">
+  <button type="button" class="btn btn-default vector">&rharu;</button>
+  <button type="button" class="btn btn-default vector">&rarr;</button>
+  <button type="button" class="btn btn-default vector">&tilde;</button>
+  <button type="button" class="btn btn-default vector">^</button>
+  </div>
+  </center></li>
+  </ul>
+
+		</div>
+       <div class="modal-body">
+          	<!--<center><textarea style="width:500px;height:150px;overflow:scroll" placeholder="Click add to add new equation"></textarea></center>-->
+          	<center><textarea id="MathInput" onkeyup="Preview.Update()" style="margin-top:5px;width:500px;height:150px;overflow:scroll" placeholder="Please add an Equation using the button to start">
+			</textarea></center>
+        </div>
+		
+		<b style="margin-left:40px">Preview is shown here</b>
+		<div id="MathPreview" style="padding: 3px; min-width:50%; margin-top:5px;"></div>
+		<div id="MathBuffer" style="padding: 3px; min-width:50%; margin-top:5px;visibility:hidden; position:absolute; top:0; left:0"></div>
+		<!--<div style="padding:30px 20px 30px">
+		</div>-->
+		<center><button class="btn btn-default" id="btnright" style="margin-bottom:20px">Click here to avail options</button></center>
+		<div id="slidediv" style="display:none">
+		<center>
+		<button class="btn btn-default" id="anim">Animate</button>
+		<select name="in" id="animSelect">
+    		<option value="flash">flash</option>
+    		<option value="bounce">bounce</option>
+    		<option value="shake">shake</option>
+    		<option value="tada">tada</option>
+    		<option value="swing">swing</option>
+    		<option value="wobble">wobble</option>
+    		<option value="pulse">pulse</option>
+    		<option value="flip">flip</option>
+    		<option value="flipInX">flipInX</option>
+    		<option value="flipInY">flipInY</option>
+    		<option value="fadeIn">fadeIn</option>
+    		<option value="fadeInUp">fadeInUp</option>
+    		<option value="fadeInDown">fadeInDown</option>
+    		<option value="fadeInLeft">fadeInLeft</option>
+    		<option value="fadeInRight">fadeInRight</option>
+    		<option value="fadeInUpBig">fadeInUpBig</option>
+    		<option value="fadeInDownBig">fadeInDownBig</option>
+    		<option value="fadeInLeftBig">fadeInLeftBig</option>
+    		<option value="fadeInRightBig">fadeInRightBig</option>
+    		<option value="bounceIn">bounceIn</option>
+    		<option value="bounceInDown">bounceInDown</option>
+    		<option value="bounceInUp">bounceInUp</option>
+    		<option value="bounceInLeft">bounceInLeft</option>
+    		<option value="bounceInRight">bounceInRight</option>
+    		<option value="rotateIn">rotateIn</option>
+    		<option value="rotateInDownLeft">rotateInDownLeft</option>
+    		<option value="rotateInDownRight">rotateInDownRight</option>
+    		<option value="rotateInUpLeft">rotateInUpLeft</option>
+    		<option value="rotateInUpRight">rotateInUpRight</option>
+    		<option value="rollIn">rollIn</option>
+		</select>&nbsp;&nbsp;
+		<button class="btn btn-default" id="addClass" title="Click to toggle modes">Text Mode</button>
+		</center>
+		<br>
+		<center style="margin-bottom:10px">
+		<input type="color" style="width:12%;margin-left:20px" id="favcolor">
+		<button class="btn btn-default" id="color">Color</button>&nbsp;&nbsp;
+		<input type="checkbox" id="btn-bold" name="radBold"> Bold
+		</center>
+		<center>
+		Equation ClassNames : <select id="EqnClass" style="overflow: scroll;">
+		</select>&nbsp;&nbsp;&nbsp;
+		<div class="btn btn-group">
+		<button class="btn btn-default" id="newEqn">New Eqn</button>
+		<button class="btn btn-default" id="delEqn">Delete Eqn</button>
+		</div>
+		</center>
+		<center>
+		Child ClassNames : <select id="ChildClass" style="overflow: scroll;">
+		</select>&nbsp;&nbsp;&nbsp;
+		<div class="btn btn-group">
+		<button class="btn btn-default" id="newChild">New Child</button>
+		<button class="btn btn-default" id="delChild">Delete Child</button>
+		</div>
+		</center>
+		</div>
+		<div class="modal-footer">
+		<button class="btn btn-primary" id="preview">OK</button>
+         <button class="btn btn-default" data-dismiss="modal">Close</button>
+        </div>
+		
+		
+
+    
+    </div>
+  </div>
+</div>
+
+</div>
+<!--<canvas id="canv" width="1136px" height="1000px" style="border-style:groove">
+</canvas>
+<div id="div2">
+</div>-->
+<div id="canvas-wrap" >
+	<canvas id="canv" width="1136px" height="1000px">
+	</canvas>
+	<span id="T0" name="T0" contenteditable="true" style="display: inline-block; border:1px solid black;z-index:2"  class="demo ui-widget-content draggable animated" >
+		<p>Here's a typical paragraph element</p>
+	</span>	
+</div>
+</div>
+</div>
+</div>
+
+<script type="text/javascript">
+Preview.Init();
+$(function() {
+$("#btnright").click(function() {
+$('#slidediv').toggle('slide', { direction: 'right' }, 700);
+});
+$("#btnleft").click(function() {
+$('#slidediv').toggle('slide', { direction: 'left' }, 700);
+});
+});
+
+//Equation Object 
+//DeleteEqn will work on both the arrays 
+//DeleteChildClass will work on only one array
+var Equation = function(className,code,animation,outputId,hint){
+  this.className = className;
+  this.code = code;
+  this.animation = animation;
+  this.animOrder = null;
+  this.groupOrder = null;
+  this.childArray=[];
+  this.outputId = outputId;
+  this.hint = hint;
+  this.top = 0;
+  this.left = 0;
+  this.isDeleted = false;
+}
+
+/*Child Object in Eqn Array
+[{
+  "e1c0":{
+      this.color:"black";
+      this.fontWeight:"none";
+      this.fontStyle:"none";      
+  },
+}]
+*/
+
+var Child=function(className,color,fontWeight,fontStyle){
+  this.className = className;
+  this.fontWeight = fontWeight;
+  this.fontStyle = fontStyle;
+  this.color = color;
+}
+// Opera 8.0+
+var isOpera = (!!window.opr && !!opr.addons) || !!window.opera || navigator.userAgent.indexOf(' OPR/') >= 0;
+
+// Firefox 1.0+
+var isFirefox = typeof InstallTrigger !== 'undefined';
+
+// Safari 3.0+ "[object HTMLElementConstructor]" 
+var isSafari = Object.prototype.toString.call(window.HTMLElement).indexOf('Constructor') > 0 || (function(p) {
+  return p.toString() === "[object SafariRemoteNotification]";
+})(!window['safari'] || safari.pushNotification);
+
+// Internet Explorer 6-11 
+var isIE = /*@cc_on!@*/ false || !!document.documentMode;
+
+// Edge 20+
+var isEdge = !isIE && !!window.StyleMedia;
+
+// Chrome 1+
+var isChrome = !!window.chrome && !!window.chrome.webstore;
+var position = 0;
+
+// text to anser
+//var text = 'Inserted Text';
+var operator = ["+","-","*",".","(",")",",","[","]","=","{","}","?","!","~"];
+var math_main_class = [];
+var math_child_class = [];
+var math_indx = -1;
+var MathMode = true;
+var childName = "";
+
+$(document).ready(function(){
+/* Adding text on click based on browser */
+  $("#MathInput").val("");
+  $("#MathInput").on("keypress", function(event) {
+    var char = event.which || event.keyCode;
+    if(event.ctrlKey){
+      math_main_class[math_indx].code = $(this).val();
+      return;
+    }
+    if( event.keyCode >= 37 && event.keyCode <= 40 ) {
+      math_main_class[math_indx].code = $(this).val();
+      return; // arrow keys
+    }
+    if( event.keyCode === 8 || event.keyCode === 46 || event.keyCode==13) {
+      if(event.keyCode == 13 && MathMode){
+        var txt = "<mspace linebreak='newline' />";
+        insertAtCaret('MathInput',txt);
+      }
+      math_main_class[math_indx].code = $(this).val();
+      return; // backspace (8) / delete (46)
+    }
+    else if(((char>=48 && char<58) || (char>=65 && char<=90) || (char>=97 && char<=122) ||operator.includes(String.fromCharCode(char))) && MathMode){
+      var str = String.fromCharCode(char);
+      insertAtCaret('MathInput',""+convertCode(str,char));
+      //text = convertCode(str,char);
+      event.preventDefault();
+      // this.value = this.value.substring(0, this.value.length-1);
+    }
+    math_main_class[math_indx].code = $(this).val();
+    //console.log(""+math_main_class[math_indx].code);
+});
+
+$("#fraction").on("click",function(){
+  var txt = "<mfrac>\n<mrow></mrow>\n<mrow></mrow>\n</mfrac>\n";
+  insertAtCaret('MathInput',txt);
+});
+
+$("#power").on("click",function(){
+  var txt = "<msup>\n<mrow></mrow>\n<mrow></mrow>\n</msup>\n";
+  insertAtCaret('MathInput',txt);
+});
+
+$("#anim").on("click",function(){
+    var anim = $("#animSelect").val();
+    var c_name = math_main_class[math_indx].className;
+    c_name = "."+c_name;
+    $(c_name).animateCss(anim);
+    math_main_class[math_indx].animation = anim;
+    console.log(math_main_class[math_indx].animation);
+    //$(".e01").animateCss(anim);
+    //alert(anim);
+});
+
+$("#newEqn").on("click",function(){
+    var c_order = "e"+math_main_class.length;
+    var neq = new Equation(c_order,"<math class='"+c_order+"'>\n</math>","fadeIn","eq"+(math_main_class.length));
+    $("#MathInput").val("<math class='"+c_order+"'>\n</math>");
+    math_main_class.push(neq);
+    math_indx=math_main_class.length-1;
+    console.log("The outputId is : "+neq.outputId);
+    $("#canvas-wrap").append("<div id='"+neq.outputId+"' class='demo draggable ui-widget-content' style='display:inline-block;border:1px solid black;'></div>");
+    //Making each of the divisions draggable and assigning current positions to the array
+    //Each element will have the final possitions stored
+    var currElem = math_main_class[math_indx];
+    $("#"+neq.outputId).draggable({
+      drag: function(){
+            var offset = $(this).offset();
+            var xPos = offset.left;
+            var yPos = offset.top;
+            //console.log("Final coords : "+xPos+" "+yPos+" And element :"+neq.outputId);
+            currElem.top = yPos;
+            currElem.left = xPos;
+            //console.log("Final coords : "+xPos+" "+yPos+" And element :"+currElem.className);
+        }
+    });
+    //inserting the equation into the options menu
+    $("#EqnClass").html($("#EqnClass").html()+"<option value='"+c_order+"'>"+c_order+"</option>");
+    $("#currClass").html("Current : <strong>"+c_order+"</strong>");
+    loadChildSelect(neq.childArray);
+});
+
+$('#EqnClass').on('change', function() {
+    var index = parseInt($(this).val().substring(1));
+    var sel_eqn = math_main_class[index];
+    $("#MathInput").val(sel_eqn.code);
+    $("#currClass").html("Current : <strong>"+sel_eqn.className+"</strong>");
+    math_indx = index;
+    loadChildSelect(sel_eqn.childArray);
+});
+
+$('#newChild').on('click',function(){
+    var parent = math_main_class[math_indx].className;
+    var sel_eqn = math_main_class[math_indx];
+    var childName = parent+"c"+sel_eqn.childArray.length;
+    var childObj = new Child(childName,"#0000ff","none","none");
+    sel_eqn.childArray.push(childObj);
+    //$(".e1c1").css("color","#0000ff");
+    $("#ChildClass").html($("#ChildClass").html()+"<option value='"+childName+"'>"+childName+"</option>");
+});
+
+$("#addClass").on('click',function(){
+  if(MathMode){
+    $(this).text("Math Mode");
+    MathMode = false;
+  }else{ 
+    $(this).text("Text Mode");
+    MathMode = true;
+  }
+});
+
+$("#color").on('click',function(){
+    var colVal = $("#favcolor").val();
+    var parent = math_main_class[math_indx];
+    childName = $("#ChildClass").val();
+    var child = parent.childArray.find(findChild);
+    try{
+      child.color = colVal;
+    }catch(e){
+      alert("Please select a ChildClass");
+    }
+    console.log(child);
+});
+
+$("#btn-bold").on('change',function(){
+    var isBold = false;
+    if($('#btn-bold').is(':checked')) { 
+        isBold = true;
+    }
+    var parent = math_main_class[math_indx];
+    childName = $("#ChildClass").val();
+    var child = parent.childArray.find(findChild);
+    try{
+      child.fontWeight = (isBold)?"bold":"none";
+    }catch(e){
+      alert("Please select a ChildClass");
+    }
+    console.log(child);
+});
+
+$("#preview").on('click',function(){
+    try{
+    var finalEq = math_main_class[math_indx];
+    var eqname = "."+finalEq.className;
+    var arrayChild = finalEq.childArray;
+    for(var itr=0;itr<arrayChild.length;itr++){
+        var child = arrayChild[itr];
+        var clname = child.className;
+        clname="."+clname;
+        $(clname).css({"color":child.color,"font-weight":child.fontWeight});
+    }
+    $(eqname).animateCss(finalEq.animation);
+    var output = "#"+finalEq.outputId;
+    //$(output).html($("#MathPreview").html());
+    var target = "#";
+    if (!($("#MathPreview").css('visibility') === 'hidden')) {
+        target+="MathPreview";
+    }else target+="MathBuffer";
+    $(output).html($(target).html());
+    console.log("DONE "+output+" "+target);
+  }catch(e){
+    alert("Please Add Some Equations");
+  }
+});
+
+//Button Functionalities according to the classes
+//symbol class
+$(".symbol").on("click",function(){
+  var txt = "<mi>"+$(this).text()+"</mi>";
+  insertAtCaret('MathInput',txt); 
+});
+//supsub class
+$(".supsub").on("click",function(){
+  var txt = "<munderover><mrow><mo>"+$(this).text()+"</mo></mrow>\n<mrow> </mrow>\n<mrow> </mrow>\n</munderover>\n";
+  insertAtCaret('MathInput',txt);
+});
+//operator class
+$(".operate").on("click",function(){
+  var txt = "<mo>"+$(this).text()+"</mo>";
+  insertAtCaret('MathInput',txt); 
+});
+//root Classes
+$(".sqroot").on("click",function(){
+  var txt = "<msqrt>\n<mrow></mrow></msqrt>";
+  insertAtCaret('MathInput',txt);
+});
+//curoot
+$(".curoot").on("click",function(){
+  var txt="<mroot>\n<mrow> </mrow>\n<mn>3</mn>\n</mroot>\n";
+  insertAtCaret('MathInput',txt);
+}); 
+//n-root class
+$(".nroot").on("click",function(){
+  var txt="<mroot>\n<mrow> </mrow>\n<mrow> </mrow>\n</mroot>\n";
+  insertAtCaret('MathInput',txt);
+});
+//vector class
+$(".vector").on("click",function(){
+  var txt = "<mover><mrow></mrow><mo>"+$(this).text()+"</mo></mover>\n";
+  insertAtCaret('MathInput',txt);
+});
+//complex class
+$(".complex").on("click",function(){
+  var txt="<mfrac><mo>d</mo><mrow><mo>dx</mo></mrow></mfrac>";
+  insertAtCaret('MathInput',txt);
+
+});
+
+$("#delEqn").on("click",function(){
+    var output = "#"+math_main_class[math_indx].outputId;
+    var rm="#EqnClass option[value='"+ math_main_class[math_indx].className +"']";
+    console.log("While deleting : "+math_indx);
+    //math_main_class.splice(math_indx,1);
+    math_main_class[math_indx].isDeleted = true;
+    $(rm).remove();
+    $(output).remove();
+});
+
+//This is required to insert stuff at the pointer position
+$("#MathInput").on("focusout", function(e) {
+  position = $(this)[0].selectionStart;
+});
+});
+
+$.fn.extend({
+    animateCss: function (animationName) {
+        var animationEnd = 'webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend';
+        this.addClass('animated ' + animationName).one(animationEnd, function() {
+            $(this).removeClass('animated ' + animationName);
+        });
+    }
+});
+
+
+function findChild(obj) { 
+    return obj.className === childName;
+}
+
+function loadChildSelect(array){
+    console.log("called");
+    $("#ChildClass").html("<option value=''></option>");
+    for(var itr=0;itr<array.length;itr++){
+        var c_name = array[itr].className;
+        console.log("cname = "+c_name);
+        var string = "<option value='"+c_name+"'>"+c_name+"</option>";
+        $("#ChildClass").html($("#ChildClass").html()+string);
+    }
+}
+
+function convertCode(text,code){
+  var txt="";
+  if((code>=65&&code<=90) || (code>=97&&code<=122))
+    txt="<mi>"+text+"</mi>\n";
+  else if(code>=48 && code<58)
+    txt="<mn>"+text+"</mn>\n";
+  else if(operator.includes(text))
+    txt="<mo>"+text+"</mo>\n";
+  return txt;
+}
+
+function insertAtCaret(areaId, text) {
+    var txtarea = document.getElementById(areaId);
+    if (!txtarea) { return; }
+
+    var scrollPos = txtarea.scrollTop;
+    var strPos = 0;
+    var br = ((txtarea.selectionStart || txtarea.selectionStart == '0') ?
+        "ff" : (document.selection ? "ie" : false ) );
+    if (br == "ie") {
+        txtarea.focus();
+        var range = document.selection.createRange();
+        range.moveStart ('character', -txtarea.value.length);
+        strPos = range.text.length;
+    } else if (br == "ff") {
+        strPos = txtarea.selectionStart;
+    }
+
+    var front = (txtarea.value).substring(0, strPos);
+    var back = (txtarea.value).substring(strPos, txtarea.value.length);
+    txtarea.value = front + text + back;
+    strPos = strPos + text.length;
+    if (br == "ie") {
+        txtarea.focus();
+        var ieRange = document.selection.createRange();
+        ieRange.moveStart ('character', -txtarea.value.length);
+        ieRange.moveStart ('character', strPos);
+        ieRange.moveEnd ('character', 0);
+        ieRange.select();
+    } else if (br == "ff") {
+        txtarea.selectionStart = strPos;
+        txtarea.selectionEnd = strPos;
+        txtarea.focus();
+    }
+
+    txtarea.scrollTop = scrollPos;
+}
+</script>
+
+<div class="hide" id="rmenu">
+            <ul>
+                <li>
+                    <a onclick="Copy()">Copy</a>
+                </li>
+
+                <li>
+                    <a onclick="Paste()">Paste</a>
+                </li>
+            </ul>
+</div>
+
+<script>
+var ref=[];
+//var array=[];
+var clipboard;
+//var arrayIndex=0;
+var objectCounter=0;
+var canvas = new fabric.Canvas('canv', { selection: true,stopContextMenu:true });
+canvas.upperCanvasEl.addEventListener('contextmenu', function(e) {
+            document.getElementById("rmenu").className = "show"; 
+            document.getElementById("rmenu").style.top =(e.clientY+170) + 'px';
+            document.getElementById("rmenu").style.left =(e.clientX+25) + 'px';
+            console.log(document.getElementById("rmenu").style.top);
+            e.preventDefault();
+        }, false);
+var shape = null;
+var isDown = false;
+var element;
+var origX, origY, finX, finY, prev=null;
+var selecting = false;
+var grouping = false;
+var group=[];
+var x1,y1,x2,y2;
+canvas.on('mouse:down', function(o){
+  console.log("Event in Fabric");
+  //if(shape==null) return;
+  isDown = true;
+  var pointer = canvas.getPointer(o.e);
+  origX = pointer.x;
+  origY = pointer.y;
+  console.log("Event");
+  x1=origX;
+  y1=origY;
+  console.log("MouseDOWN : "+x1+" "+y1);
+  selecting = true;
+});
+
+canvas.on('mouse:move', function(o){
+  if (!isDown) return;
+  var pointer = canvas.getPointer(o.e);
+
+  switch(shape) {
+    case 'circle':
+    element=new fabric.Circle({
+        id: objectCounter,
+        left: origX,
+        top: origY,
+        radius: Math.abs(origX - pointer.x)/2,
+        strokeWidth: 2,
+        fill: null,
+        stroke: 'black',
+        selectable: true,
+        backgroundColor: 'transparent',
+        originX: 'left', originY: 'top'
+    });
+    if(pointer.x<origX){
+      element.set({left: pointer.x});
+    }
+    else{
+      element.set({left: origX});
+    }
+    if(pointer.y>origY){
+      element.set({top: origY});
+    }
+    else{
+      element.set({top: pointer.y});
+    }
+    del(prev);
+    canvas.add(element);
+    prev=element;
+    break;
+
+    case 'rectangle':
+    element=new fabric.Rect({
+        id: objectCounter,
+        left: origX,
+        top: origY,
+        width: Math.abs(origX - pointer.x),
+        height: Math.abs(origY - pointer.y),
+        strokeWidth: 2,
+        fill: null,
+        stroke: 'black',
+        selectable: true,
+        backgroundColor: 'transparent',
+        originX: 'left', originY: 'top'
+    });
+    if(pointer.x<origX){
+      element.set({left: pointer.x});
+    }
+    else{
+      element.set({left: origX});
+    }
+    if(pointer.y>origY){
+      element.set({top: origY});
+    }
+    else{
+      element.set({top: pointer.y});
+    }
+    del(prev);
+    canvas.add(element);
+    prev=element;
+    break;
+
+    case 'triangle':
+    element=new fabric.Triangle({
+        id: objectCounter,
+        left: origX,
+        top: origY,
+        width: Math.abs(origX - pointer.x),
+        height: Math.abs(origY - pointer.y),
+        strokeWidth: 2,
+        fill: null,
+        stroke: 'black',
+        selectable: true,
+        backgroundColor: 'transparent',
+        originX: 'left', originY: 'top'
+    });
+    if(pointer.x<origX){
+      element.set({left: pointer.x});
+    }
+    else{
+      element.set({left: origX});
+    }
+    if(pointer.y>origY){
+      element.set({top: origY});
+    }
+    else{
+      element.set({top: pointer.y});
+    }
+    del(prev);
+    canvas.add(element);
+    prev=element;
+    break;
+
+    case 'line':
+    finX=pointer.x;
+    finY=pointer.y;
+    element = new fabric.Line([origX, origY, finX, finY], {
+      id: objectCounter,
+      length: Math.sqrt((origX-finX)*(origX-finX)+(origY-finY)*(origY-finY)),
+        stroke: 'black',
+        selectable: true
+      });
+    del(prev);
+    canvas.add(element);
+    prev=element;
+    break;
+  }
+  canvas.renderAll();
+});
+
+canvas.on('mouse:up', function(o){
+  if(prev){
+    ref.push(prev);
+    objectCounter++;
+    for(var i=0;i<objectCounter;i++){
+      console.log(ref[i].type+" "+ref[i].id);
+    }
+  }
+  isDown = false;
+  shape=null;
+  prev=null;
+  selectable=true;
+  var pointer = canvas.getPointer(o.e);
+  x2 = pointer.x;
+  y2 = pointer.y;
+  console.log("MouseUP : "+x2+" "+y2);
+  if(selecting){
+      selecting = false;
+      var superArray = MyArray.concat(math_main_class);
+      superArray = superArray.concat(ref); 
+      for(var itr=0;itr<superArray.length;itr++){
+          var element = superArray[itr];
+          var x = element.left;
+          var y = element.top;
+          if((x>=x1 && x<=x2) || (x>=x2 && x<=x1)){
+            if((y>=y1 && y<=y2) || (y>=y2 && y<=y1)){
+                group.push(element);
+                console.log(element);
+            }
+          }
+      }
+  }
+});
+
+function Fill(){
+  var col=document.getElementById("bottle").value;
+  console.log(col);
+  if(canvas.getActiveObject()){
+    canvas.getActiveObject().set({fill:col});
+  }
+  else if (canvas.getActiveGroup()) {
+            var objectsInGroup = canvas.getActiveGroup().getObjects();
+            canvas.discardActiveGroup();
+            objectsInGroup.forEach(function(object) {
+            object.set({fill:col});
+            });
+  }
+  canvas.renderAll();
+}
+
+function Copy() {
+    if(canvas.getActiveObject()) {
+        if(!fabric.util.getKlass(canvas.getActiveObject().type).async) {
+            clipboard = canvas.getActiveObject().clone();
+        } else {
+            canvas.getActiveObject().clone(function(clone) {
+                clipboard= clone;
+            });
+        }
+    }
+
+    if(canvas.getActiveGroup()) {
+        canvas.getActiveGroup().clone(function(clone) {
+            clipboard = clone;
+        });
+    }
+}
+
+
+function Paste() {
+    if(clipboard) { 
+        if(!fabric.util.getKlass(clipboard.type).async) {
+            var obj = clipboard.clone();
+            obj.setTop(obj.top += 10);
+            obj.setLeft(obj.left += 10);            
+            canvas.add(obj);
+            canvas.setActiveObject(obj);
+            clipboard = obj;
+        }  else {
+            clipboard.clone(function(clone) {
+                clone.setTop(clone.top += 10);
+                clone.setLeft(clone.left += 10);
+                clone.forEachObject(function(obj){
+          canvas.add(obj);
+        });
+                
+          canvas.deactivateAll();
+
+                if(clipboard.isType("group")) {
+                    canvas.setActiveGroup(clone);
+                } else {
+                    canvas.setActiveObject(clone);
+                }
+                clipboard = clone;
+            });
+        }
+    }
+    document.getElementById("rmenu").className = "hide";
+    clipboard=null;
+    canvas.renderAll();
+}
+
+function deleteObjects(){
+  var activeObject = canvas.getActiveObject(),
+    activeGroup = canvas.getActiveGroup();
+    if (activeObject) {
+        if (confirm('Are you sure?')) {
+          activeObject.visible=false;
+        }
+    }
+    else if (activeGroup) {
+        if (confirm('Are you sure?')) {
+            var objectsInGroup = activeGroup.getObjects();
+            canvas.discardActiveGroup();
+            objectsInGroup.forEach(function(object) {
+            object.visible=false;
+            });
+        }
+    }
+    canvas.renderAll();
+}
+
+function del(ob){
+  var activeObject = ob;
+    if (activeObject) {
+        canvas.remove(activeObject);
+    }
+}
+</script>
+
+
+<!-- Text-Scripts-->
+
+
+<script>
+var MyArray=[]; //Array to store all text elements
+var id="T0";    //initially id=0;
+var index=0;    //intial index of first element in array is 0;
+var s=document.getElementById("T0").innerHTML;
+var i="flash";
+var o="flash";
+var offset=document.getElementById("T0");
+var l=offset.offsetLeft;
+var t=offset.offsetTop;
+MyArray.push({id:"T0",Data:s,in_anim:i,out_anim:o,left:l,top:t,in_delay:"2",out_delay:"2",in_duration:"3000",out_duration:"3000",in_order:"1",out_order:"1",isDeleted:false});
+//Script to make the default element Drragable 
+//Script to make default element draggable on click and content editable on double click
+ 		$(function() {
+				$("#T0")
+				.draggable({ containment: "parent" },
+				{
+				drag: function(){
+				var offset = $(this).offset();
+				var xPos = offset.left;
+				var yPos = offset.top;
+				//$('#posX').text('x: ' + xPos);
+				//$('#posY').text('y: ' + yPos);
+				MyArray[index].left=xPos;
+				MyArray[index].top=yPos;
+        console.log(xPos+" "+yPos);
+				},
+				})		 		
+		.click(function(){
+				if ( $(this).is('.ui-draggable-dragging') ) {
+					return;
+				}
+				$(this).draggable( "option", "disabled", true );
+				$(this).attr('contenteditable','true');
+     			}).blur(function(){
+				$(this).draggable( 'option', 'disabled', false);
+				$(this).attr('contenteditable','false');
+				});
+				});
+//Script to get the id and index of current text element that is clicked	
+	    jQuery(document).on("click", "span.demo", function (event) {
+					  id = jQuery(this).attr('id') || '';
+					  for(var j=0;j<MyArray.length;j++)
+					  {
+					  if(MyArray[j].id==id)
+					        { index=j;
+							break;}
+					  }
+					  //Script to restore the values(delay,duration and animation order) of current text element in the input box
+					var editable = document.getElementById(id);
+				    editable.addEventListener('input', function() {
+					MyArray[index].Data=document.getElementById(id).innerHTML;
+				});
+					  document.getElementById("in_delay").value=MyArray[index].in_delay;
+					  document.getElementById("in_duration").value=MyArray[index].in_duration;
+					  document.getElementById("in_a_order").value=MyArray[index].in_order;
+					  document.getElementById("out_delay").value=MyArray[index].in_delay;
+					  document.getElementById("out_duration").value=MyArray[index].in_duration;
+					  document.getElementById("out_a_order").value=MyArray[index].in_order;
+				  });
+//Script to delete a text element
+        function DeleteDiv()
+		{
+
+					if(MyArray.length>0 && document.getElementById(id)!=null)
+				    {
+            MyArray[index].isDeleted=true;
+            document.getElementById(id).style.visibility = "hidden";
+					//MyArray.splice(index, 1);
+					//document.getElementById(id).remove();
+					}
+					else if(document.getElementById(id)==null && MyArray.length!=0)
+					{
+					alert("Select an element to delete");
+					}
+					else if(MyArray.length==0)
+					{
+					alert("There is no  element that can be  deleted");					
+					}
+					
+		}
+//Script to create a new text element, make it draggable and on double click it should be content editable, giving it default attributes and storing it in the array 
+	    var c=0;
+		function NewDiv()
+		{	c++;
+			$("#canvas-wrap").append('<span id="T'+ c +'" name="T'+ c +'" class="demo" contenteditable="true" style="display: inline-block; border:1px solid black;"  class="ui-widget-content draggable,animated"><p>Here is a typical paragraph element</p></span>	');
+            var x=	"#T"+c;		 
+			$(x).draggable({ containment: "parent" },
+            {
+			drag: function(){
+            var offset = $(this).offset();
+            var xPos = offset.left;
+            var yPos = offset.top;
+			MyArray[index].left=xPos;
+			MyArray[index].top=yPos;
+             },
+            })
+           .click(function(){
+			if ( $(this).is('.ui-draggable-dragging') ) {
+				return;
+			}
+			$(this).draggable( "option", "disabled", true );
+			 $(this).attr('contenteditable','true'); 
+     		})
+			.blur(function(){
+            $(this).draggable( 'option', 'disabled', false);
+            $(this).attr('contenteditable','false');
+				});
+			var s=document.getElementById(id).innerHTML;
+			var i="flash";
+			var o="flash";
+			var offset=document.getElementById(id);
+			var l=offset.offsetLeft;
+			var t=offset.offsetTop;
+			MyArray.push({id:"T"+c,Data:s,in_anim:i,out_anim:o,left:l,top:t,in_delay:"2",out_delay:"2",in_duration:"3000",out_duration:"3000",in_order:"1",out_order:"1",isDeleted:false});
+		}
+//Script to add font color in text
+        function FontColor()
+		{
+						var range;
+						var c=document.getElementById("favcolor").value;
+						if (window.getSelection && window.getSelection().getRangeAt) {
+						var html='<font color='+c+'>' + window.getSelection() + '</font>';
+						range = window.getSelection().getRangeAt(0);
+						range.deleteContents();
+						var div = document.createElement("span");
+						div.innerHTML = html;
+						var frag = document.createDocumentFragment(), child;
+						while ( (child = div.firstChild) ) {
+						frag.appendChild(child);
+						}
+						range.insertNode(frag);
+						} 
+						else if (document.selection && document.selection.createRange)
+						{
+						range = document.selection.createRange();
+						range.pasteHTML(html);
+						}
+						MyArray[index].Data=document.getElementById(id).innerHTML;
+		}			
+//Script to make text Bold
+        function Bold()
+		{
+						var range;
+						if (window.getSelection && window.getSelection().getRangeAt) {
+						var html="<strong>"+window.getSelection()+"</strong>";
+						range = window.getSelection().getRangeAt(0);
+						range.deleteContents();
+						var div = document.createElement("span");
+						div.innerHTML = html;
+						var frag = document.createDocumentFragment(), child;
+						while ( (child = div.firstChild) ) {
+						frag.appendChild(child);
+						}
+						range.insertNode(frag);
+						} else if (document.selection && document.selection.createRange) {
+						range = document.selection.createRange();
+						range.pasteHTML(html);
+						}
+						var d=document.getElementById(id);
+					    var s=d.innerHTML;						
+						console.log(s);
+						MyArray[index].Data=document.getElementById(id).innerHTML;
+		}
+//Script to make text Italics		
+		function Italics() 
+		{
+						var range;
+						if (window.getSelection && window.getSelection().getRangeAt) {
+						var html="<i>"+window.getSelection()+"</i>";
+						range = window.getSelection().getRangeAt(0);
+						range.deleteContents();
+						var div = document.createElement("span");
+						div.innerHTML = html;
+						var frag = document.createDocumentFragment(), child;
+						while ( (child = div.firstChild) ) {
+						frag.appendChild(child);
+						}
+						range.insertNode(frag);
+						} else if (document.selection && document.selection.createRange) {
+						range = document.selection.createRange();
+						range.pasteHTML(html);
+						}
+						MyArray[index].Data=document.getElementById(id).innerHTML;
+		}
+//Script to give Font Size
+		function FontSize(value) 
+		{
+						var range;
+						if (window.getSelection && window.getSelection().getRangeAt) {
+						var html='<span style="font-size:'+value+'px">'+window.getSelection()+"</span>";
+						//var html="<font size="+value+">"+window.getSelection()+"</font>";
+						range = window.getSelection().getRangeAt(0);
+						range.deleteContents();
+						var div = document.createElement("span");
+						div.innerHTML = html;
+						var frag = document.createDocumentFragment(), child;
+						while ( (child = div.firstChild) ) {
+						frag.appendChild(child);
+						}
+						range.insertNode(frag);
+						} else if (document.selection && document.selection.createRange) {
+						range = document.selection.createRange();
+						range.pasteHTML(html);
+						}
+						MyArray[index].Data=document.getElementById(id).innerHTML;
+		}
+//Script to change Font Face
+		function FontFace(value) 
+		{
+						var range;
+						if (window.getSelection && window.getSelection().getRangeAt) {
+						var html='<font face='+value+'>' +window.getSelection()+ '</font>';
+						range = window.getSelection().getRangeAt(0);
+						range.deleteContents();
+						var div = document.createElement("span");
+						div.innerHTML = html;
+						var frag = document.createDocumentFragment(), child;
+						while ( (child = div.firstChild) ) {
+						frag.appendChild(child);
+						}
+						range.insertNode(frag);
+						} else if (document.selection && document.selection.createRange) {
+						range = document.selection.createRange();
+						range.pasteHTML(html);
+						}
+						MyArray[index].Data=document.getElementById(id).innerHTML;
+		}
+//Script to give in animation
+		function in_anim(value)
+		{
+				MyArray[index].in_anim=value;
+		}
+//Script to make out animation
+		function out_anim(value)
+		{
+				MyArray[index].out_anim=value;
+		}
+//Script to give in delay
+		function in_delay_change()
+		{
+				 var v1=document.getElementById("in_delay").value;
+				 if(v1!=null && v1!="")
+				 {
+			     $("#"+id).css({"-webkit-animation-duration": v1+'s'});
+				 $("#"+id).css({"-moz-animation-duration": v1+'s'});
+				 $("#"+id).css({"animation-duration": v1+'s'});
+				 MyArray[index].delay=v1;
+				 }
+		}
+//Script to give delay
+		function out_delay_change()
+		{
+				 var v1=document.getElementById("out_delay").value;
+				 if(v1!=null && v1!="")
+				 {
+			     $("#"+id).css({"-webkit-animation-duration": v1+'s'});
+				 $("#"+id).css({"-moz-animation-duration": v1+'s'});
+				 $("#"+id).css({"animation-duration": v1+'s'});
+				 MyArray[index].delay=v1;
+				 }
+		}
+//Script to give in duration
+		function in_duration_change()
+		{
+				 var v2=document.getElementById("in_duration").value;
+				 MyArray[index].in_duration=v2;
+		}	
+//Script to give out duration
+		function out_duration_change()
+		{
+				 var v2=document.getElementById("out_duration").value;
+				 MyArray[index].out_duration=v2;
+		}
+//Script to give in animmation order
+		function in_anim_order()
+		{
+				MyArray[index].in_order=document.getElementById("in_a_order").value;
+		}
+		
+//Script to give out animmation order
+		function out_anim_order()
+		{
+				MyArray[index].out_order=document.getElementById("out_a_order").value;
+		}
+//Script to extend the animation function
+		$.fn.extend({
+				animateCss: function (animationName) {
+			    var animationEnd = 'webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend';
+						this.addClass('animated ' + animationName).one(animationEnd, function() {
+							$(this).removeClass('animated ' + animationName);
+						});
+					}
+		});
+//Script to show animation		
+		function f1()
+		{
+				for(var x=0;x<MyArray.length;x++)
+				{
+				var element=document.getElementById(MyArray[x].id);
+				var e1 = MyArray[index].in_anim;
+				var e2 = MyArray[index].out_anim;
+				var t=MyArray[index].in_duration;
+				$(element).animateCss(""+e1);
+				setTimeout(function() {
+				$(element).animateCss(""+e2)
+				},t);
+                }
+		}
+//Script to create CSV
+		function f8()
+	    {
+			var str=[];
+			for(var n=0;n<MyArray.length;n++)
+			{var final_string=JSON.stringify(MyArray[n]);
+			str.push(final_string);
+			}
+			exportToCsv("final-file.csv",str);
+		}
+		function exportToCsv(filename, rows)
+		{
+			   var processRow = function (row) {
+				var finalVal = '';
+				finalVal+=row;
+					return finalVal + '\n';
+				};
+				var csvFile = '';
+				for (var i = 0; i < rows.length; i++) {
+					csvFile += processRow(rows[i]);
+				}
+				var blob = new Blob([csvFile], { type: 'text/csv;charset=utf-8;' });
+				if (navigator.msSaveBlob) { // IE 10+
+					navigator.msSaveBlob(blob, filename);
+				} else {
+					var link = document.createElement("a");
+					if (link.download !== undefined) {
+						var url = URL.createObjectURL(blob);
+						link.setAttribute("href", url);
+						link.setAttribute("download", filename);
+						link.style.visibility = 'hidden';
+						document.body.appendChild(link);
+						link.click();
+						document.body.removeChild(link);
+					}
+				}
+		}				
+</script>
+<script>
+/*var superArray = MyArray.concat(math_main_class);
+superArray = superArray.concat(ref);
+console.log("SuperArray");
+for(var itr=0;itr<superArray.length;itr++){
+    console.log(superArray[i]);
+}*/
+/*canvas.on('mouse:down',function(options){
+    console.log("Event");
+    x1=options.e.clientX;
+    y1=options.e.clientY;
+    console.log("MouseDOWN : "+x1+" "+y1);
+    selecting = true;
+});
+canvas.on('mouse:up',function(options){
+    x2=options.e.clientX;
+    y2=options.e.clientY;
+    console.log("MouseUP : "+x2+" "+y2);
+    if(selecting){
+        selecting = false;
+        var superArray = MyArray.concat(math_main_class);
+        superArray = superArray.concat(ref); 
+        for(var itr=0;itr<superArray.length;itr++){
+            var element = superArray[itr];
+            var x = element.left;
+            var y=element.top;
+            if((x>=x1 && x=<x2) || (x>=x2 && x=<x1)){
+              if((y>=y1 && y=<y2) || (y>=y2 && y<=y1)){
+                  group.push(element);
+                  console.log(element);
+              }
+            }
+        }
+    }
+});*/
+</script>
+</body>
+</html>
