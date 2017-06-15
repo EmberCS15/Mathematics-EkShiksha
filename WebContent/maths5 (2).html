@@ -406,7 +406,8 @@ Preview.callback.autoReset = true;  // make sure it can run more than once
 </button>&nbsp;
 <button class="btn btn-default">Add Hint</button>
 <button class="btn btn-default">Show Hints</button>
-<button class="btn btn-default" onclick="f1();">Show Text Animation</button>
+<button class="btn btn-default" onclick="f1();">Show Text Animation</button>&nbsp;&nbsp;
+<button class="btn btn-default" onclick="finalAnimation()">Animatum</button>
 <div class="modal fade" id="myModal" data-target="#myModal">
   <div class="modal-dialog">
     <div class="modal-content">
@@ -625,10 +626,6 @@ Preview.callback.autoReset = true;  // make sure it can run more than once
 		<button class="btn btn-primary" id="preview">OK</button>
          <button class="btn btn-default" data-dismiss="modal">Close</button>
         </div>
-		
-		
-
-    
     </div>
   </div>
 </div>
@@ -648,7 +645,27 @@ Preview.callback.autoReset = true;  // make sure it can run more than once
 </div>
 </div>
 </div>
+<script>
+//Declaring Global arrays for all three Forms Text/Graphics/Equations
+//CReating groups Arrays
+//Group Object
+var Group = function(groupOrder){
+    this.groupOrder = groupOrder;
+    this.event = null;
+    this.kid = [];
+}
 
+//Group Array and Group Array Size
+//Whenever Grouping is done the group order of each element mut be updated
+var groupArray = [];
+var grArraySize = 0;
+
+//Canvas Offset 
+var canvasOffset = $("#canv").offset();
+//console.log("Hello : "+canvasOffset);
+var canvasX = canvasOffset.left;
+var canvasY = canvasOffset.top;
+</script>
 <script type="text/javascript">
 Preview.Init();
 $(function() {
@@ -667,8 +684,8 @@ var Equation = function(className,code,animation,outputId,hint){
   this.className = className;
   this.code = code;
   this.animation = animation;
-  this.animOrder = null;
-  this.groupOrder = null;
+  this.animOrder = -1;
+  this.groupOrder = -1;
   this.childArray=[];
   this.outputId = outputId;
   this.hint = hint;
@@ -771,7 +788,7 @@ $("#anim").on("click",function(){
     c_name = "."+c_name;
     $(c_name).animateCss(anim);
     math_main_class[math_indx].animation = anim;
-    console.log(math_main_class[math_indx].animation);
+    //console.log(math_main_class[math_indx].animation);
     //$(".e01").animateCss(anim);
     //alert(anim);
 });
@@ -782,7 +799,7 @@ $("#newEqn").on("click",function(){
     $("#MathInput").val("<math class='"+c_order+"'>\n</math>");
     math_main_class.push(neq);
     math_indx=math_main_class.length-1;
-    console.log("The outputId is : "+neq.outputId);
+    //console.log("The outputId is : "+neq.outputId);
     $("#canvas-wrap").append("<div id='"+neq.outputId+"' class='demo draggable ui-widget-content' style='display:inline-block;border:1px solid black;'></div>");
     //Making each of the divisions draggable and assigning current positions to the array
     //Each element will have the final possitions stored
@@ -790,8 +807,8 @@ $("#newEqn").on("click",function(){
     $("#"+neq.outputId).draggable({
       drag: function(){
             var offset = $(this).offset();
-            var xPos = offset.left;
-            var yPos = offset.top;
+            var xPos = offset.left-canvasX;
+            var yPos = offset.top-canvasY;
             //console.log("Final coords : "+xPos+" "+yPos+" And element :"+neq.outputId);
             currElem.top = yPos;
             currElem.left = xPos;
@@ -843,7 +860,7 @@ $("#color").on('click',function(){
     }catch(e){
       alert("Please select a ChildClass");
     }
-    console.log(child);
+    //console.log(child);
 });
 
 $("#btn-bold").on('change',function(){
@@ -859,7 +876,7 @@ $("#btn-bold").on('change',function(){
     }catch(e){
       alert("Please select a ChildClass");
     }
-    console.log(child);
+    //console.log(child);
 });
 
 $("#preview").on('click',function(){
@@ -881,7 +898,7 @@ $("#preview").on('click',function(){
         target+="MathPreview";
     }else target+="MathBuffer";
     $(output).html($(target).html());
-    console.log("DONE "+output+" "+target);
+    //console.log("DONE "+output+" "+target);
   }catch(e){
     alert("Please Add Some Equations");
   }
@@ -933,7 +950,7 @@ $(".complex").on("click",function(){
 $("#delEqn").on("click",function(){
     var output = "#"+math_main_class[math_indx].outputId;
     var rm="#EqnClass option[value='"+ math_main_class[math_indx].className +"']";
-    console.log("While deleting : "+math_indx);
+    //console.log("While deleting : "+math_indx);
     //math_main_class.splice(math_indx,1);
     math_main_class[math_indx].isDeleted = true;
     $(rm).remove();
@@ -961,11 +978,11 @@ function findChild(obj) {
 }
 
 function loadChildSelect(array){
-    console.log("called");
+    //console.log("called");
     $("#ChildClass").html("<option value=''></option>");
     for(var itr=0;itr<array.length;itr++){
         var c_name = array[itr].className;
-        console.log("cname = "+c_name);
+        //console.log("cname = "+c_name);
         var string = "<option value='"+c_name+"'>"+c_name+"</option>";
         $("#ChildClass").html($("#ChildClass").html()+string);
     }
@@ -1043,7 +1060,7 @@ canvas.upperCanvasEl.addEventListener('contextmenu', function(e) {
             document.getElementById("rmenu").className = "show"; 
             document.getElementById("rmenu").style.top =(e.clientY+170) + 'px';
             document.getElementById("rmenu").style.left =(e.clientX+25) + 'px';
-            console.log(document.getElementById("rmenu").style.top);
+            //console.log(document.getElementById("rmenu").style.top);
             e.preventDefault();
         }, false);
 var shape = null;
@@ -1055,13 +1072,13 @@ var grouping = false;
 var group=[];
 var x1,y1,x2,y2;
 canvas.on('mouse:down', function(o){
-  console.log("Event in Fabric");
+  //console.log("Event in Fabric");
   //if(shape==null) return;
   isDown = true;
   var pointer = canvas.getPointer(o.e);
   origX = pointer.x;
   origY = pointer.y;
-  console.log("Event");
+  //console.log("Event");
   x1=origX;
   y1=origY;
   console.log("MouseDOWN : "+x1+" "+y1);
@@ -1202,6 +1219,9 @@ canvas.on('mouse:up', function(o){
       selecting = false;
       var superArray = MyArray.concat(math_main_class);
       superArray = superArray.concat(ref); 
+      for(var i=0;i<objectCounter;i++){
+          console.log(ref[i]);
+      }
       for(var itr=0;itr<superArray.length;itr++){
           var element = superArray[itr];
           var x = element.left;
@@ -1218,7 +1238,7 @@ canvas.on('mouse:up', function(o){
 
 function Fill(){
   var col=document.getElementById("bottle").value;
-  console.log(col);
+  //console.log(col);
   if(canvas.getActiveObject()){
     canvas.getActiveObject().set({fill:col});
   }
@@ -1341,7 +1361,7 @@ MyArray.push({id:"T0",Data:s,in_anim:i,out_anim:o,left:l,top:t,in_delay:"2",out_
 				//$('#posY').text('y: ' + yPos);
 				MyArray[index].left=xPos;
 				MyArray[index].top=yPos;
-        console.log(xPos+" "+yPos);
+        //console.log(xPos+" "+yPos);
 				},
 				})		 		
 		.click(function(){
@@ -1409,8 +1429,8 @@ MyArray.push({id:"T0",Data:s,in_anim:i,out_anim:o,left:l,top:t,in_delay:"2",out_
             var offset = $(this).offset();
             var xPos = offset.left;
             var yPos = offset.top;
-			MyArray[index].left=xPos;
-			MyArray[index].top=yPos;
+			      MyArray[index].left=xPos-canvasX;
+			      MyArray[index].top=yPos-canvasY;
              },
             })
            .click(function(){
@@ -1664,40 +1684,62 @@ MyArray.push({id:"T0",Data:s,in_anim:i,out_anim:o,left:l,top:t,in_delay:"2",out_
 		}				
 </script>
 <script>
-/*var superArray = MyArray.concat(math_main_class);
-superArray = superArray.concat(ref);
-console.log("SuperArray");
-for(var itr=0;itr<superArray.length;itr++){
-    console.log(superArray[i]);
-}*/
-/*canvas.on('mouse:down',function(options){
-    console.log("Event");
-    x1=options.e.clientX;
-    y1=options.e.clientY;
-    console.log("MouseDOWN : "+x1+" "+y1);
-    selecting = true;
+$(window).on("click",function(e){
+  //console.log(e.target);
+  try{
+    var elm = e.target;  
+    var myClass = elm.className;
+    var par = $(elm).closest(".demo");
+    //console.log(myClass.indexOf("demo"));
+    //console.log($(elm).parents('div').last().attr('class'));
+    //console.log($(elm).closest(".demo"));
+    if(myClass.indexOf("demo")!=-1 || par!=null){
+        $(".demo").css("border-style","solid");
+        if(par!=null){
+            $(par).css("border-style","dashed");
+        }else
+            $(elm).css("border-style","dashed");   
+    }else{
+        $(".demo").css("border-style","solid");
+    }
+  }catch(e){console.log("Couldnt find className");}
 });
-canvas.on('mouse:up',function(options){
-    x2=options.e.clientX;
-    y2=options.e.clientY;
-    console.log("MouseUP : "+x2+" "+y2);
-    if(selecting){
-        selecting = false;
-        var superArray = MyArray.concat(math_main_class);
-        superArray = superArray.concat(ref); 
-        for(var itr=0;itr<superArray.length;itr++){
-            var element = superArray[itr];
-            var x = element.left;
-            var y=element.top;
-            if((x>=x1 && x=<x2) || (x>=x2 && x=<x1)){
-              if((y>=y1 && y=<y2) || (y>=y2 && y<=y1)){
-                  group.push(element);
-                  console.log(element);
-              }
+
+//Creating the Final Animation Yeah!!!!!!
+function playAnimation(){
+    var superArray = MyArray.concat(math_main_class);
+    superArray = superArray.concat(ref);
+    var defaultGroup = new Group(-1);
+    defaultGroup.event = "onclick";
+    for(var itr=0;itr<superArray.length;itr++){
+        if(superArray[itr].groupOrder == -1){
+            defaultGroup.kid.push(superArray[itr]);
+        }
+    }
+    groupArray.shift(defaultGroup);
+    //Sort According to the group Order
+    //Write the function for the superArray
+    groupArray.sort(function(){
+        //Write Code Here
+
+    });
+    //Write now it is a simple loop just ploughing through the array and animating each objeect as and where it comes
+    for(var itr=0;itr<groupArray.length;itr++){
+        var list = groupArray[itr].kid;
+        for(var i=0;i<list.length;i++){
+            var el = list[i];
+            //Check the FIRST CHARACTERS OF YOUR ID and all the fields
+            if(el.className[0] == 'e' || el.className[0] == 't'){
+                var anm = el.animation;
+                var cl = "#"+el.outputId;
+                $(cl).animateCss(anm);
+            }else{
+              //Write Your Functions for animation
             }
         }
     }
-});*/
+}
+
 </script>
 </body>
 </html>
