@@ -1,0 +1,859 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Graphics</title>
+</head>
+<body>
+
+<button type = "button" onclick="shape='circle'">Circle</button>
+<button type = "button" onclick="shape='rectangle'">Rectangle</button>
+<button type = "button" onclick="shape='triangle'">Triangle</button>
+<button type = "button" onclick="shape='line'">Line</button>
+<button type = "button" onclick="deleteObjects()">Remove</button>
+<button type = "button" onclick="submit()">Submit</button>
+<button type = "button" onclick="Copy()">copy</button>
+<button type = "button" onclick="Paste()">paste</button>
+<input type="color" id="favcolor" style="font-size:15pt">
+<button type = "button" onclick="Fill()">Fill</button>
+<button type = "button" onclick="deleteObjects()">Remove</button>
+<button type = "button" onclick="submit()">Submit</button
+
+<br> <br> <select id="animate_g" onChange = "set_effect(this.value);">
+<option>Choose Animation Effect</option>
+<option value="fade in">Fade In</option>
+<option value="fade out in">Fade Out-In</option>
+<option value="draw">Draw</option>
+<option value="ease">Ease</option>
+<option value="disappear">Disappear</option>
+</select>
+
+&nbsp;&nbsp;&nbsp;&nbsp;
+
+<select id="att_ease_g" onChange= "set_att_ease(this.value);">
+<option>Choose Easing Attribute</option>
+<option value="left">Left</option>
+<option value="top">Top</option>
+<option value="width">Width</option>
+<option value="height">Height</option>
+<option value="angle">Angle</option>
+<option value="opacity">Opacity</option>
+
+</select>
+
+
+&nbsp;&nbsp;&nbsp;&nbsp;
+
+<select id="easing_g" onChange = "set_easing(this.value);">
+	<option>Choose Easing Effect</option>
+    <option value="easeInQuad">easeInQuad</option>
+    <option value="easeOutQuad">easeOutQuad</option>
+    <option value="easeInOutQuad">easeInOutQuad</option>
+    <option value="easeInCubic">easeInCubic</option>
+    <option value="easeOutCubic">easeOutCubic</option>
+    <option value="easeInOutCubic">easeInOutCubic</option>
+    <option value="easeInQuart">easeInQuart</option>
+    <option value="easeOutQuart">easeOutQuart</option>
+    <option value="easeInOutQuart">easeInOutQuart</option>
+    <option value="easeInQuint">easeInQuint</option>
+    <option value="easeOutQuint">easeOutQuint</option>
+    <option value="easeInOutQuint">easeInOutQuint</option>
+    <option value="easeInSine">easeInSine</option>
+    <option value="easeOutSine">easeOutSine</option>
+    <option value="easeInOutSine">easeInOutSine</option>
+    <option value="easeInExpo">easeInExpo</option>
+    <option value="easeOutExpo">easeOutExpo</option>
+    <option value="easeInOutExpo">easeInOutExpo</option>
+    <option value="easeInCirc">easeInCirc</option>
+    <option value="easeOutCirc">easeOutCirc</option>
+    <option value="easeInOutCirc">easeInOutCirc</option>
+    <option value="easeInElastic">easeInElastic</option>
+    <option value="easeOutElastic">easeOutElastic</option>
+    <option value="easeInOutElastic">easeInOutElastic</option>
+    <option value="easeInBack">easeInBack</option>
+    <option value="easeOutBack">easeOutBack</option>
+    <option value="easeInOutBack">easeInOutBack</option>
+    <option value="easeInBounce">easeInBounce</option>
+    <option value="easeOutBounce">easeOutBounce</option>
+    <option value="easeInOutBounce">easeInOutBounce</option>
+  </select>
+
+
+<br> Delay:<input id="delay_g" onchange="delay_change_g();">
+<br> Duration:<input id="duration_g" onchange="duration_change_g();">
+<br> Animation Order:<input id="a_order_g" onchange="anim_order_g()">
+<br> Ease Attribute Value:<input id="ease_value_g" onchange="ease_value_g()">
+
+<br> <button onclick="show_animation();">Animate All</button>
+<br> <br>
+
+
+<canvas id="c" width="800" height="400" style="border:1px solid #ccc"></canvas>
+
+<script src="fabric.js"></script>
+
+<script>
+var ref=[];
+var array=[];
+var arrayIndex=0;
+var objectCounter=0;
+var canvas = new fabric.Canvas('c', { selection: true });
+var shape = null;
+var isDown = false;
+var element;
+var origX, origY, finX, finY, prev=null;
+
+canvas.on('mouse:down', function(o){
+	if(shape==null) return;
+	  isDown = true;
+	  var pointer = canvas.getPointer(o.e);
+	  origX = pointer.x;
+	  origY = pointer.y;
+});
+
+canvas.on('mouse:move', function(o){
+  if (!isDown) return;
+  var pointer = canvas.getPointer(o.e);
+
+  switch(shape) {
+    case 'circle':
+    var Circ=new fabric.Circle({
+        left: origX,
+        top: origY,
+        radius: Math.abs(origX - pointer.x)/2,
+		right: origX + Math.abs(origX - pointer.x),
+		bottom: origY + Math.abs(origY - pointer.y),
+        strokeWidth: 2,
+        fill: null,
+        angle:0,
+        stroke: 'black',
+        selectable: true,
+        backgroundColor: 'transparent',
+        originX: 'left', originY: 'top',
+	  effect: null,
+		    easing: "easeOutElastic",
+			ease_att: 'width',
+			ease_value: 10,
+		    delay: 0,
+		    duration: 1000,
+		    anim_order: 1
+    });
+    if(pointer.x<origX){
+      Circ.set({left: pointer.x});
+    }
+    else{
+      Circ.set({left: origX});
+    }
+    if(pointer.y>origY){
+      Circ.set({top: origY});
+    }
+    else{
+      Circ.set({top: pointer.y});
+    }
+    del(prev);
+    if(prev==null){
+      ref.push(Circ);
+      objectCounter++;
+    }
+    else{
+      ref[objectCounter-1]=Circ;
+    }
+    canvas.add(Circ);
+    prev=Circ;
+    break;
+
+    case 'rectangle':
+    var Recta=new fabric.Rect({
+        left: origX,
+        top: origY,
+        width: Math.abs(origX - pointer.x),
+        height: Math.abs(origY - pointer.y),
+		right: origX + Math.abs(origX - pointer.x),
+		bottom: origY + Math.abs(origY - pointer.y),
+        strokeWidth: 2,
+        fill: null,
+        angle:0,
+        stroke: 'black',
+        selectable: true,
+        backgroundColor: 'transparent',
+        originX: 'left', originY: 'top',
+		effect: null,
+		    easing: "easeOutElastic",
+			ease_att: 'width',
+			ease_value: 10,
+		    delay: 0,
+		    duration: 1000,
+		    anim_order: 1,
+			drawType:'Q1'
+    });
+    if(pointer.x<origX){
+      Recta.set({left: pointer.x});
+    }
+    else{
+      Recta.set({left: origX});
+    }
+    if(pointer.y>origY){
+      Recta.set({top: origY});
+    }
+    else{
+      Recta.set({top: pointer.y});
+    }
+    del(prev);
+    if(prev==null){
+      ref.push(Recta);
+      objectCounter++;
+    }
+    else{
+      ref[objectCounter-1]=Recta;
+    }
+    canvas.add(Recta);
+    prev=Recta;
+    break;
+
+    case 'triangle':
+    var Tri=new fabric.Triangle({
+        left: origX,
+        top: origY,
+        width: Math.abs(origX - pointer.x),
+        height: Math.abs(origY - pointer.y),
+		right: origX + Math.abs(origX - pointer.x),
+		bottom: origY + Math.abs(origY - pointer.y),
+        angle:0,
+        strokeWidth: 2,
+        fill: null,
+        stroke: 'black',
+        selectable: true,
+        backgroundColor: 'transparent',
+        originX: 'left', originY: 'top',
+		effect: null,
+		    easing: "easeOutElastic",
+			ease_att: 'width',
+			ease_value: 10,
+		    delay: 0,
+		    duration: 1000,
+		    anim_order: 1,
+			drawType:'Q1'
+    });
+    if(pointer.x<origX){
+      Tri.set({left: pointer.x});
+    }
+    else{
+      Tri.set({left: origX});
+    }
+    if(pointer.y>origY){
+      Tri.set({top: origY});
+    }
+    else{
+      Tri.set({top: pointer.y});
+    }
+    del(prev);
+    if(prev==null){
+      ref.push(Tri);
+      objectCounter++;
+    }
+    else{
+      ref[objectCounter-1]=Tri;
+    }
+    canvas.add(Tri);
+    prev=Tri;
+    break;
+
+    case 'line':
+    finX=pointer.x;
+    finY=pointer.y;
+    var angg;
+    if(prev==null){
+        angg=0;
+    }
+    else{
+        angg=prev.getAngle();
+    }
+    var line = new fabric.Line([origX, origY, finX, finY], {
+      id: objectCounter,
+	left:origX,
+	top: origY,
+	right: finX,
+	bottom: finY,
+      angle: angg,
+      length: Math.sqrt((origX-finX)*(origX-finX)+(origY-finY)*(origY-finY)),
+        stroke: 'black',
+        selectable: true,
+		effect: null,
+		    easing: "easeOutElastic",
+			ease_att: 'width',
+			ease_value: 10,
+		    delay: 0,
+		    duration: 1000,
+		    anim_order: 1,
+			drawType: 'Q1'
+      });
+	if(pointer.x<origX){
+      line.set({left: pointer.x});
+    }
+    else{
+      line.set({left: origX});
+    }
+    if(pointer.y>origY){
+      line.set({top: origY});
+    }
+    else{
+      line.set({top: pointer.y});
+    }
+
+	if(origX < finX && origY < finY)line.set({drawType:'Q1'});
+	if(origX > finX && origY < finY)line.set({drawType:'Q2'});
+	if(origX > finX && origY > finY)line.set({drawType:'Q3'});
+	if(origX < finX && origY > finY)line.set({drawType:'Q4'});
+
+    del(prev);
+    if(prev==null){
+      ref.push(line);
+      objectCounter++;
+    }
+    else{
+      ref[objectCounter-1]=line;
+    }
+    canvas.add(line);
+    prev=line;
+    break;
+  }
+  canvas.renderAll();
+});
+
+canvas.on('mouse:up', function(o){
+  for(var i=0;i<objectCounter;i++){
+      if(ref[i].type=='circle'){
+        var off=ref[i].strokeWidth;
+        var radii=((ref[i].getWidth())-off)/2;
+        ref[i].set({scaleX:1});
+        ref[i].set({scaleY:1});
+        var ang=ref[i].getAngle();
+        ref[i].set({angle:ang});
+        ref[i].set({radius:radii});
+ref[i].set({left: ref[i].oCoords.tl.x, top: ref[i].oCoords.tl.y, right: ref[i].oCoords.br.x, bottom: ref[i].oCoords.br.y});
+
+      }
+      else if(ref[i].type=='line'){
+        var wd=ref[i].getWidth();
+        var ht=ref[i].getHeight();
+        var ang=ref[i].getAngle();
+		
+ref[i].set({left: ref[i].oCoords.tl.x, top: ref[i].oCoords.tl.y, right: ref[i].oCoords.br.x, bottom: ref[i].oCoords.br.y});
+		
+        ref[i].set({angle:ang});
+        var off=ref[i].strokeWidth;
+        var len=Math.sqrt(wd*wd+ht*ht)-Math.sqrt(off);
+        ref[i].set({length:len});
+      }
+      else{
+        var wd=ref[i].getWidth();
+        var ht=ref[i].getHeight();
+        var ang=ref[i].getAngle();
+
+	ref[i].set({left: ref[i].oCoords.tl.x, top: ref[i].oCoords.tl.y, right: ref[i].oCoords.br.x, bottom: ref[i].oCoords.br.y});
+
+
+        ref[i].set({angle:ang});
+        ref[i].set({scaleX:1});
+        ref[i].set({scaleY:1});
+        var off=ref[i].strokeWidth;
+        ref[i].set({width:wd-off});
+        ref[i].set({height:ht-off});
+        //console.log(ref[i].top+" "+ref[i].width+" "+ref[i].height);
+      }
+    }
+  isDown = false;
+  shape=null;
+  prev=null;
+  selectable=true;
+});
+
+
+
+function Fill(){
+	var col=document.getElementById("favcolor").value;
+	if(canvas.getActiveObject()){
+		canvas.getActiveObject().set({fill:col});
+	}
+	else if (canvas.getActiveGroup()) {
+            var objectsInGroup = canvas.getActiveGroup().getObjects();
+            canvas.discardActiveGroup();
+            objectsInGroup.forEach(function(object) {
+            object.set({fill:col});
+            });
+    }
+canvas.renderAll();
+}
+
+function Copy() {
+    // Single Object
+    if(canvas.getActiveObject()) {
+        // Does this object require an async clone?
+        console.log(canvas.getActiveObject().type);
+        if(!fabric.util.getKlass(canvas.getActiveObject().type).async) {
+            clipboard = canvas.getActiveObject().clone();
+        } else {
+            canvas.getActiveObject().clone(function(clone) {
+                clipboard= clone;
+            });
+        }
+    }
+
+    // Group of Objects (all groups require async clone)
+    if(canvas.getActiveGroup()) {
+        canvas.getActiveGroup().clone(function(clone) {
+            clipboard = clone;
+        });
+    }
+}
+
+
+function Paste() {
+    // Do we have an object in our clipboard?
+    if(clipboard) {
+        // Lets see if we need to clone async 
+        if(!fabric.util.getKlass(clipboard.type).async) {
+            var obj = clipboard.clone();
+            obj.setTop(obj.top += 10);
+            obj.setLeft(obj.left += 10);            
+            canvas.add(obj);
+            // We do not need to clone async, all groups require async clone
+            canvas.setActiveObject(obj);
+            clipboard = obj;
+        }  else {
+            clipboard.clone(function(clone) {
+                clone.setTop(clone.top += 10);
+                clone.setLeft(clone.left += 10);
+                clone.forEachObject(function(obj){
+										canvas.add(obj);
+								});
+                
+   							canvas.deactivateAll();
+
+                // We need to clone async, but this doesnt mean its a group
+                if(clipboard.isType("group")) {
+                    canvas.setActiveGroup(clone);
+                } else {
+                    canvas.setActiveObject(clone);
+                }
+                clipboard = clone;
+            });
+        }
+    }
+    canvas.renderAll();
+}
+
+function deleteObjects(){
+	var activeObject = canvas.getActiveObject(),
+    activeGroup = canvas.getActiveGroup();
+    if (activeObject) {
+        if (confirm('Are you sure?')) {
+        	activeObject.visible=false;
+        }
+    }
+    else if (activeGroup) {
+        if (confirm('Are you sure?')) {
+            var objectsInGroup = activeGroup.getObjects();
+            canvas.discardActiveGroup();
+            objectsInGroup.forEach(function(object) {
+            object.visible=false;
+            });
+        }
+    }
+canvas.renderAll();
+}
+
+function del(ob){
+	var activeObject = ob;
+    if (activeObject) {
+		activeObject.visible = false;
+        canvas.remove(activeObject);
+    }
+}
+
+var str=[];
+function submit(){
+	for(var i=0;i<objectCounter;i++){
+		if(ref[i]!=null){
+			if(ref[i].type=='circle'){
+				array.push({id: 'G'+arrayIndex, DBN: true, type:{shape:ref[i].type, radius:ref[i].radius, stroke:ref[i].stroke, strokeWidth:ref[i].strokeWidth, fill:ref[i].fill},boundedBox:{top:ref[i].top,left:ref[i].left}, animation:{entrance: null, emphasis: null,exit: null }});
+			}
+			else if(ref[i].type=='rectangle'){
+				array.push({id: 'G'+arrayIndex, DBN: true, type:{shape:ref[i].type, height:ref[i].height, width:ref[i].width, stroke:ref[i].stroke, strokeWidth:ref[i].strokeWidth, fill:ref[i].fill},boundedBox:{top:ref[i].top,left:ref[i].left}, animation:{entrance: null, emphasis: null,exit: null }});
+			}
+			else if(ref[i].type=='triangle'){
+				array.push({id: 'G'+arrayIndex, DBN: true, type:{shape:ref[i].type, height:ref[i].height, width:ref[i].width, stroke:ref[i].stroke, strokeWidth:ref[i].strokeWidth, fill:ref[i].fill},boundedBox:{top:ref[i].top,left:ref[i].left}, animation:{entrance: null, emphasis: null,exit: null }});
+			}
+			else if(ref[i].type=='line'){
+				array.push({id: 'G'+arrayIndex, DBN: true, type:{shape:ref[i].type, length:ref[i].length, stroke:ref[i].stroke, strokeWidth:ref[i].strokeWidth, fill:ref[i].fill},boundedBox:{top:ref[i].top,left:ref[i].left}, animation:{entrance: null, emphasis: null,exit: null }});
+			}
+			var myJSON = JSON.stringify(array[arrayIndex]);
+			str.push(myJSON);
+			arrayIndex++;
+		}
+	}
+	exportToCsv('file.csv',str);
+}
+
+function exportToCsv(filename, rows) {
+        var processRow = function (row) {
+            var finalVal = '';
+            finalVal+=row;
+            return finalVal + '\n';
+        };
+
+        var csvFile = '';
+        for (var i = 0; i < rows.length; i++) {
+            csvFile += processRow(rows[i]);
+        }
+
+        var blob = new Blob([csvFile], { type: 'text/csv;charset=utf-8;' });
+        if (navigator.msSaveBlob) { // IE 10+
+            navigator.msSaveBlob(blob, filename);
+        } else {
+            var link = document.createElement("a");
+            if (link.download !== undefined) {
+                var url = URL.createObjectURL(blob);
+                link.setAttribute("href", url);
+                link.setAttribute("download", filename);
+                link.style.visibility = 'hidden';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            }
+        }
+    }
+
+function set_effect(effect_g){
+	if(canvas.getActiveObject()){	
+		canvas.getActiveObject().set({effect:effect_g});
+	}
+}
+
+function set_easing(easing_g){
+	if(canvas.getActiveObject()){	
+		canvas.getActiveObject().set({easing:easing_g});
+	}
+}
+
+function set_att_ease(easea_g){
+	if(canvas.getActiveObject()){	
+		canvas.getActiveObject().set({ease_att:easea_g});
+	}
+}
+
+function delay_change_g(){
+	if(canvas.getActiveObject()){	
+	canvas.getActiveObject().set({delay:document.getElementById('delay_g').value});
+	}
+}
+
+function duration_change_g(){
+	if(canvas.getActiveObject()){	
+	canvas.getActiveObject().set({duration:document.getElementById('duration_g').value});
+	}
+}
+
+function anim_order_g(){
+	if(canvas.getActiveObject()){	
+	canvas.getActiveObject().set({anim_order:document.getElementById('a_order_g').value});
+	}
+}
+
+function ease_value_g(){
+	if(canvas.getActiveObject()){	
+	canvas.getActiveObject().set({ease_value:document.getElementById('ease_value_g').value});
+	}
+}
+
+
+function fade_out_in(obj){
+	obj.setOpacity(1);
+	setTimeout(function(){ obj.animate('opacity', '1', {
+  		duration: obj.duration/2,
+  		onChange: canvas.renderAll.bind(canvas)
+		})
+	}, obj.duration/2);	
+
+	obj.animate('opacity', '0', {
+  		duration: obj.duration/2,
+  		onChange: canvas.renderAll.bind(canvas)
+	});
+}
+
+function fade_in(obj){
+	obj.setOpacity(0);	
+	canvas.renderAll();
+	obj.animate('opacity', '1', {
+  		duration: parseInt(obj.duration),
+  		onChange: canvas.renderAll.bind(canvas)
+	});
+}
+
+var context = canvas.getContext('2d');
+var startAngle;
+var endAngle;
+var t;
+var flag;
+
+function draw(obj){
+	if(obj.type == 'circle') {draw_circle(obj,'draw');}
+	else if(obj.type == 'rect') {draw_rect(obj,'draw');}
+	else if(obj.type == 'triangle') {draw_triangle(obj,'draw');}
+	else if(obj.type == 'line') {draw_line(obj,'draw');}
+	else {console.log("No such shape");}
+}
+
+function draw_circle(obj,mode){
+	if(mode == 'draw'){
+		obj.setOpacity(0);
+		canvas.renderAll();
+	}
+	startAngle = 0;
+	endAngle = (2*Math.PI)/360;
+	t = 1;
+	draw_helpc(obj,mode);
+	if(mode == 'draw'){
+		setTimeout(function(){
+				obj.setOpacity(1);
+				canvas.renderAll();
+		} ,obj.duration);
+	}	
+}
+
+function draw_helpc(obj,mode){
+	if(t > 362) return;
+	endAngle=(2*t*Math.PI)/360;
+	context.beginPath();
+	context.arc((obj.left+obj.right)/2,(obj.top+obj.bottom)/2, obj.radius, startAngle, endAngle, false);
+	if(mode == 'draw'){
+		context.lineWidth = obj.strokeWidth;
+		context.strokeStyle = obj.stroke;
+	}
+	else if(mode == 'disa'){
+		context.lineWidth = 2*obj.strokeWidth;
+		context.strokeStyle = 'white';
+	}
+	context.stroke();
+	startAngle = endAngle;
+	t += 2000/obj.duration;
+	setTimeout(draw_helpc,1,obj,mode);
+	
+}
+
+function draw_rect(obj,mode){
+	if(mode == 'draw'){
+		obj.setOpacity(0);
+		canvas.renderAll();
+	}	
+	
+	A = obj.left;
+	B = obj.top;
+	C = obj.oCoords.tr.x;
+	D = obj.oCoords.tr.y;
+
+	draw_helpl(obj,A,B,C,D,obj.width,mode);
+
+	setTimeout(function(){
+		A = obj.oCoords.tr.x;
+		B = obj.oCoords.tr.y;
+		C = obj.right;
+		D = obj.bottom;
+		draw_helpl(obj,A,B,C,D,obj.height,mode);}, obj.duration/4);
+
+	setTimeout(function(){
+		A = obj.right;
+	B = obj.bottom
+	C = obj.oCoords.bl.x;
+	D = obj.oCoords.bl.y;
+		draw_helpl(obj,A,B,C,D,obj.width,mode);}, obj.duration/2);
+
+
+	setTimeout(function(){
+		A = obj.oCoords.bl.x;
+	B = obj.oCoords.bl.y;
+	C = obj.left;
+	D = obj.top;
+		draw_helpl(obj,A,B,C,D,obj.height,mode);},3*obj.duration/4);
+	
+
+	if(mode == 'draw'){
+		setTimeout(function(){
+				obj.setOpacity(1);
+				canvas.renderAll();
+		} ,obj.duration);
+	}
+}
+
+
+
+function draw_triangle(obj,mode){
+	if(mode == 'draw'){
+		obj.setOpacity(0);
+		canvas.renderAll();
+	}
+	
+	A = (obj.left+obj.oCoords.tr.x)/2;
+	B = (obj.top+obj.oCoords.tr.y)/2;
+	C = obj.right;
+	D = obj.bottom;
+	var w1 = Math.sqrt((C-A)*(C-A)+(D-B)*(D-B));
+	draw_helpl(obj,A,B,C,D,w1,mode);
+
+	setTimeout(function(){
+		A = obj.right;
+		B = obj.bottom;
+		C = obj.oCoords.bl.x;
+		D = obj.oCoords.bl.y;
+		var w2 = Math.sqrt((C-A)*(C-A)+(D-B)*(D-B));
+		draw_helpl(obj,A,B,C,D,w2,mode);}, obj.duration/3);
+
+	setTimeout(function(){
+		A = obj.oCoords.bl.x;
+	B = obj.oCoords.bl.y;
+	C = (obj.left+obj.oCoords.tr.x)/2;
+	D = (obj.top+obj.oCoords.tr.y)/2;
+	var w3 = Math.sqrt((C-A)*(C-A)+(D-B)*(D-B));
+		draw_helpl(obj,A,B,C,D,w3,mode);}, 2*obj.duration/3);
+
+	if(mode == 'draw'){
+		setTimeout(function(){
+				obj.setOpacity(1);
+				canvas.renderAll();
+		} ,obj.duration);
+	}
+
+}
+
+var A;
+var B;
+var C;
+var D;
+
+
+function draw_line(obj,mode){
+	if(mode == 'draw'){
+		obj.setOpacity(0);
+		canvas.renderAll();
+	}
+
+	if(obj.drawType == 'Q1'){
+		A = obj.left;
+		B = obj.top;
+		C = obj.right;
+		D = obj.bottom;
+		draw_helpl(obj,A,B,C,D,obj.length,mode);
+	}
+
+	else if(obj.drawType == 'Q2'){
+		A = obj.oCoords.tr.x;
+		B = obj.oCoords.tr.y;
+		C = obj.oCoords.bl.x;
+		D = obj.oCoords.bl.y;
+		draw_helpl(obj,A,B,C,D,obj.length,mode);
+	}
+
+	else if(obj.drawType == 'Q3'){
+		A = obj.right;
+		B = obj.bottom;
+		C = obj.left;
+		D = obj.top;
+		draw_helpl(obj,A,B,C,D,obj.length,mode);
+	}
+
+	else if(obj.drawType == 'Q4'){
+		C = obj.oCoords.tr.x;
+		D = obj.oCoords.tr.y;
+		A = obj.oCoords.bl.x;
+		B = obj.oCoords.bl.y;
+		draw_helpl(obj,A,B,C,D,obj.length,mode);
+	}
+
+
+	if(mode == 'draw'){
+		setTimeout(function(){
+				obj.setOpacity(1);
+				canvas.renderAll();
+		} ,obj.duration);
+	}
+}
+
+
+function draw_helpl(obj,a,b,c,d,len,mode){
+	if(len < Math.sqrt((A-a)*(A-a) + (B-b)*(B-b))) return;
+	context.beginPath();
+	if(mode == 'draw'){
+		context.lineWidth = obj.strokeWidth;
+		context.strokeStyle = obj.stroke;
+	}
+	else if(mode == 'disa'){
+		context.lineWidth = 2*obj.strokeWidth;
+		context.strokeStyle = 'white';
+	}
+	context.moveTo(a,b);
+	
+	b += (D-B)*2/len;
+	a += (C-A)*2/len;
+//2 for line, 3 for rectangle at 2500 medium
+		
+
+	context.lineTo(a,b);
+	
+	context.stroke();
+	setTimeout(draw_helpl,1,obj,a,b,c,d,len,mode);
+}
+
+      
+
+function ease(obj){
+	obj.animate(obj.ease_att, obj.ease_value, {
+ 		onChange:canvas.renderAll.bind(canvas),
+		duration: obj.duration,
+		easing: fabric.util.ease[obj.easing]
+	});
+}
+
+
+function disappear(obj){
+	if(obj.type == 'circle') {draw_circle(obj,'disa');}
+	else if(obj.type == 'rect') {draw_rect(obj,'disa');}
+	else if(obj.type == 'triangle') {draw_triangle(obj,'disa');}
+	else if(obj.type == 'line') {draw_line(obj,'disa');}
+	else {console.log("No such shape");}
+}
+
+
+var time_diff;
+
+function show_animation(){
+	time_diff = 0;
+	for(var i = 0 ; i < objectCounter; i++){
+		var obj = ref[i];
+		console.log(obj.type + " " + obj.duration + " " + time_diff);
+		if(!obj.visible) continue;
+		switch(obj.effect){
+			case 'fade in':
+				setTimeout(fade_in,time_diff,obj);
+				break;
+			case 'fade out in':
+				setTimeout(fade_out_in,time_diff,obj);
+				break;
+			case 'draw':
+				setTimeout(draw,time_diff,obj);
+				break;
+			case 'ease':
+				setTimeout(ease,time_diff,obj);
+				break;
+			case 'disappear':
+				setTimeout(disappear,time_diff,obj);
+				break;
+		}
+		var a = parseInt(time_diff);
+		a = a + parseInt(obj.duration);
+		time_diff = a;
+	}
+}
+
+
+</script>
+</body>
+</html>
