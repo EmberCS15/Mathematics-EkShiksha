@@ -392,6 +392,7 @@ ref[i].set({left: ref[i].oCoords.tl.x, top: ref[i].oCoords.tl.y, right: ref[i].o
 
 ref[i].set({left: ref[i].oCoords.tl.x, top: ref[i].oCoords.tl.y, right: ref[i].oCoords.br.x, bottom: ref[i].oCoords.br.y});
 
+
 	}
       else if(ref[i].type =='line'){
         var wd=ref[i].getWidth();
@@ -701,7 +702,7 @@ function draw_helpc(obj,mode){
 	}
 	context.stroke();
 	startAngle = endAngle;
-	t += 2000/obj.duration;
+	t += 2500/obj.duration;
 	setTimeout(draw_helpc,1,obj,mode);
 	
 }
@@ -714,6 +715,7 @@ function draw_ellip(obj,mode){
 	startAngle = 0;
 	endAngle = (2*Math.PI)/360;
 	t = 1;
+	console.log(obj.angle);
 	draw_helpe(obj,mode);
 	if(mode == 'draw'){
 		setTimeout(function(){
@@ -727,7 +729,7 @@ function draw_helpe(obj,mode){
 	if(t > 362) return;
 	endAngle=(2*t*Math.PI)/360;
 	context.beginPath();
-	context.ellipse((obj.left+obj.right)/2, (obj.top+obj.bottom)/2, obj.rx, obj.ry, obj.angle, startAngle, endAngle, false);
+	context.ellipse((obj.left+obj.right)/2, (obj.top+obj.bottom)/2, obj.rx, obj.ry, (obj.angle*Math.PI)/180, startAngle, endAngle, false);
 	if(mode == 'draw'){
 		context.lineWidth = obj.strokeWidth;
 		context.strokeStyle = obj.stroke;
@@ -738,7 +740,7 @@ function draw_helpe(obj,mode){
 	}
 	context.stroke();
 	startAngle = endAngle;
-	t += 2000/obj.duration;
+	t += 2500/obj.duration;
 	setTimeout(draw_helpe,1,obj,mode);
 	
 }
@@ -885,7 +887,7 @@ function draw_helpl(obj,a,b,c,d,len,mode,time){
 	context.beginPath();
 	if(mode == 'draw'){
 		context.lineWidth = obj.strokeWidth;
-		context.strokeStyle = 'red';
+		context.strokeStyle = obj.stroke;
 	}
 	else if(mode == 'disa'){
 		context.lineWidth = 2*obj.strokeWidth;
