@@ -6,6 +6,7 @@
 <body>
 
 <button type = "button" onclick="shape='circle'">Circle</button>
+<button type = "button" onclick="shape='ellipse'">Ellipse</button>
 <button type = "button" onclick="shape='rectangle'">Rectangle</button>
 <button type = "button" onclick="shape='triangle'">Triangle</button>
 <button type = "button" onclick="shape='line'">Line</button>
@@ -160,6 +161,54 @@ canvas.on('mouse:move', function(o){
     canvas.add(Circ);
     prev=Circ;
     break;
+
+	case 'ellipse':
+    var ellip=new fabric.Ellipse({
+        left: origX,
+        top: origY,
+		rx: Math.abs(origX - pointer.x)/2,
+		ry: Math.abs(origY - pointer.y)/2,
+		right: origX + Math.abs(origX - pointer.x),
+		bottom: origY + Math.abs(origY - pointer.y),
+        strokeWidth: 2,
+        fill: null,
+        angle:0,
+        stroke: 'black',
+        selectable: true,
+        backgroundColor: 'transparent',
+        originX: 'left', originY: 'top',
+	  effect: null,
+		    easing: "easeOutElastic",
+			ease_att: 'width',
+			ease_value: 10,
+		    delay: 0,
+		    duration: 1000,
+		    anim_order: 1
+    });
+    if(pointer.x<origX){
+      ellip.set({left: pointer.x});
+    }
+    else{
+      ellip.set({left: origX});
+    }
+    if(pointer.y>origY){
+      ellip.set({top: origY});
+    }
+    else{
+      ellip.set({top: pointer.y});
+    }
+    del(prev);
+    if(prev==null){
+      ref.push(ellip);
+      objectCounter++;
+    }
+    else{
+      ref[objectCounter-1]=ellip;
+    }
+    canvas.add(ellip);
+    prev=ellip;
+    break;
+
 
     case 'rectangle':
     var Recta=new fabric.Rect({
@@ -330,9 +379,21 @@ canvas.on('mouse:up', function(o){
         ref[i].set({angle:ang});
         ref[i].set({radius:radii});
 ref[i].set({left: ref[i].oCoords.tl.x, top: ref[i].oCoords.tl.y, right: ref[i].oCoords.br.x, bottom: ref[i].oCoords.br.y});
-
       }
-      else if(ref[i].type=='line'){
+	else if(ref[i].type == 'ellipse'){
+		var off=ref[i].strokeWidth;
+        var rx_v=((ref[i].getWidth())-off)/2;
+		var ry_v=((ref[i].getHeight())-off)/2;
+        ref[i].set({scaleX:1});
+        ref[i].set({scaleY:1});
+        var ang=ref[i].getAngle();
+        ref[i].set({angle:ang});
+        ref[i].set({rx:rx_v,ry:ry_v});
+
+ref[i].set({left: ref[i].oCoords.tl.x, top: ref[i].oCoords.tl.y, right: ref[i].oCoords.br.x, bottom: ref[i].oCoords.br.y});
+
+	}
+      else if(ref[i].type =='line'){
         var wd=ref[i].getWidth();
         var ht=ref[i].getHeight();
         var ang=ref[i].getAngle();
@@ -388,7 +449,8 @@ function Copy() {
     // Single Object
     if(canvas.getActiveObject()) {
         // Does this object require an async clone?
-        console.log(canvas.getActiveObject().type);
+        ref.push(canvas.getActiveObject());
+		objectCounter++;
         if(!fabric.util.getKlass(canvas.getActiveObject().type).async) {
             clipboard = canvas.getActiveObject().clone();
         } else {
@@ -425,6 +487,9 @@ function Paste() {
                 clone.setLeft(clone.left += 10);
                 clone.forEachObject(function(obj){
 										canvas.add(obj);
+	ref.push(obj);
+	objectCounter++;
+
 								});
                 
    							canvas.deactivateAll();
@@ -543,25 +608,25 @@ function set_att_ease(easea_g){
 
 function delay_change_g(){
 	if(canvas.getActiveObject()){	
-	canvas.getActiveObject().set({delay:document.getElementById('delay_g').value});
+	canvas.getActiveObject().set({delay:parseInt(document.getElementById('delay_g').value)});
 	}
 }
 
 function duration_change_g(){
 	if(canvas.getActiveObject()){	
-	canvas.getActiveObject().set({duration:document.getElementById('duration_g').value});
+	canvas.getActiveObject().set({duration:parseInt(document.getElementById('duration_g').value)});
 	}
 }
 
 function anim_order_g(){
 	if(canvas.getActiveObject()){	
-	canvas.getActiveObject().set({anim_order:document.getElementById('a_order_g').value});
+	canvas.getActiveObject().set({anim_order:parseInt(document.getElementById('a_order_g').value)});
 	}
 }
 
 function ease_value_g(){
 	if(canvas.getActiveObject()){	
-	canvas.getActiveObject().set({ease_value:document.getElementById('ease_value_g').value});
+	canvas.getActiveObject().set({ease_value:parseInt(document.getElementById('ease_value_g').value)});
 	}
 }
 
@@ -584,7 +649,7 @@ function fade_in(obj){
 	obj.setOpacity(0);	
 	canvas.renderAll();
 	obj.animate('opacity', '1', {
-  		duration: parseInt(obj.duration),
+  		duration: obj.duration,
   		onChange: canvas.renderAll.bind(canvas)
 	});
 }
@@ -597,6 +662,7 @@ var flag;
 
 function draw(obj){
 	if(obj.type == 'circle') {draw_circle(obj,'draw');}
+	else if(obj.type == 'ellipse') {draw_ellip(obj,'draw');}
 	else if(obj.type == 'rect') {draw_rect(obj,'draw');}
 	else if(obj.type == 'triangle') {draw_triangle(obj,'draw');}
 	else if(obj.type == 'line') {draw_line(obj,'draw');}
@@ -640,6 +706,44 @@ function draw_helpc(obj,mode){
 	
 }
 
+function draw_ellip(obj,mode){
+	if(mode == 'draw'){
+		obj.setOpacity(0);
+		canvas.renderAll();
+	}
+	startAngle = 0;
+	endAngle = (2*Math.PI)/360;
+	t = 1;
+	draw_helpe(obj,mode);
+	if(mode == 'draw'){
+		setTimeout(function(){
+				obj.setOpacity(1);
+				canvas.renderAll();
+		} ,obj.duration);
+	}
+}
+
+function draw_helpe(obj,mode){
+	if(t > 362) return;
+	endAngle=(2*t*Math.PI)/360;
+	context.beginPath();
+	context.ellipse((obj.left+obj.right)/2, (obj.top+obj.bottom)/2, obj.rx, obj.ry, obj.angle, startAngle, endAngle, false);
+	if(mode == 'draw'){
+		context.lineWidth = obj.strokeWidth;
+		context.strokeStyle = obj.stroke;
+	}
+	else if(mode == 'disa'){
+		context.lineWidth = 2*obj.strokeWidth;
+		context.strokeStyle = 'white';
+	}
+	context.stroke();
+	startAngle = endAngle;
+	t += 2000/obj.duration;
+	setTimeout(draw_helpe,1,obj,mode);
+	
+}
+
+
 function draw_rect(obj,mode){
 	if(mode == 'draw'){
 		obj.setOpacity(0);
@@ -651,21 +755,21 @@ function draw_rect(obj,mode){
 	C = obj.oCoords.tr.x;
 	D = obj.oCoords.tr.y;
 
-	draw_helpl(obj,A,B,C,D,obj.width,mode);
+	draw_helpl(obj,A,B,C,D,obj.width,mode,obj.duration/4);
 
 	setTimeout(function(){
 		A = obj.oCoords.tr.x;
 		B = obj.oCoords.tr.y;
 		C = obj.right;
 		D = obj.bottom;
-		draw_helpl(obj,A,B,C,D,obj.height,mode);}, obj.duration/4);
+		draw_helpl(obj,A,B,C,D,obj.height,mode,obj.duration/4);}, obj.duration/4);
 
 	setTimeout(function(){
 		A = obj.right;
 	B = obj.bottom
 	C = obj.oCoords.bl.x;
 	D = obj.oCoords.bl.y;
-		draw_helpl(obj,A,B,C,D,obj.width,mode);}, obj.duration/2);
+		draw_helpl(obj,A,B,C,D,obj.width,mode,obj.duration/4);}, obj.duration/2);
 
 
 	setTimeout(function(){
@@ -673,7 +777,7 @@ function draw_rect(obj,mode){
 	B = obj.oCoords.bl.y;
 	C = obj.left;
 	D = obj.top;
-		draw_helpl(obj,A,B,C,D,obj.height,mode);},3*obj.duration/4);
+		draw_helpl(obj,A,B,C,D,obj.height,mode,obj.duration/4);},3*obj.duration/4);
 	
 
 	if(mode == 'draw'){
@@ -683,8 +787,6 @@ function draw_rect(obj,mode){
 		} ,obj.duration);
 	}
 }
-
-
 
 function draw_triangle(obj,mode){
 	if(mode == 'draw'){
@@ -697,7 +799,7 @@ function draw_triangle(obj,mode){
 	C = obj.right;
 	D = obj.bottom;
 	var w1 = Math.sqrt((C-A)*(C-A)+(D-B)*(D-B));
-	draw_helpl(obj,A,B,C,D,w1,mode);
+	draw_helpl(obj,A,B,C,D,w1,mode,obj.duration/3);
 
 	setTimeout(function(){
 		A = obj.right;
@@ -705,7 +807,7 @@ function draw_triangle(obj,mode){
 		C = obj.oCoords.bl.x;
 		D = obj.oCoords.bl.y;
 		var w2 = Math.sqrt((C-A)*(C-A)+(D-B)*(D-B));
-		draw_helpl(obj,A,B,C,D,w2,mode);}, obj.duration/3);
+		draw_helpl(obj,A,B,C,D,w2,mode,obj.duration/3);}, obj.duration/3);
 
 	setTimeout(function(){
 		A = obj.oCoords.bl.x;
@@ -713,7 +815,7 @@ function draw_triangle(obj,mode){
 	C = (obj.left+obj.oCoords.tr.x)/2;
 	D = (obj.top+obj.oCoords.tr.y)/2;
 	var w3 = Math.sqrt((C-A)*(C-A)+(D-B)*(D-B));
-		draw_helpl(obj,A,B,C,D,w3,mode);}, 2*obj.duration/3);
+		draw_helpl(obj,A,B,C,D,w3,mode,obj.duration/3);}, 2*obj.duration/3);
 
 	if(mode == 'draw'){
 		setTimeout(function(){
@@ -741,7 +843,7 @@ function draw_line(obj,mode){
 		B = obj.top;
 		C = obj.right;
 		D = obj.bottom;
-		draw_helpl(obj,A,B,C,D,obj.length,mode);
+		draw_helpl(obj,A,B,C,D,obj.length,mode,obj.duration);
 	}
 
 	else if(obj.drawType == 'Q2'){
@@ -749,7 +851,7 @@ function draw_line(obj,mode){
 		B = obj.oCoords.tr.y;
 		C = obj.oCoords.bl.x;
 		D = obj.oCoords.bl.y;
-		draw_helpl(obj,A,B,C,D,obj.length,mode);
+		draw_helpl(obj,A,B,C,D,obj.length,mode,obj.duration);
 	}
 
 	else if(obj.drawType == 'Q3'){
@@ -757,7 +859,7 @@ function draw_line(obj,mode){
 		B = obj.bottom;
 		C = obj.left;
 		D = obj.top;
-		draw_helpl(obj,A,B,C,D,obj.length,mode);
+		draw_helpl(obj,A,B,C,D,obj.length,mode,obj.duration);
 	}
 
 	else if(obj.drawType == 'Q4'){
@@ -765,7 +867,7 @@ function draw_line(obj,mode){
 		D = obj.oCoords.tr.y;
 		A = obj.oCoords.bl.x;
 		B = obj.oCoords.bl.y;
-		draw_helpl(obj,A,B,C,D,obj.length,mode);
+		draw_helpl(obj,A,B,C,D,obj.length,mode,obj.duration);
 	}
 
 
@@ -778,12 +880,12 @@ function draw_line(obj,mode){
 }
 
 
-function draw_helpl(obj,a,b,c,d,len,mode){
+function draw_helpl(obj,a,b,c,d,len,mode,time){
 	if(len < Math.sqrt((A-a)*(A-a) + (B-b)*(B-b))) return;
 	context.beginPath();
 	if(mode == 'draw'){
 		context.lineWidth = obj.strokeWidth;
-		context.strokeStyle = obj.stroke;
+		context.strokeStyle = 'red';
 	}
 	else if(mode == 'disa'){
 		context.lineWidth = 2*obj.strokeWidth;
@@ -791,30 +893,30 @@ function draw_helpl(obj,a,b,c,d,len,mode){
 	}
 	context.moveTo(a,b);
 	
-	b += (D-B)*2/len;
-	a += (C-A)*2/len;
-//2 for line, 3 for rectangle at 2500 medium
+	b += (D-B)*6/time;
+	a += (C-A)*6/time;
 		
 
 	context.lineTo(a,b);
 	
 	context.stroke();
-	setTimeout(draw_helpl,1,obj,a,b,c,d,len,mode);
+	setTimeout(draw_helpl,1,obj,a,b,c,d,len,mode,time);
 }
 
       
 
 function ease(obj){
 	obj.animate(obj.ease_att, obj.ease_value, {
- 		onChange:canvas.renderAll.bind(canvas),
 		duration: obj.duration,
-		easing: fabric.util.ease[obj.easing]
+		easing: fabric.util.ease[obj.easing],
+		onChange:canvas.renderAll.bind(canvas)
 	});
 }
 
 
 function disappear(obj){
 	if(obj.type == 'circle') {draw_circle(obj,'disa');}
+	else if(obj.type == 'ellipse') {draw_ellip(obj,'disa');}
 	else if(obj.type == 'rect') {draw_rect(obj,'disa');}
 	else if(obj.type == 'triangle') {draw_triangle(obj,'disa');}
 	else if(obj.type == 'line') {draw_line(obj,'disa');}
