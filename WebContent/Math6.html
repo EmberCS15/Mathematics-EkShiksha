@@ -20,17 +20,17 @@
 <script src="http://threedubmedia.com/inc/js/excanvas.min.js"></script>
 <script type="text/javascript" src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
 <link rel="stylesheet" href="./animate.css">
-<script src="js/MathJax-master/MathJax.js?config=TeX-MML-AM_HTMLorMML"></script>
+<script src="../MathJax-master/MathJax.js?config=TeX-MML-AM_HTMLorMML"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/1.7.11/fabric.js"></script>
 <style>
 body{
-  background:url("images.png");
+  background:url("mathbkg.jpg");
 }
 .sidenav {
     height: 100%;
     width: 0;
     position: fixed;
-	margin-top:52px;
+  margin-top:52px;
     z-index: 1;
     top: 0;
     left: 0;
@@ -47,7 +47,7 @@ body{
     color: white;
     display: block;
     transition: 0.3s;
-	font-family:Comic sans MS;
+  font-family:Comic sans MS;
 }
 
 .sidenav a:hover, .offcanvas a:focus{
@@ -65,7 +65,7 @@ body{
 #main {
     transition: margin-left .5s;
     padding: 16px;
-	position:relative;
+  position:relative;
 }
 
 @media screen and (max-height: 450px) {
@@ -119,18 +119,18 @@ border-style:groove;
 }
 
 #canvas-wrap { 
-	position:relative;
-	border:5px solid #000000;
-	overflow-x: scroll;
-	width: 1140px;
-	height: 1000px;
-	padding:0px;
+  position:relative;
+  border:5px solid #000000;
+  overflow-x: scroll;
+  width: 1140px;
+  height: 1000px;
+  padding:0px;
 } /* Make this a positioned parent */
 #canv{
-	position:absolute;
-	/*border-style:groove;*/
-	z-index: -2;
-	background-color:white;
+  position:absolute;
+  /*border-style:groove;*/
+  z-index: -2;
+  background-color:white;
 }
 .upper-canvas .lower-canvas{
   /*z-index:-2;*/
@@ -347,7 +347,7 @@ Preview.callback.autoReset = true;  // make sure it can run more than once
       <li><a href="#">Preview</a></li>
       <li><a href="#" onclick="Create_Group()">Create Group</a></li>
     </ul>
-	
+  
 </div>
 
 
@@ -367,28 +367,28 @@ Preview.callback.autoReset = true;  // make sure it can run more than once
  
 </div>
 <input type="color" id="favcolor" value="#ff0000" title="Select porion to hightlight">&nbsp;
-						
+            
 <select style="width:120px;height:35px;margin-right:-12px;border-radius:3px" title="Choose your font" onchange="FontFace(this.value);">
-	<option selected hidden >Font Face</option>
-	<option> Times New Roman</option>
-	<option>Verdana</option>
-	<option>Monotype Corsiva</option>
-	</select>
+  <option selected hidden >Font Face</option>
+  <option> Times New Roman</option>
+  <option>Verdana</option>
+  <option>Monotype Corsiva</option>
+  </select>
 <select style="width:40px;height:35px;margin-left:5px;border-radius:3px" title="Choose font size" onchange="FontSize(this.value);">
-	<option selected hidden>px</option>
-	<option>10</option>
-	<option>15</option>
-	<option>20</option>
-	<option>25</option>
-	<option>30</option>
-	<option>35</option>
-	<option>40</option>
-	</select>
+  <option selected hidden>px</option>
+  <option>10</option>
+  <option>15</option>
+  <option>20</option>
+  <option>25</option>
+  <option>30</option>
+  <option>35</option>
+  <option>40</option>
+  </select>
 <div class="btn btn-group">
     
-	
-	<button class="btn btn-default" data-toggle="modal" data-target="#myModal2" title="Add animation">Animation</button>
-	<div class="modal fade" id="myModal2" role="dialog">
+  
+  <button class="btn btn-default" data-toggle="modal" data-target="#myModal2" title="Add animation">Animation</button>
+  <div class="modal fade" id="myModal2" role="dialog">
     <div class="modal-dialog">
     
       <!-- Modal content-->
@@ -399,7 +399,7 @@ Preview.callback.autoReset = true;  // make sure it can run more than once
         </div>
         <div class="modal-body">
          
-		 <ul class="nav nav-tabs">
+     <ul class="nav nav-tabs">
     <li class="active"><a data-toggle="tab" href="#menu1">Text</a></li>
     <li><a data-toggle="tab" href="#menu2">Graphics</a></li>
   </ul>
@@ -408,62 +408,62 @@ Preview.callback.autoReset = true;  // make sure it can run more than once
    
     <div id="menu1" class="tab-pane fade in active">
       <center style="padding:20px 0px 20px 0px">
-		In
-		<select onchange="in_anim(this.value);">
-		<option value="flash">flash</option><option value="bounce">bounce</option><option value="shake">shake</option><option value="tada">tada</option><option value="swing">swing</option><option value="wobble">wobble</option><option value="pulse">pulse</option><option value="flip">flip</option><option value="flipInX">flipInX</option><option value="flipInY">flipInY</option><option value="fadeIn">fadeIn</option><option value="fadeInUp">fadeInUp</option><option value="fadeInDown">fadeInDown</option><option value="fadeInLeft">fadeInLeft</option><option value="fadeInRight">fadeInRight</option><option value="fadeInUpBig">fadeInUpBig</option><option value="fadeInDownBig">fadeInDownBig</option><option value="fadeInLeftBig">fadeInLeftBig</option><option value="fadeInRightBig">fadeInRightBig</option><option value="bounceIn">bounceIn</option><option value="bounceInDown">bounceInDown</option><option value="bounceInUp">bounceInUp</option><option value="bounceInLeft">bounceInLeft</option><option value="bounceInRight">bounceInRight</option><option value="rotateIn">rotateIn</option><option value="rotateInDownLeft">rotateInDownLeft</option><option value="rotateInDownRight">rotateInDownRight</option><option value="rotateInUpLeft">rotateInUpLeft</option><option value="rotateInUpRight">rotateInUpRight</option><option value="rollIn">rollIn</option>
-		</select>&nbsp;&nbsp;
-		Delay
-		<input type="text" style="width:40px" id="in_delay" onchange="in_delay_change();">&nbsp;&nbsp;
-		Duration
-		<input type="text" style="width:40px" id="in_duration" onchange="in_duration_change();">&nbsp;&nbsp;
-		Animation order
-		<input type="text" style="width:40px" id="in_a_order" onchange="in_anim_order()">&nbsp;
-		<br><br>
-		Out
-		<select onchange="out_anim(this.value);">
-		<option value="flash">flash</option><option value="bounce">bounce</option><option value="shake">shake</option><option value="tada">tada</option><option value="swing">swing</option><option value="wobble">wobble</option><option value="pulse">pulse</option><option value="flip">flip</option><option value="flipOutX">flipOutX</option><option value="flipOutY">flipOutY</option><option value="fadeOut">fadeOut</option><option value="fadeOutUp">fadeOutUp</option><option value="fadeOutDown">fadeOutDown</option><option value="fadeOutLeft">fadeOutLeft</option><option value="fadeOutRight">fadeOutRight</option><option value="fadeOutUpBig">fadeOutUpBig</option><option value="fadeOutDownBig">fadeOutDownBig</option><option value="fadeOutLeftBig">fadeOutLeftBig</option><option value="fadeOutRightBig">fadeOutRightBig</option><option value="bounceOut">bounceOut</option><option value="bounceOutDown">bounceOutDown</option><option value="bounceOutUp">bounceOutUp</option><option value="bounceOutLeft">bounceOutLeft</option><option value="bounceOutRight">bounceOutRight</option><option value="rotateOut">rotateOut</option><option value="rotateOutDownLeft">rotateOutDownLeft</option><option value="rotateOutDownRight">rotateOutDownRight</option><option value="rotateOutUpLeft">rotateOutUpLeft</option><option value="rotateOutUpRight">rotateOutUpRight</option><option value="hinge">hinge</option><option value="rollOut">rollOut</option>
-		</select>&nbsp;&nbsp;
-		Delay
-		<input type="text" style="width:40px" id="out_delay" onchange="out_delay_change();">&nbsp;
-		Duration
-		<input type="text" style="width:40px" id="out_duration" onchange="out_duration_change();">&nbsp;
-		Animation order
-		<input type="text" style="width:40px" id="out_a_order" onchange="out_anim_order()">&nbsp;
-		</center>
-		<button class="btn btn-primary" data-dismiss="modal" onclick="f1();">Show Text Animation</button>
+    In
+    <select onchange="in_anim(this.value);">
+    <option value="flash">flash</option><option value="bounce">bounce</option><option value="shake">shake</option><option value="tada">tada</option><option value="swing">swing</option><option value="wobble">wobble</option><option value="pulse">pulse</option><option value="flip">flip</option><option value="flipInX">flipInX</option><option value="flipInY">flipInY</option><option value="fadeIn">fadeIn</option><option value="fadeInUp">fadeInUp</option><option value="fadeInDown">fadeInDown</option><option value="fadeInLeft">fadeInLeft</option><option value="fadeInRight">fadeInRight</option><option value="fadeInUpBig">fadeInUpBig</option><option value="fadeInDownBig">fadeInDownBig</option><option value="fadeInLeftBig">fadeInLeftBig</option><option value="fadeInRightBig">fadeInRightBig</option><option value="bounceIn">bounceIn</option><option value="bounceInDown">bounceInDown</option><option value="bounceInUp">bounceInUp</option><option value="bounceInLeft">bounceInLeft</option><option value="bounceInRight">bounceInRight</option><option value="rotateIn">rotateIn</option><option value="rotateInDownLeft">rotateInDownLeft</option><option value="rotateInDownRight">rotateInDownRight</option><option value="rotateInUpLeft">rotateInUpLeft</option><option value="rotateInUpRight">rotateInUpRight</option><option value="rollIn">rollIn</option>
+    </select>&nbsp;&nbsp;
+    Delay
+    <input type="text" style="width:40px" id="in_delay" onchange="in_delay_change();">&nbsp;&nbsp;
+    Duration
+    <input type="text" style="width:40px" id="in_duration" onchange="in_duration_change();">&nbsp;&nbsp;
+    Animation order
+    <input type="text" style="width:40px" id="in_a_order" onchange="in_anim_order()">&nbsp;
+    <br><br>
+    Out
+    <select onchange="out_anim(this.value);">
+    <option value="flash">flash</option><option value="bounce">bounce</option><option value="shake">shake</option><option value="tada">tada</option><option value="swing">swing</option><option value="wobble">wobble</option><option value="pulse">pulse</option><option value="flip">flip</option><option value="flipOutX">flipOutX</option><option value="flipOutY">flipOutY</option><option value="fadeOut">fadeOut</option><option value="fadeOutUp">fadeOutUp</option><option value="fadeOutDown">fadeOutDown</option><option value="fadeOutLeft">fadeOutLeft</option><option value="fadeOutRight">fadeOutRight</option><option value="fadeOutUpBig">fadeOutUpBig</option><option value="fadeOutDownBig">fadeOutDownBig</option><option value="fadeOutLeftBig">fadeOutLeftBig</option><option value="fadeOutRightBig">fadeOutRightBig</option><option value="bounceOut">bounceOut</option><option value="bounceOutDown">bounceOutDown</option><option value="bounceOutUp">bounceOutUp</option><option value="bounceOutLeft">bounceOutLeft</option><option value="bounceOutRight">bounceOutRight</option><option value="rotateOut">rotateOut</option><option value="rotateOutDownLeft">rotateOutDownLeft</option><option value="rotateOutDownRight">rotateOutDownRight</option><option value="rotateOutUpLeft">rotateOutUpLeft</option><option value="rotateOutUpRight">rotateOutUpRight</option><option value="hinge">hinge</option><option value="rollOut">rollOut</option>
+    </select>&nbsp;&nbsp;
+    Delay
+    <input type="text" style="width:40px" id="out_delay" onchange="out_delay_change();">&nbsp;
+    Duration
+    <input type="text" style="width:40px" id="out_duration" onchange="out_duration_change();">&nbsp;
+    Animation order
+    <input type="text" style="width:40px" id="out_a_order" onchange="out_anim_order()">&nbsp;
+    </center>
+    <button class="btn btn-primary" data-dismiss="modal" onclick="f1();">Show Text Animation</button>
      
     </div>
     <div id="menu2" class="tab-pane fade">
      
       <center style="padding:20px 0px 20px 0px">
-		Animation effect
-		<select>
-		<option></option>
-		<option></option>
-		<option></option>
-		<option></option>
-		</select>
-		Easing
-		<select>
-		<option></option>
-		<option></option>
-		<option></option>
-		<option></option>
-		</select><br><br>
-		Delay
-		<input type="text" style="width:60px">&nbsp;&nbsp;
-		Duration
-		<input type="text" style="width:60px">&nbsp;&nbsp;
-		Animation order
-		<input type="text" style="width:60px">&nbsp;
-		<br><br>
-		</center>
+    Animation effect
+    <select>
+    <option></option>
+    <option></option>
+    <option></option>
+    <option></option>
+    </select>
+    Easing
+    <select>
+    <option></option>
+    <option></option>
+    <option></option>
+    <option></option>
+    </select><br><br>
+    Delay
+    <input type="text" style="width:60px">&nbsp;&nbsp;
+    Duration
+    <input type="text" style="width:60px">&nbsp;&nbsp;
+    Animation order
+    <input type="text" style="width:60px">&nbsp;
+    <br><br>
+    </center>
     </div>
    
   </div>
-		 
-		
-		
+     
+    
+    
         </div>
         <div class="modal-footer">
           <button class="btn btn-default" data-dismiss="modal">Close</button>
@@ -473,11 +473,11 @@ Preview.callback.autoReset = true;  // make sure it can run more than once
     </div>
   </div>
   
-	<button class="btn btn-default" title="Insert new div element" onclick="NewDiv();"><i class="fa fa-plus"></i>
-	</button>
-	<button class="btn btn-default" title="Delete div element" onclick="DeleteDiv();"><i class="fa fa-minus"></i>
-	</button>
-	
+  <button class="btn btn-default" title="Insert new div element" onclick="NewDiv();"><i class="fa fa-plus"></i>
+  </button>
+  <button class="btn btn-default" title="Delete div element" onclick="DeleteDiv();"><i class="fa fa-minus"></i>
+  </button>
+  
 </div>
 
 
@@ -653,7 +653,7 @@ function URLs(){
       <div class="modal-header orange">
         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span>
         </button>
-	
+  
   Welcome to Equation Editor &nbsp;
   <button class="btn btn-default" type="button" data-toggle="dropdown">&#8721;
     <span class="caret"></span></button>
@@ -805,83 +805,83 @@ function URLs(){
   </center></li>
   </ul>
 
-		</div>
+    </div>
        <div class="modal-body">
             <center><span id="MathPara"></span></center>
-          	<center><span>Insert Math Here : </span><input style="overflow:scroll" class="UserInput" placeholder="Insert Character">
+            <center><span>Insert Math Here : </span><input style="overflow:scroll" class="UserInput" placeholder="Insert Character">
             <button id="apply" class="btn btn-primary" disabled>Apply</button></center> 
-          	<center><textarea id="MathInput" onkeyup="Preview.Update()" style="margin-top:5px;width:500px;height:0px;overflow:scroll;visibility:hidden" placeholder="Please add an Equation using the button to start">
-			</textarea></center>
+            <center><textarea id="MathInput" onkeyup="Preview.Update()" style="margin-top:5px;width:500px;height:0px;overflow:scroll;visibility:hidden" placeholder="Please add an Equation using the button to start" disabled>
+      </textarea></center>
         </div>
-		
-		<b style="margin-left:40px">Preview is shown here</b>
-		<div id="MathPreview" style="padding: 3px; min-width:50%; margin-top:5px;overflow:scroll"></div>
-		<div id="MathBuffer" style="padding: 3px; min-width:50%; margin-top:5px;visibility:hidden; position:absolute; top:0; left:0;overflow:scroll;"></div>
-		<!--<div style="padding:30px 20px 30px">
-		</div>-->
-		<center><button class="btn btn-default" id="btnright" style="margin-bottom:20px">Click here to avail options</button></center>
-		<div id="slidediv" style="display:none">
-		<center>
-		<button class="btn btn-default" id="anim">Animate</button>
-		<select name="in" id="animSelect">
-    		<option value="flash">flash</option>
-    		<option value="bounce">bounce</option>
-    		<option value="shake">shake</option>
-    		<option value="tada">tada</option>
-    		<option value="swing">swing</option>
-    		<option value="wobble">wobble</option>
-    		<option value="pulse">pulse</option>
-    		<option value="flip">flip</option>
-    		<option value="flipInX">flipInX</option>
-    		<option value="flipInY">flipInY</option>
-    		<option value="fadeIn">fadeIn</option>
-    		<option value="fadeInUp">fadeInUp</option>
-    		<option value="fadeInDown">fadeInDown</option>
-    		<option value="fadeInLeft">fadeInLeft</option>
-    		<option value="fadeInRight">fadeInRight</option>
-    		<option value="fadeInUpBig">fadeInUpBig</option>
-    		<option value="fadeInDownBig">fadeInDownBig</option>
-    		<option value="fadeInLeftBig">fadeInLeftBig</option>
-    		<option value="fadeInRightBig">fadeInRightBig</option>
-    		<option value="bounceIn">bounceIn</option>
-    		<option value="bounceInDown">bounceInDown</option>
-    		<option value="bounceInUp">bounceInUp</option>
-    		<option value="bounceInLeft">bounceInLeft</option>
-    		<option value="bounceInRight">bounceInRight</option>
-    		<option value="rotateIn">rotateIn</option>
-    		<option value="rotateInDownLeft">rotateInDownLeft</option>
-    		<option value="rotateInDownRight">rotateInDownRight</option>
-    		<option value="rotateInUpLeft">rotateInUpLeft</option>
-    		<option value="rotateInUpRight">rotateInUpRight</option>
-    		<option value="rollIn">rollIn</option>
-		</select>&nbsp;&nbsp;
-		<button class="btn btn-default" id="addClass" title="Click to toggle modes">Text Mode</button>
-		</center>
-		<br>
-		<center style="margin-bottom:10px">
-		<input type="color" style="width:12%;margin-left:20px" id="favcolor">
-		<button class="btn btn-default" id="color">Color</button>&nbsp;&nbsp;
-		<input type="checkbox" id="btn-bold" name="radBold"> Bold
-		</center>
-		<center>
-		Equation ClassNames : <select id="EqnClass" style="overflow: scroll;">
-		</select>&nbsp;&nbsp;&nbsp;
-		<div class="btn btn-group">
-		<button class="btn btn-default" id="newEqn">New Eqn</button>
-		<button class="btn btn-default" id="delEqn">Delete Eqn</button>
-		</div>
-		</center>
-		<center>
-		Child ClassNames : <select id="ChildClass" style="overflow: scroll;">
-		</select>&nbsp;&nbsp;&nbsp;
-		<div class="btn btn-group">
-		<button class="btn btn-default" id="newChild">New Child</button>
-		<button class="btn btn-default" id="delChild">Delete Child</button>
-		</div>
-		</center>
-		</div>
-		<div class="modal-footer">
-		<button class="btn btn-primary" id="preview">OK</button>
+    
+    <b style="margin-left:40px">Preview is shown here</b>
+    <div id="MathPreview" style="padding: 3px; min-width:50%; margin-top:5px;overflow:scroll"></div>
+    <div id="MathBuffer" style="padding: 3px; min-width:50%; margin-top:5px;visibility:hidden; position:absolute; top:0; left:0;overflow:scroll;"></div>
+    <!--<div style="padding:30px 20px 30px">
+    </div>-->
+    <center><button class="btn btn-default" id="btnright" style="margin-bottom:20px">Click here to avail options</button></center>
+    <div id="slidediv" style="display:none">
+    <center>
+    <button class="btn btn-default" id="anim">Animate</button>
+    <select name="in" id="animSelect">
+        <option value="flash">flash</option>
+        <option value="bounce">bounce</option>
+        <option value="shake">shake</option>
+        <option value="tada">tada</option>
+        <option value="swing">swing</option>
+        <option value="wobble">wobble</option>
+        <option value="pulse">pulse</option>
+        <option value="flip">flip</option>
+        <option value="flipInX">flipInX</option>
+        <option value="flipInY">flipInY</option>
+        <option value="fadeIn">fadeIn</option>
+        <option value="fadeInUp">fadeInUp</option>
+        <option value="fadeInDown">fadeInDown</option>
+        <option value="fadeInLeft">fadeInLeft</option>
+        <option value="fadeInRight">fadeInRight</option>
+        <option value="fadeInUpBig">fadeInUpBig</option>
+        <option value="fadeInDownBig">fadeInDownBig</option>
+        <option value="fadeInLeftBig">fadeInLeftBig</option>
+        <option value="fadeInRightBig">fadeInRightBig</option>
+        <option value="bounceIn">bounceIn</option>
+        <option value="bounceInDown">bounceInDown</option>
+        <option value="bounceInUp">bounceInUp</option>
+        <option value="bounceInLeft">bounceInLeft</option>
+        <option value="bounceInRight">bounceInRight</option>
+        <option value="rotateIn">rotateIn</option>
+        <option value="rotateInDownLeft">rotateInDownLeft</option>
+        <option value="rotateInDownRight">rotateInDownRight</option>
+        <option value="rotateInUpLeft">rotateInUpLeft</option>
+        <option value="rotateInUpRight">rotateInUpRight</option>
+        <option value="rollIn">rollIn</option>
+    </select>&nbsp;&nbsp;
+    <button class="btn btn-default" id="addClass" title="Click to toggle modes">Text Mode</button>
+    </center>
+    <br>
+    <center style="margin-bottom:10px">
+    <input type="color" style="width:12%;margin-left:20px" id="favcolor">
+    <button class="btn btn-default" id="color">Color</button>&nbsp;&nbsp;
+    <input type="checkbox" id="btn-bold" name="radBold"> Bold
+    </center>
+    <center>
+    Equation ClassNames : <select id="EqnClass" style="overflow: scroll;">
+    </select>&nbsp;&nbsp;&nbsp;
+    <div class="btn btn-group">
+    <button class="btn btn-default" id="newEqn">New Eqn</button>
+    <button class="btn btn-default" id="delEqn">Delete Eqn</button>
+    </div>
+    </center>
+    <center>
+    Child ClassNames : <select id="ChildClass" style="overflow: scroll;">
+    </select>&nbsp;&nbsp;&nbsp;
+    <div class="btn btn-group">
+    <button class="btn btn-default" id="newChild">New Child</button>
+    <button class="btn btn-default" id="delChild">Delete Child</button>
+    </div>
+    </center>
+    </div>
+    <div class="modal-footer">
+    <button class="btn btn-primary" id="preview">OK</button>
          <button class="btn btn-default" data-dismiss="modal">Close</button>
         </div>
     </div>
@@ -894,8 +894,8 @@ function URLs(){
 <div id="div2">
 </div>-->
 <div id="canvas-wrap" >
-	<canvas id="canv" width="1136px" height="1000px">
-	</canvas>
+  <canvas id="canv" width="1136px" height="1000px">
+  </canvas>
 </div>
 </div>
 </div>
@@ -990,6 +990,10 @@ var selectFlag=0;
 //Stack of Cursor Positions for all possible operations
 //Stack dataStructure to maintain the stack of operations
 var posArray=[];
+var stack=[];
+var  cursorStatus = [];
+var globalStatus = [];
+//var cursorStack = [];
 //text for cursor
 var textCursor = "<mo class='mathCursor'>|</mo>";
 var updateCursor=true;
@@ -1073,12 +1077,17 @@ var xoff1,yoff1;
 var leffter1=[];
 var topper1=[];
 $("#newEqn").on("click",function(){
+    if(math_main_class.length!=0){
+      math_main_class[math_indx].code = $("#MathInput").val();
+      cursorStatus[math_indx]=updateCursor;
+      globalStatus[math_indx]=globalCursor;
+      stack[math_indx]=posArray;
+    }
     var c_order = "e"+math_main_class.length;
     var neq = new Equation(c_order,"<math class='"+c_order+"'>\n</math>","fadeIn","eq"+(math_main_class.length));
     $("#MathInput").val("<math class='"+c_order+"'>\n</math>");
     var elem = document.getElementById('MathInput');
     elem.setSelectionRange(elem.value.lastIndexOf("</math>"),elem.value.lastIndexOf("</math>"));
-    globalCursor = elem.value.lastIndexOf("</math>");
     math_main_class.push(neq);
     math_indx=math_main_class.length-1;
     //console.log("The outputId is : "+neq.outputId);
@@ -1096,7 +1105,6 @@ $("#newEqn").on("click",function(){
             currElem.left = xPos;
             //console.log("Final coords : "+xPos+" "+yPos+" And element :"+currElem.className);
         }
-
     });
     $("#"+neq.outputId).click(function(){
       $( this ).toggleClass("selected");      
@@ -1117,7 +1125,8 @@ $("#newEqn").on("click",function(){
           top: dd.offsetY-Y,
           left: dd.offsetX-X
         });
-        
+        currElem.top = dd.offsetY-Y;
+        currElem.left = dd.offsetX-X;
     });
     //inserting the equation into the options menu
     $("#EqnClass").html($("#EqnClass").html()+"<option value='"+c_order+"'>"+c_order+"</option>");
@@ -1125,21 +1134,32 @@ $("#newEqn").on("click",function(){
     loadChildSelect(neq.childArray);
     Preview.CreatePreview();
     $(".UserInput").val("");
+    $('#EqnClass').val(""+c_order);
+    cursorStatus.push(true);
+    globalStatus.push(elem.value.lastIndexOf("</math>"));
+    stack.push([]);
+    updateCursor = true;
+    posArray = stack[math_indx];
 });
 
 $('#EqnClass').on('change', function() {
+    math_main_class[math_indx].code = $("#MathInput").val();
+    stack[math_indx]=posArray;
+    cursorStatus[math_indx]=updateCursor;
+    globalStatus[math_indx]=globalCursor;
     var index = parseInt($(this).val().substring(1));
     var sel_eqn = math_main_class[index];
     $("#MathInput").val(sel_eqn.code);
     $("#currClass").html("Current : <strong>"+sel_eqn.id+"</strong>");
     math_indx = index;
+    posArray = stack[math_indx];
+    updateCursor = cursorStatus[math_indx];
+    globalCursor = globalStatus[math_indx];
     loadChildSelect(sel_eqn.childArray);
     Preview.CreatePreview();
     $(".UserInput").val("");
     var elem = document.getElementById('MathInput');
-    globalCursor = elem.value.length-7;
-    elem.setSelectionRange(globalCursor,globalCursor);
-    insertCursor();
+    enableApply();
 });
 
 $('#newChild').on('click',function(){
@@ -1177,7 +1197,6 @@ $("#color").on('click',function(){
     }catch(e){
       alert("Please select a ChildClass");
     }
-    //console.log(child);
 });
 
 $("#btn-bold").on('change',function(){
@@ -1381,7 +1400,7 @@ function loadChildSelect(array){
 }
 
 function removeCursor(){
-    console.log(updateCursor+ " UC ");
+    //console.log(updateCursor+ " UC ");
     var textEqn="";
     var elem = document.getElementById('MathInput');
     var EqnString = elem.value;
@@ -2190,7 +2209,7 @@ var id,flag=0;
             document.body.removeChild(link);
           }
         }
-    } 	 	
+    }     
 </script>
 <script>
 /*$(window).on("click",function(e){
