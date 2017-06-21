@@ -20,8 +20,9 @@
 <script src="http://threedubmedia.com/inc/js/excanvas.min.js"></script>
 <script type="text/javascript" src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
 <link rel="stylesheet" href="./animate.css">
-<script src="../MathJax-master/MathJax.js?config=TeX-MML-AM_HTMLorMML"></script>
+<script src="js/MathJax-master/MathJax.js?config=TeX-MML-AM_HTMLorMML"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/1.7.11/fabric.js"></script>
+<script src="https://cdn.ckeditor.com/4.7.0/full/ckeditor.js"></script>
 <style>
 body{
   background:url("images.png");
@@ -1811,9 +1812,10 @@ var id,flag=0;
   var O=$(document.getElementById("canvas-wrap")).offset();
   var X=O.left;
   var Y=O.top;
+  var ide,indexe,T_E=-1;
   
 //Script to get the id and index of current text element that is clicked  
-      jQuery(document).on("click", "span.demo", function (event) {
+jQuery(document).on("click", "span.demo", function (event) {
             id = jQuery(this).attr('id') || '';
             for(var j=0;j<MyArray.length;j++)
             {
@@ -1822,10 +1824,8 @@ var id,flag=0;
               break;}
             }
 //Script to restore the values(delay,duration and animation order) of current text element in the input box
-          var editable = document.getElementById(id);
-            editable.addEventListener('input', function() {
-          MyArray[index].Data=document.getElementById(id).innerHTML;
-        });
+            //if(T_E==1)
+            //{
             document.getElementById("in_delay").value=MyArray[index].in_delay;
             document.getElementById("in_duration").value=MyArray[index].in_duration;
             document.getElementById("in_a_order").value=MyArray[index].in_order;
@@ -1839,14 +1839,18 @@ var id,flag=0;
             document.getElementById("anchor1").innerHTML = MyArray[index].URLs; 
             //document.getElementById("smallHint").innerHTML=MyArray[index].smallHint;
             //HINTS
+         // }
           });
 //Script to delete a text element
         function DeleteDiv()
     {
-          if(MyArray.length>0 && document.getElementById(id)!=null)
+          if(MyArray.length>=0 && document.getElementById(id)!=null)
             {
-          MyArray.splice(index, 1);
-          document.getElementById(id).remove();
+      
+        document.getElementById(id).style.visibility="hidden";
+      MyArray[index].isDeleted=true;
+          //MyArray.splice(index, 1);
+          //document.getElementById(id).remove();
           }
           else if(document.getElementById(id)==null && MyArray.length!=0)
           {
@@ -1862,7 +1866,7 @@ var id,flag=0;
       var c=0;
     function NewDiv()
     { 
-      $("#canvas-wrap").append('<span id="T'+ c +'" name="T'+ c +'" class="demo" contenteditable="true" style="display: inline-block; border:1px solid black;"  class="ui-widget-content draggable,animated,drag"><p>Here is a typical paragraph element</p></span> ');
+      $("#canvas-wrap").append('<div id="T'+ c +'" name="T'+ c +'" class="demo" contenteditable="true" style="display: inline-block; border:1px solid black;"  class="ui-widget-content draggable,animated,drag"><p>Here is a typical paragraph element</p></div> ');
             var x=  "#T"+c;    
       $(x).draggable({ containment: "parent" },
             {
@@ -1936,6 +1940,22 @@ var id,flag=0;
                  canvas.renderAll();
                  });           
             }
+        })
+    
+        .drag("end",function(ev,dd)
+        {
+            for(var k=0;k<MyArray.length;k++)
+            {
+              if($( document.getElementById(MyArray[k].id)).is('.selected'))
+               {
+                 var offset = $(document.getElementById(MyArray[k].id)).offset();
+               var xPos = offset.left;
+               var yPos = offset.top;
+                 MyArray[k].xPos=xPos;
+                   MyArray[k].yPos=yPos;
+          //       console.log("index: "+k+"Xpos: "+MyArray[k].xPos+"Ypos: "+MyArray[k].xPos);
+               }
+            }
         });
       var s=document.getElementById(id).innerHTML;
       var i="flash";
@@ -1944,17 +1964,16 @@ var id,flag=0;
       var l=offset.offsetLeft;
       var t=offset.offsetTop;
       MyArray.push({id:"T"+c,Data:s,in_anim:i,out_anim:o,xPos:l,yPos:t,in_delay:"2",out_delay:"2",in_duration:"3000",out_duration:"3000",in_order:"1",out_order:"1"});
-        c++;
+      $(document.getElementById("#"+x)).attr( 'contenteditable', true );
+    CKEDITOR.inline( "T"+c,{});
+    c++;
     
     function singleClick(e) {
-        console.log('click');
-        $(x).click(function()
-    {
+     
            $( this ).toggleClass("selected");
             
                    $(this).draggable( "option", "disabled", true );
                  $(this).attr('contenteditable','true');
-          });
     }
       function doubleClick(e)
       {
@@ -1986,118 +2005,6 @@ var id,flag=0;
       });
     }
           
-          
-    
-//Script to add font color in text
-        function FontColor()
-    {
-            var range;
-            var c=document.getElementById("favcolor").value;
-            if (window.getSelection && window.getSelection().getRangeAt) {
-            var html='<font color='+c+'>' + window.getSelection() + '</font>';
-            range = window.getSelection().getRangeAt(0);
-            range.deleteContents();
-            var div = document.createElement("span");
-            div.innerHTML = html;
-            var frag = document.createDocumentFragment(), child;
-            while ( (child = div.firstChild) ) {
-            frag.appendChild(child);
-            }
-            range.insertNode(frag);
-            } 
-            else if (document.selection && document.selection.createRange)
-            {
-            range = document.selection.createRange();
-            range.pasteHTML(html);
-            }
-            MyArray[index].Data=document.getElementById(id).innerHTML;
-    }     
-//Script to make text Bold
-        function Bold()
-    {
-            var range;
-            if (window.getSelection && window.getSelection().getRangeAt) {
-            var html="<strong>"+window.getSelection()+"</strong>";
-            range = window.getSelection().getRangeAt(0);
-            range.deleteContents();
-            var div = document.createElement("span");
-            div.innerHTML = html;
-            var frag = document.createDocumentFragment(), child;
-            while ( (child = div.firstChild) ) {
-            frag.appendChild(child);
-            }
-            range.insertNode(frag);
-            } else if (document.selection && document.selection.createRange) {
-            range = document.selection.createRange();
-            range.pasteHTML(html);
-            }
-            var d=document.getElementById(id);
-              var s=d.innerHTML;            
-            console.log(s);
-            MyArray[index].Data=document.getElementById(id).innerHTML;
-    }
-//Script to make text Italics   
-    function Italics() {
-      var range;
-      if (window.getSelection && window.getSelection().getRangeAt) {
-      var html="<em>"+window.getSelection()+"</em>";
-      range = window.getSelection().getRangeAt(0);
-      range.deleteContents();
-      var div = document.createElement("span");
-      div.innerHTML = html;
-      var frag = document.createDocumentFragment(), child;
-      while ( (child = div.firstChild) ) {
-      frag.appendChild(child);
-      }
-      range.insertNode(frag);
-      } else if (document.selection && document.selection.createRange) {
-      range = document.selection.createRange();
-      range.pasteHTML(html);
-      }
-      MyArray[index].Data=document.getElementById(id).innerHTML;
-    }
-//Script to give Font Size
-    function FontSize(value) {
-      var range;
-      if (window.getSelection && window.getSelection().getRangeAt) {
-      var html='<span style="font-size:'+value+'px">'+window.getSelection()+"</span>";
-      //var html="<font size="+value+">"+window.getSelection()+"</font>";
-      range = window.getSelection().getRangeAt(0);
-      range.deleteContents();
-      var div = document.createElement("span");
-      div.innerHTML = html;
-      var frag = document.createDocumentFragment(), child;
-      while ( (child = div.firstChild) ) {
-      frag.appendChild(child);
-      }
-      range.insertNode(frag);
-      } else if (document.selection && document.selection.createRange) {
-      range = document.selection.createRange();
-      range.pasteHTML(html);
-      }
-      MyArray[index].Data=document.getElementById(id).innerHTML;
-    }
-//Script to change Font Face
-    function FontFace(value) 
-    {
-            var range;
-            if (window.getSelection && window.getSelection().getRangeAt) {
-            var html='<font face='+value+'>' +window.getSelection()+ '</font>';
-            range = window.getSelection().getRangeAt(0);
-            range.deleteContents();
-            var div = document.createElement("span");
-            div.innerHTML = html;
-            var frag = document.createDocumentFragment(), child;
-            while ( (child = div.firstChild) ) {
-            frag.appendChild(child);
-            }
-            range.insertNode(frag);
-            } else if (document.selection && document.selection.createRange) {
-            range = document.selection.createRange();
-            range.pasteHTML(html);
-            }
-            MyArray[index].Data=document.getElementById(id).innerHTML;
-    }
 //Script to give in animation
     function in_anim(value)
     {
@@ -2165,19 +2072,18 @@ var id,flag=0;
           }
     });
 //Script to show animation    
-    function f1()
-    {
-        for(var x=0;x<MyArray.length;x++)
-        {
-        var element=document.getElementById(MyArray[x].id);
-        var e1 = MyArray[index].in_anim;
-        var e2 = MyArray[index].out_anim;
-        var t=MyArray[index].in_duration;
-        $(element).animateCss(""+e1);
-        setTimeout(function() {
-        $(element).animateCss(""+e2)
-        },t);
-                }
+    function f1(){
+        MyArray.sort(function(a,b){ return a.});
+        for(var x=0;x<MyArray.length;x++){
+          var element=document.getElementById(MyArray[x].id);
+          var e1 = MyArray[index].in_anim;
+          var e2 = MyArray[index].out_anim;
+          var t=MyArray[index].in_duration;
+          $(element).animateCss(""+e1);
+          setTimeout(function() {
+            $(element).animateCss(""+e2);
+          },t);
+        }
     }
 //Script to create CSV
     function f8()
@@ -2215,7 +2121,7 @@ var id,flag=0;
             document.body.removeChild(link);
           }
         }
-    }     
+    }       
 </script>
 <script>
 /*$(window).on("click",function(e){
