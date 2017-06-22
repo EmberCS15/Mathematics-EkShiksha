@@ -1067,7 +1067,7 @@ var updateCursor=true;
 var globalCursor;
 var selectedEquation;
 var selectedIndex;
-
+var copiedEqn=null;
 $(document).ready(function(){
 /* Adding text on click based on browser */
   $("#MathInput").val("");
@@ -1574,6 +1574,20 @@ jQuery(document).on("click", ".math_equation", function (event) {
 function changeAnimationOrder(){
     math_main_class[selectedIndex].animOrder = $("#equationAnimationOrder").val();
     console.log(math_main_class[selectedIndex].animOrder);
+}
+
+function copyEquation(eqObj){
+  copiedEqn = new Equation("e"+math_main_class.length,eqobj.code,eqObj.animation,null,null,eqObj.childArray,"eq"+math_main_class.length,eqObj.top+2,eqObj.left+2,false);
+}
+
+function pasteEquation(obj){
+    if(copiedEqn == null)
+      return;
+    math_main_class.push(copiedEqn);
+    copiedEqn = null;
+    $("#canvas-wrap").append("<div id='"+copiedEqn.outputId+"' class='demo drag draggable ui-widget-content math_equation' style='display:inline-block;'></div>");
+    $("#EqnClass").html($("#EqnClass").html()+"<option value='"+copiedEqn.id+"'>"+copiedEqn.id+"</option>");
+}
 }
 </script>
 
