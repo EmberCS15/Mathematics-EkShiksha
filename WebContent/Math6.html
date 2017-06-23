@@ -20,7 +20,7 @@
 <script src="http://threedubmedia.com/inc/js/excanvas.min.js"></script>
 <script type="text/javascript" src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
 <link rel="stylesheet" href="./animate.css">
-<script src="js/MathJax-master/MathJax.js?config=TeX-MML-AM_HTMLorMML"></script>
+<script src="../MathJax-master/MathJax.js?config=TeX-MML-AM_HTMLorMML"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/1.7.11/fabric.js"></script>
 <style>
 body{
@@ -352,34 +352,9 @@ Preview.callback.autoReset = true;  // make sure it can run more than once
 <div id="menubar" class="row-fluid" style="background-color:#33B8FF">
 
 <div class="btn btn-group">
-<button class="btn btn-default" title="Save" data-toggle="modal" data-target="#saveModal" >
-
+<button class="btn btn-default" title="Save" onclick="queryDataBase()">
 <i class="fa fa-save"></i>
 </button>
-<div class="modal fade" id="saveModal" role="dialog">
-    <div class="modal-dialog">
-    
-      <!-- Modal content-->
-      <div class="modal-content">
-        <div class="modal-header">
-          <button type="button" class="close" data-dismiss="modal">&times;</button>
-          <h4 class="modal-title">Save As</h4>
-        </div>
-        <div class="modal-body">
-          <input type="text" placeholder="Topic name" id="savetopicname"><br><br>
-           <input type="text" placeholder="Activity name" id="saveactivityname"><br><br>
-           <textarea style="width:200px;height:100px" placeholder="Description" id="description"></textarea><br><br>
-           <button class="btn btn-primary" onClick="queryDataBase()">Save</button>
-          
-        </div>
-        <div class="modal-footer">
-          <button  class="btn btn-default" data-dismiss="modal">Close</button>
-        </div>
-      </div>
-      
-    </div>
-  </div>
-
 <button class="btn btn-default" data-toggle="dropdown">
     <span class="caret"></span></button>
     <ul class="dropdown-menu">
@@ -926,7 +901,9 @@ function URLs(){
     </center>
     <br>
     <center>
+    <!-- Change made as on 22nd June-->
     Equation ClassNames : <select id="EqnClass" style="overflow: scroll;">
+      <option value="none"></option>
     </select>&nbsp;&nbsp;&nbsp;
     <div class="btn btn-group">
     <button class="btn btn-default" id="newEqn">New Eqn</button>
@@ -1068,6 +1045,7 @@ var globalCursor;
 var selectedEquation;
 var selectedIndex;
 var copiedEqn=null;
+
 $(document).ready(function(){
 /* Adding text on click based on browser */
   $("#MathInput").val("");
@@ -1138,7 +1116,7 @@ $("#anim").on("click",function(){
     c_name = "."+c_name;
     $(c_name).animateCss(anim);
     math_main_class[math_indx].animation = anim;
-    console.log("In anim : "+math_main_class[math_indx].id);
+    //console.log("In anim : "+math_main_class[math_indx].id);
     //$(".e01").animateCss(anim);
     //alert(anim);
 });
@@ -1219,6 +1197,10 @@ $('#EqnClass').on('change', function() {
     stack[math_indx]=posArray;
     cursorStatus[math_indx]=updateCursor;
     globalStatus[math_indx]=globalCursor;
+    if($(this).val() === 'none'){
+        console.log("Ola None");
+        return;
+    }
     var index = parseInt($(this).val().substring(1));
     var sel_eqn = math_main_class[index];
     $("#MathInput").val(sel_eqn.code);
@@ -1307,7 +1289,7 @@ $("#preview").on('click',function(){
         target+="MathPreview";
     }else target+="MathBuffer";
     $(output).html($(target).html());
-    console.log("DONE "+output+" "+target);
+    //console.log("DONE "+output+" "+target);
     $(".UserInput").val("");
     $(eqname).animateCss(finalEq.animation);
   }catch(e){
@@ -1377,12 +1359,14 @@ $(".complex").on("click",function(){
 });
 
 $("#delEqn").on("click",function(){
-  //Change made by A
+    //Change made as on 22nd June
     var output = "#"+math_main_class[math_indx].outputId;
     var rm="#EqnClass option[value='"+ math_main_class[math_indx].id +"']";
     math_main_class[math_indx].isDeleted = true;
+    console.log("Math Main Deleted = "+math_main_class[math_indx].isDeleted+" "+math_indx+" "+rm+" output="+output);
     $(rm).remove();
     $(output).remove();
+    $("#EqnClass").val('none');
 });
 
 //This is required to insert stuff at the pointer position
@@ -1466,7 +1450,7 @@ function enableApply(){
 }
 function disableApply(){
   var app = document.getElementById('apply');
-  console.log(posArray.length);
+  //console.log(posArray.length);
   if(posArray.length == 0){
     app.disabled=true;
   }else app.disabled=false;
@@ -1568,18 +1552,17 @@ jQuery(document).on("click", ".math_equation", function (event) {
       selectedEquation = jQuery(this).attr('id') || '';
       selectedIndex = selectedEquation.charAt(2);
       math_indx = selectedIndex;
-      console.log(selectedEquation+ " "+selectedIndex+" "+math_indx);
+      //console.log(selectedEquation+ " "+selectedIndex+" "+math_indx);
     }
 );
 function changeAnimationOrder(){
     math_main_class[selectedIndex].animOrder = $("#equationAnimationOrder").val();
     console.log(math_main_class[selectedIndex].animOrder);
 }
-
+//Test Copy Paste Equationsh
 function copyEquation(eqObj){
-  copiedEqn = new Equation("e"+math_main_class.length,eqobj.code,eqObj.animation,null,null,eqObj.childArray,"eq"+math_main_class.length,eqObj.top+2,eqObj.left+2,false);
+  copiedEqn = new Equation("e"+math_main_class.length,eqobj.code,eqObj.animation,null,null,[],"eq"+math_main_class.length,eqObj.top+2,eqObj.left+2,false);
 }
-
 function pasteEquation(obj){
     if(copiedEqn == null)
       return;
@@ -1587,7 +1570,6 @@ function pasteEquation(obj){
     copiedEqn = null;
     $("#canvas-wrap").append("<div id='"+copiedEqn.outputId+"' class='demo drag draggable ui-widget-content math_equation' style='display:inline-block;'></div>");
     $("#EqnClass").html($("#EqnClass").html()+"<option value='"+copiedEqn.id+"'>"+copiedEqn.id+"</option>");
-}
 }
 </script>
 
@@ -2878,7 +2860,8 @@ function playAnimation(){
 }
 
 function animateObject(list,obj,groupItr,kidLength){
-    if(groupItr === kidLength)
+    //Change Made 22nd June 1.>= 2.
+    if(groupItr >= kidLength)
       return;
     var elem;
     var i;
@@ -2934,103 +2917,18 @@ function animateObject(list,obj,groupItr,kidLength){
 
 //DataBase actions taken here
 //All data sent to the dataBase as JSON
-function innerHTMLChange()
-{
-    for(var k=0;k<MyArray.length;k++)
-        {
-            MyArray[k].Data=document.getElementById(MyArray[k].id).innerHTML;
-        }
-}
 function queryDataBase(){
-    innerHTMLChange();
-    
-    var superArray = MyArray.concat(math_main_class);
-    
-    superArray = superArray.concat(ref);
-    
-    var defaultGroup = new Group(-1);
-    
-    defaultGroup.event = "onclick";
-    
-    for(var itr=0;itr<superArray.length;itr++){
-        if(superArray[itr].groupOrder == -1){
-            defaultGroup.kid.push(superArray[itr]);
-        }
-    }
-    
-    console.log(groupArray);
-    groupArray.shift(defaultGroup);
-    //console.log(ref[0]);
-    
-    var equations=[];
-    
-    for(var i=0;i<math_main_class.length;i++)
-    {
-        if(!math_main_class[i].isDeleted)
-            equations.push(math_main_class[i]);
-    }
-    
-    var texts=[];
-    
-    for(var i=0;i<MyArray.length;i++)
-    {
-        if(!MyArray[i].isDeleted)
-            texts.push(MyArray[i]);
-    }
-    
-    for(var i=0;i<canvas.getObjects.length;i++)
-    {
-        canvas.item(i).set({width:canvas.item(i).getWidth(),height:canvas.item(i).getHeight()});
-    }
-    
-    console.log(groupArray);
     var activity={
-            //tname:tname,
-            //aname:aname,
-            //desc:desc,
-            //type:type,
-            tname:document.getElementById("savetopicname").value,
-            aname:document.getElementById("saveactivityname").value,
-            desc:document.getElementById("description").value,
-            type:"tutorial",
-            text:texts,
-            equation:equations,
-            graphics:canvas,
-            group:groupArray
-    }
-    
-    var json=JSON.stringify(activity);
-    //potential bug
-    json = json.replace(/\+/g,"PLUS");
-    
-    
-    
+      name:"activity1",
+      topic:"topic1",
+      text:MyArray,
+      equation:math_main_class,
+      graphics:ref,
+      group:groupArray
+    };
+    json=JSON.stringify(activity);
     console.log(json);
-    console.log(escape(json));
-    
-    getObject();
-    
-    $.ajax({
-        type:'post',
-        url:'StoreActivity',
-        dataType:'JSON',
-        data:
-        {
-            activity:escape(json)
-        },
-        success:processRequest,
-        error:function(){alert("Error");}
-    });
-    
-    
-    
 }
-
-function processRequest()
-{
-    alert("Activity Has been saved successfully");    
-}
-
 </script>
 <script>
 function Create_Group(){
