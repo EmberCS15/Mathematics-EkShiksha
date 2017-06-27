@@ -1205,7 +1205,6 @@ $("#newEqn").on("click",function(){
             //console.log("Final coords : "+xPos+" "+yPos+" And element :"+neq.outputId);
             currElem.top = yPos;
             currElem.left = xPos;
-            //console.log("Final coords : "+xPos+" "+yPos+" And element :"+currElem.className);
         }
     });
     $("#"+neq.outputId).click(function(){
@@ -1213,12 +1212,6 @@ $("#newEqn").on("click",function(){
       $(this).draggable( "option", "disabled", true );
     })
     .drag("init",function(dd){
-        /*if(flag==1)
-        {
-          id=this.id;
-          console.log("After Deleting the drag has started from :"+id);
-        }*/
-    
         return $('.selected');       
     })
     .drag(function( ev, dd ){
@@ -3674,13 +3667,41 @@ function addElements(json)
     {
         var e=json.equation[i];
         loadEquation(e);
-        text="<div class='"+e.outputId+" demo' style='top:"+e.top+"px;left:"+e.left+"px;z-index:2'>";
+        //console.log("The outputId is : "+e.outputId);
+        tesxt+="<div id='"+e.outputId+"' class='demo drag draggable ui-widget-content math_equation' style='display:inline-block;'>";
         text+=e.code;
         text+="</div>";
         division.innerHTML+=text;
+        var currElem = math_main_class[math_indx];
+        $("#"+e.outputId).draggable({
+          drag: function(){
+                var offset = $(this).offset();
+                var xPos = offset.left-canvasX;
+                var yPos = offset.top-canvasY;
+                //console.log("Final coords : "+xPos+" "+yPos+" And element :"+neq.outputId);
+                currElem.top = yPos;
+                currElem.left = xPos;
+            }
+        });
+        $("#"+e.outputId).click(function(){
+          $( this ).toggleClass("selected");     
+          $(this).draggable( "option", "disabled", true );
+        })
+        .drag("init",function(dd){
+            return $('.selected');       
+        })
+        .drag(function( ev, dd ){
+            $( this ).css({
+              top: dd.offsetY-Y,
+              left: dd.offsetX-X
+            });
+            currElem.top = dd.offsetY-Y;
+            currElem.left = dd.offsetX-X;
+        });
     }
     MathJax.Hub.Queue(["Typeset",MathJax.Hub]);
     addGraphics();
+    
     groupArray = [];
     //Group Array Name
     for(var i=0;i<json.group.length;i++)
